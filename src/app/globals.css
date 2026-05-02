@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --color-mp-canvas: #d4e2e5;
+  --color-mp-sidebar: #bed4d8;
+  --color-mp-panel: #f6fffc;
+  --color-mp-auth-left: #efe9e5;
+  --color-mp-card: #fcfffe;
+  --color-mp-charcoal: #454545;
+  --color-mp-muted: #785964;
+  --color-mp-border: #ded3ca;
+  --color-mp-logout: #604750;
+  --color-mp-nav-active: #454545;
+  --color-mp-accent: #785964;
+  --color-mp-accent-strong: #604750;
+  --color-mp-accent-soft: #e5dce0;
+  --color-mp-soft-blue: #e9f1f2;
+  --color-mp-warm: #f7f4f2;
+  --radius-mp-card: 1rem;
+  --shadow-mp-card: 0 14px 40px rgb(69 69 69 / 0.12);
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  background: linear-gradient(180deg, var(--color-mp-soft-blue) 0%, var(--color-mp-panel) 52%, var(--color-mp-warm) 100%);
+  color: var(--color-mp-charcoal);
+}

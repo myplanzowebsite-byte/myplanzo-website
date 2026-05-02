@@ -1,0 +1,10 @@
+.env
+/docs
+IMPLEMENTATION_DOCUMENTATION.txt
+myplanzo.html
+MyPlanzo_Website_Development_Agreement_v2 Signed.pdf
+myplanzo-website.html
+/.next/
+node_modules/
+/UIUX
+prisma/*.db

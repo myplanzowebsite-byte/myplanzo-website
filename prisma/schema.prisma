@@ -1,0 +1,265 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  // DATABASE_URL: Supabase "Transaction" pooler (port 6543) on Vercel — add ?pgbouncer=true
+  url       = "postgresql://myplanzo:myplanzo@localhost:5432/myplanzo"
+  // DIRECT_URL: direct Postgres (port 5432) for prisma migrate / db push / introspect
+  directUrl = "postgresql://myplanzo:myplanzo@localhost:5432/myplanzo"
+}
+
+enum UserRole {
+  CUSTOMER
+  VENDOR
+  ADMIN
+  SUBADMIN
+}
+
+enum VendorVerificationStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+  SUSPENDED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum ListingStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum PaymentStatus {
+  PENDING
+  AUTHORIZED
+  CAPTURED
+  REFUNDED
+  FAILED
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  phone        String    @unique
+  passwordHash String
+  role         UserRole
+  isBlocked      Boolean   @default(false)
+  phoneVerified  Boolean   @default(false)
+  permissions    Json? // SUBADMIN module flags
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  customerProfile CustomerProfile?
+  vendorProfile   VendorProfile?
+  shortlist          ShortlistEntry[]
+  sentMessages       Message[]        @relation("SentMessages")
+  receivedMessages   Message[]        @relation("ReceivedMessages")
+  otpCodes           OtpCode[]
+  accessLogs         AccessLog[]
+  bookingsAsCustomer Booking[]        @relation("CustomerBookings")
+}
+
+model OtpCode {
+  id        String   @id @default(cuid())
+  userId    String?
+  phone     String
+  code      String
+  purpose   String // register | login | reset
+  expiresAt DateTime
+  consumed  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([phone, purpose, consumed])
+}
+
+model CustomerProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  displayName String?
+  photoUrl    String?
+  preferences Json?
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VendorProfile {
+  id                 String                   @id @default(cuid())
+  userId             String                   @unique
+  businessName       String
+  description        String?
+  location           String?
+  verificationStatus VendorVerificationStatus @default(PENDING)
+  portfolioUrls      String[]                 @default([])
+  user               User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listings           ServiceListing[]
+  bookings           Booking[]                @relation("VendorBookings")
+}
+
+model ServiceListing {
+  id          String        @id @default(cuid())
+  vendorId    String
+  title       String
+  description String
+  photos      String[]      @default([])
+  priceMin    Int?
+  priceMax    Int?
+  eventTags   String[]      @default([])
+  location    String?
+  status      ListingStatus @default(DRAFT)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  vendor      VendorProfile    @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  bookings    Booking[]
+  shortlists  ShortlistEntry[]
+}
+
+model ShortlistEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  listingId String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing   ServiceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, listingId])
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  customerId      String
+  vendorId        String
+  listingId       String?
+  status          BookingStatus @default(PENDING)
+  eventDate       DateTime?
+  eventDetails    String?
+  amountPaise     Int           @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  customer        User          @relation("CustomerBookings", fields: [customerId], references: [id], onDelete: Cascade)
+  vendor          VendorProfile @relation("VendorBookings", fields: [vendorId], references: [id], onDelete: Cascade)
+  listing         ServiceListing? @relation(fields: [listingId], references: [id])
+  payments        Payment[]
+  messages        Message[]
+  checklistItems  EventChecklistItem[]
+}
+
+model Payment {
+  id               String        @id @default(cuid())
+  bookingId        String
+  razorpayOrderId  String?
+  razorpayPaymentId String?
+  amountPaise      Int
+  commissionPaise  Int           @default(0)
+  status           PaymentStatus @default(PENDING)
+  createdAt        DateTime      @default(now())
+  booking          Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model Message {
+  id           String   @id @default(cuid())
+  bookingId    String
+  senderId     String
+  receiverId   String
+  senderRole   UserRole
+  receiverRole UserRole
+  channel      String   @default("web")
+  body         String
+  readAt       DateTime?
+  createdAt    DateTime @default(now())
+  booking      Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  sender       User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver     User     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId, createdAt])
+}
+
+model EventChecklistItem {
+  id        String  @id @default(cuid())
+  bookingId String
+  title     String
+  done      Boolean @default(false)
+  sortOrder Int     @default(0)
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model CmsPage {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  bodyHtml  String   @default("")
+  updatedAt DateTime @updatedAt
+}
+
+model CmsAnnouncement {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CmsBanner {
+  id        String   @id @default(cuid())
+  imageUrl  String
+  linkUrl   String?
+  sortOrder Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model CmsFaq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  sortOrder Int      @default(0)
+}
+
+model PushNotificationCampaign {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  audience  String   @default("all")
+  sentAt    DateTime?
+  createdAt DateTime @default(now())
+}
+
+model AccessLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  meta      Json?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model EventType {
+  id        String   @id @default(cuid())
+  emoji     String   // e.g., "🎂"
+  title     String   @unique // e.g., "Birthday Parties"
+  description String // e.g., "Decor, cakes, photo booths, and entertainers for every age."
+  sortOrder Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VendorCategory {
+  id        String   @id @default(cuid())
+  emoji     String   // e.g., "🏛️"
+  title     String   @unique // e.g., "Venues"
+  sortOrder Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

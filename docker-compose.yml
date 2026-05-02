@@ -1,0 +1,18 @@
+# Optional: local PostgreSQL when not using Supabase for dev.
+# With Supabase, skip this and set DATABASE_URL + DIRECT_URL in .env (see .env.example).
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: myplanzo
+      POSTGRES_PASSWORD: myplanzo
+      POSTGRES_DB: myplanzo
+    ports:
+      - "5432:5432"
+    volumes:
+      - myplanzo_pg:/var/lib/postgresql/data
+
+volumes:
+  myplanzo_pg:
