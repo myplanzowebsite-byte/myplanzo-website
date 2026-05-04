@@ -36,7 +36,7 @@ export default function EventsManagementPage() {
       if (!res.ok) throw new Error("Failed to fetch events");
       const data = await res.json();
       setEvents(data);
-    } catch (err) {
+    } catch {
       setError("Failed to load events");
     } finally {
       setLoading(false);
@@ -64,7 +64,7 @@ export default function EventsManagementPage() {
       setEditingId(null);
       setFormData({ emoji: "", title: "", description: "", sortOrder: 0, active: true });
       setError(null);
-    } catch (err) {
+    } catch {
       setError("Failed to save event");
     }
   }
@@ -75,7 +75,7 @@ export default function EventsManagementPage() {
       const res = await fetch(`/api/admin/event-types/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete event");
       await fetchEvents();
-    } catch (err) {
+    } catch {
       setError("Failed to delete event");
     }
   }

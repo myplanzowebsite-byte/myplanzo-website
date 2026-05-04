@@ -54,7 +54,7 @@ export function BookingActions({
           keyId: data.keyId,
         });
       }
-    } catch (err) {
+    } catch {
       setMsg("Payment failed");
     } finally {
       setLoading(false);
@@ -75,7 +75,7 @@ export function BookingActions({
       } else {
         setMsg("Payment verification failed");
       }
-    } catch (err) {
+    } catch {
       setMsg("Payment verification failed");
     }
     setPaymentData(null);

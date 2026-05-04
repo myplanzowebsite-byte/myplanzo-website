@@ -4,6 +4,12 @@ import { prisma } from "@/lib/prisma";
 import { ShortlistButton } from "@/components/customer/ShortlistButton";
 import { BookingRequestForm } from "@/components/customer/BookingRequestForm";
 
+type ListingReview = {
+  rating: number;
+  title?: string | null;
+  comment?: string | null;
+};
+
 export default async function CustomerListingPage({
   params,
 }: {
@@ -17,8 +23,9 @@ export default async function CustomerListingPage({
   if (!listing) notFound();
 
   // Calculate average rating
-  const avgRating = listing.vendor.reviews && listing.vendor.reviews.length > 0
-    ? listing.vendor.reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / listing.vendor.reviews.length
+  const reviews: ListingReview[] = listing.vendor.reviews ?? [];
+  const avgRating = reviews.length > 0
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
     : 0;
 
   return (
@@ -78,7 +85,7 @@ export default async function CustomerListingPage({
               </span>
               <span className="text-sm text-mp-muted">{avgRating.toFixed(1)} based on {listing.vendor.reviews.length} reviews</span>
             </div>
-            {listing.vendor.reviews.slice(0, 3).map((review, idx) => (
+            {reviews.slice(0, 3).map((review, idx) => (
               <div key={idx} className="text-sm border-t border-mp-border pt-3 mt-3">
                 <div className="flex items-center gap-1 mb-1">
                   <span className="flex gap-0.5">

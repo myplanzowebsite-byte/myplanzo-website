@@ -91,9 +91,27 @@ const heroCards = [
   { name: "Bloom Decor Co.", category: "Decorators", price: "₹12,000+", meta: "Backdrops • florals • stage styling", emoji: "🎈" },
 ];
 
+type HomeListingReview = {
+  rating: number;
+};
+
+type HomeListing = {
+  id: string;
+  title: string;
+  description: string;
+  priceMin?: number | null;
+  priceMax?: number | null;
+  photos?: string[] | null;
+  location?: string | null;
+  vendor: {
+    reviews?: HomeListingReview[] | null;
+    eventsCompleted?: number | null;
+  };
+};
+
 export default function HomePage() {
   const [eventTypes, setEventTypes] = useState(defaultEventTypes);
-  const [listings, setListings] = useState<any[]>([]);
+  const [listings, setListings] = useState<HomeListing[]>([]);
 
   useEffect(() => {
     fetch("/api/event-types")
@@ -302,9 +320,9 @@ export default function HomePage() {
               const emoji = getCategoryEmoji(category);
               const price = listing.priceMin ? `₹${listing.priceMin.toLocaleString()}+` : "Contact for pricing";
               const meta = listing.description.length > 55 ? listing.description.slice(0, 55) + "…" : listing.description;
-              const reviews: any[] = listing.vendor.reviews ?? [];
+              const reviews = listing.vendor.reviews ?? [];
               const avgRating = reviews.length
-                ? reviews.reduce((s: number, r: any) => s + r.rating, 0) / reviews.length
+                ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length
                 : 0;
 
               return (
@@ -327,7 +345,7 @@ export default function HomePage() {
                         <span className="text-xs text-mp-muted">{avgRating.toFixed(1)} ({reviews.length})</span>
                       </div>
                     )}
-                    {listing.vendor.eventsCompleted > 0 && (
+                    {listing.vendor.eventsCompleted && listing.vendor.eventsCompleted > 0 && (
                       <p className="mt-1 text-xs text-mp-muted">✓ {listing.vendor.eventsCompleted} events done</p>
                     )}
                     <p className="mt-2 line-clamp-2 text-xs text-mp-muted">{meta}</p>

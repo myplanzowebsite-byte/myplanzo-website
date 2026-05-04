@@ -3,15 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { readSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 
-export default async function CustomerBrowsePage({
-  searchParams,
-}: {
-  searchParams?: { event?: string };
-}) {
+export default async function CustomerBrowsePage(props: unknown) {
+  const { searchParams } = props as { searchParams?: { event?: string } };
   const session = await readSession();
   if (!session || session.role !== "CUSTOMER") redirect("/login");
   const eventTypes = await prisma.eventType.findMany({ orderBy: { sortOrder: "asc" } });
-  const selectedEvent = await searchParams?.event;
+  const selectedEvent = typeof searchParams?.event === "string" ? searchParams.event : undefined;
 
   const listings = await prisma.serviceListing.findMany({
     where: {

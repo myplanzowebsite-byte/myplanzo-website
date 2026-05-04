@@ -34,7 +34,7 @@ export default function VendorCategoriesManagementPage() {
       if (!res.ok) throw new Error("Failed to fetch categories");
       const data = await res.json();
       setCategories(data);
-    } catch (err) {
+    } catch {
       setError("Failed to load vendor categories");
     } finally {
       setLoading(false);
@@ -62,7 +62,7 @@ export default function VendorCategoriesManagementPage() {
       setEditingId(null);
       setFormData({ emoji: "", title: "", sortOrder: 0, active: true });
       setError(null);
-    } catch (err) {
+    } catch {
       setError("Failed to save vendor category");
     }
   }
@@ -73,7 +73,7 @@ export default function VendorCategoriesManagementPage() {
       const res = await fetch(`/api/admin/vendor-categories/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete category");
       await fetchCategories();
-    } catch (err) {
+    } catch {
       setError("Failed to delete vendor category");
     }
   }

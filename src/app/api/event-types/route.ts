@@ -8,7 +8,7 @@ export async function GET() {
       orderBy: { sortOrder: "asc" },
     });
     return NextResponse.json(eventTypes);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch event types" }, { status: 500 });
   }
 }

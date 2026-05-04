@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth/requireSession";
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, context: unknown) {
+  const { params } = context as { params: { id: string } };
   const { session, error: authError } = await requireSession(["ADMIN", "SUBADMIN"]);
   if (authError || !session) {
     return NextResponse.json({ error: authError ?? "Unauthorized" }, { status: authError === "Forbidden" ? 403 : 401 });
@@ -24,15 +25,17 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     });
 
     return NextResponse.json(eventType);
-  } catch (error: any) {
-    if (error.code === "P2025") {
+  } catch (error: unknown) {
+    const err = error as { code?: string };
+    if (err.code === "P2025") {
       return NextResponse.json({ error: "Event type not found" }, { status: 404 });
     }
     return NextResponse.json({ error: "Failed to update event type" }, { status: 500 });
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: unknown) {
+  const { params } = context as { params: { id: string } };
   const { session, error: authError } = await requireSession(["ADMIN", "SUBADMIN"]);
   if (authError || !session) {
     return NextResponse.json({ error: authError ?? "Unauthorized" }, { status: authError === "Forbidden" ? 403 : 401 });
@@ -44,8 +47,9 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
-    if (error.code === "P2025") {
+  } catch (error: unknown) {
+    const err = error as { code?: string };
+    if (err.code === "P2025") {
       return NextResponse.json({ error: "Event type not found" }, { status: 404 });
     }
     return NextResponse.json({ error: "Failed to delete event type" }, { status: 500 });

@@ -133,7 +133,7 @@ function VerifyOtpForm() {
 
         {/* Resend OTP section */}
         <div className="text-center">
-          <p className="text-sm text-mp-muted mb-2">Didn't receive code?</p>
+          <p className="text-sm text-mp-muted mb-2">Didn&apos;t receive code?</p>
           <button
             type="button"
             onClick={handleResend}

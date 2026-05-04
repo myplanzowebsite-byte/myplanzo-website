@@ -8,7 +8,7 @@ export async function GET() {
       orderBy: { sortOrder: "asc" },
     });
     return NextResponse.json(categories);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch vendor categories" }, { status: 500 });
   }
 }
