@@ -55,17 +55,12 @@ export async function POST(req: Request) {
     },
   });
 
-  await issueOtp(phone, "register", user.id);
-
-  const devCode = await prisma.otpCode.findFirst({
-    where: { phone, purpose: "register", consumed: false },
-    orderBy: { createdAt: "desc" },
-  });
+  const otp = await issueOtp(phone, "register", user.id);
 
   return NextResponse.json({
     ok: true,
     userId: user.id,
     next: "verify-otp",
-    ...(devCode ? { devOtp: devCode.code } : {}),
+    devOtp: otp,
   });
 }
