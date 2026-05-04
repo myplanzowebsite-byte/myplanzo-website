@@ -72,6 +72,8 @@ export async function GET(req: Request) {
     return NextResponse.json({ bookings });
   }
 
+  const page = Math.max(0, parseInt(searchParams.get("page") ?? "0", 10));
+  const PAGE_SIZE = 50;
   const bookings = await prisma.booking.findMany({
     include: {
       customer: { select: { email: true, id: true } },
@@ -80,7 +82,8 @@ export async function GET(req: Request) {
       payments: true,
     },
     orderBy: { createdAt: "desc" },
-    take: 100,
+    skip: page * PAGE_SIZE,
+    take: PAGE_SIZE,
   });
-  return NextResponse.json({ bookings });
+  return NextResponse.json({ bookings, page, pageSize: PAGE_SIZE });
 }

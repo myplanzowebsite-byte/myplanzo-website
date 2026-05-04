@@ -3,28 +3,36 @@
 @theme {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
-  --color-mp-canvas: #d4e2e5;
-  --color-mp-sidebar: #bed4d8;
-  --color-mp-panel: #f6fffc;
-  --color-mp-auth-left: #efe9e5;
-  --color-mp-card: #fcfffe;
-  --color-mp-charcoal: #454545;
-  --color-mp-muted: #785964;
-  --color-mp-border: #ded3ca;
-  --color-mp-logout: #604750;
-  --color-mp-nav-active: #454545;
-  --color-mp-accent: #785964;
-  --color-mp-accent-strong: #604750;
-  --color-mp-accent-soft: #e5dce0;
-  --color-mp-soft-blue: #e9f1f2;
-  --color-mp-warm: #f7f4f2;
+  /* ── Core palette (from brand swatches) ── */
+  --color-mp-steel:         #82afbf;   /* steel blue  — hero bg, icons, highlights */
+  --color-mp-steel-light:   #d6e8ee;   /* steel blue tint — subtle fills */
+  --color-mp-canvas:        #f2fffc;   /* mint white  — page background */
+  --color-mp-taupe:         #cfbcac;   /* warm taupe  — warm sections, auth panels */
+  --color-mp-taupe-light:   #f0e8e0;   /* light taupe — borders, warm card fills */
+  --color-mp-accent:        #7a5366;   /* dusty mauve — CTAs, links, tags */
+  --color-mp-charcoal:      #3d3d3d;   /* near-black  — primary text, dark buttons */
+
+  /* ── Derived / system colours ── */
+  --color-mp-panel:         #f7fffd;   /* slightly off-canvas, secondary panels */
+  --color-mp-card:          #ffffff;   /* floating cards */
+  --color-mp-muted:         #7a5366;   /* secondary text (same hue as accent, intentional) */
+  --color-mp-border:        #e4d5ca;   /* taupe-derived border */
+  --color-mp-accent-strong: #5e3f52;   /* deeper mauve — pressed / active states */
+  --color-mp-accent-soft:   #e8dde4;   /* mauve tint — subtle icon bg */
+  --color-mp-warm:          #f5ede6;   /* warm off-white — badges, highlights */
+  --color-mp-sidebar:       #9ec4cf;   /* admin sidebar (steel-derived) */
+  --color-mp-auth-left:     #cfbcac;   /* auth split-shell left panel = taupe */
+  --color-mp-logout:        #5e3f52;
+  --color-mp-nav-active:    #3d3d3d;
+  --color-mp-soft-blue:     #d6e8ee;   /* alias for steel-light */
+
   --radius-mp-card: 1rem;
-  --shadow-mp-card: 0 14px 40px rgb(69 69 69 / 0.12);
+  --shadow-mp-card: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
 }
 
 body {
   min-height: 100vh;
   font-family: var(--font-sans);
-  background: linear-gradient(180deg, var(--color-mp-soft-blue) 0%, var(--color-mp-panel) 52%, var(--color-mp-warm) 100%);
+  background: var(--color-mp-canvas);
   color: var(--color-mp-charcoal);
 }

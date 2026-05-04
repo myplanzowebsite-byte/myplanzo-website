@@ -3,8 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth/requireSession";
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+  const { session, error: authError } = await requireSession(["ADMIN", "SUBADMIN"]);
+  if (authError || !session) {
+    return NextResponse.json({ error: authError ?? "Unauthorized" }, { status: authError === "Forbidden" ? 403 : 401 });
+  }
+
   try {
-    await requireSession(request);
     const body = await request.json();
     const { emoji, title, description, sortOrder, active } = body;
 
@@ -21,9 +25,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
     return NextResponse.json(eventType);
   } catch (error: any) {
-    if (error.message === "Unauthorized") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
     if (error.code === "P2025") {
       return NextResponse.json({ error: "Event type not found" }, { status: 404 });
     }
@@ -32,18 +33,18 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
-  try {
-    await requireSession(request);
+  const { session, error: authError } = await requireSession(["ADMIN", "SUBADMIN"]);
+  if (authError || !session) {
+    return NextResponse.json({ error: authError ?? "Unauthorized" }, { status: authError === "Forbidden" ? 403 : 401 });
+  }
 
+  try {
     await prisma.eventType.delete({
       where: { id: params.id },
     });
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    if (error.message === "Unauthorized") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
     if (error.code === "P2025") {
       return NextResponse.json({ error: "Event type not found" }, { status: 404 });
     }

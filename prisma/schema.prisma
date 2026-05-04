@@ -4,10 +4,10 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  // DATABASE_URL: Supabase "Transaction" pooler (port 6543) on Vercel — add ?pgbouncer=true
-  url       = "postgresql://myplanzo:myplanzo@localhost:5432/myplanzo"
-  // DIRECT_URL: direct Postgres (port 5432) for prisma migrate / db push / introspect
-  directUrl = "postgresql://myplanzo:myplanzo@localhost:5432/myplanzo"
+  // DATABASE_URL: Supabase Transaction pooler (port 6543) on Vercel — append ?pgbouncer=true&connection_limit=1
+  url       = env("DATABASE_URL")
+  // DIRECT_URL: Supabase direct connection (port 5432) — used by prisma migrate / db push only
+  directUrl = env("DIRECT_URL")
 }
 
 enum UserRole {
@@ -65,6 +65,7 @@ model User {
   otpCodes           OtpCode[]
   accessLogs         AccessLog[]
   bookingsAsCustomer Booking[]        @relation("CustomerBookings")
+  reviews            Review[]         @relation("CustomerReviews")
 }
 
 model OtpCode {
@@ -101,6 +102,8 @@ model VendorProfile {
   user               User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
   listings           ServiceListing[]
   bookings           Booking[]                @relation("VendorBookings")
+  reviews            Review[]                 @relation("VendorReviews")
+  eventsCompleted    Int                      @default(0)
 }
 
 model ServiceListing {
@@ -149,6 +152,7 @@ model Booking {
   payments        Payment[]
   messages        Message[]
   checklistItems  EventChecklistItem[]
+  review          Review?                    @relation("BookingReview")
 }
 
 model Payment {
@@ -188,6 +192,22 @@ model EventChecklistItem {
   done      Boolean @default(false)
   sortOrder Int     @default(0)
   booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model Review {
+  id           String   @id @default(cuid())
+  vendorId     String
+  customerId   String
+  bookingId    String   @unique
+  rating       Int      // 1-5 stars
+  title        String?
+  comment      String?
+  createdAt    DateTime @default(now())
+  vendor       VendorProfile @relation("VendorReviews", fields: [vendorId], references: [id], onDelete: Cascade)
+  customer     User          @relation("CustomerReviews", fields: [customerId], references: [id], onDelete: Cascade)
+  booking      Booking       @relation("BookingReview", fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([vendorId, createdAt])
 }
 
 model CmsPage {

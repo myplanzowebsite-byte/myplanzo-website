@@ -56,8 +56,10 @@ function LoginForm() {
 
   return (
     <AuthSplitShell
-      title="Log in to your account"
-      subtitle="Use your work email. Customers and vendors confirm login with SMS OTP."
+      title="Welcome back"
+      subtitle="Log in with your email and password"
+      currentStep={1}
+      totalSteps={2}
     >
       <form className="space-y-5" onSubmit={onSubmit}>
         {error ? (

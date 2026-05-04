@@ -7,7 +7,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
     <div className="min-h-screen bg-mp-canvas">
       <header className="border-b border-mp-border bg-mp-card/95 backdrop-blur-sm">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
-          <Link href="/customer" className="font-semibold text-mp-charcoal">
+          <Link href="/" className="font-semibold text-mp-charcoal">
             MyPlanzo
           </Link>
           <nav className="flex flex-wrap items-center gap-2 text-sm">

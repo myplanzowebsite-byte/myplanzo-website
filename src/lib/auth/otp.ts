@@ -1,10 +1,11 @@
+import { randomInt } from "crypto";
 import { prisma } from "@/lib/prisma";
 
 const OTP_TTL_MS = 5 * 60 * 1000;
 
 function randomDigits(len: number) {
   let s = "";
-  for (let i = 0; i < len; i++) s += Math.floor(Math.random() * 10).toString();
+  for (let i = 0; i < len; i++) s += randomInt(0, 10).toString();
   return s;
 }
 
@@ -26,17 +27,20 @@ export async function issueOtp(phone: string, purpose: string, userId?: string) 
 }
 
 export async function consumeOtp(phone: string, purpose: string, code: string) {
-  const row = await prisma.otpCode.findFirst({
-    where: {
-      phone,
-      purpose,
-      consumed: false,
-      code,
-      expiresAt: { gt: new Date() },
-    },
-    orderBy: { createdAt: "desc" },
+  const result = await prisma.$transaction(async (tx) => {
+    const row = await tx.otpCode.findFirst({
+      where: {
+        phone,
+        purpose,
+        consumed: false,
+        code,
+        expiresAt: { gt: new Date() },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    if (!row) return false;
+    await tx.otpCode.update({ where: { id: row.id }, data: { consumed: true } });
+    return true;
   });
-  if (!row) return false;
-  await prisma.otpCode.update({ where: { id: row.id }, data: { consumed: true } });
-  return true;
+  return result;
 }

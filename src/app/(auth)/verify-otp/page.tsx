@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useMemo, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthSplitShell } from "@/components/auth/AuthSplitShell";
 
@@ -14,8 +14,19 @@ function VerifyOtpForm() {
   const [digits, setDigits] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [canResend, setCanResend] = useState(false);
+  const [resendCountdown, setResendCountdown] = useState(0);
 
   const code = useMemo(() => digits.join(""), [digits]);
+
+  // Resend countdown effect
+  useEffect(() => {
+    if (resendCountdown > 0) {
+      const timer = setTimeout(() => setResendCountdown(resendCountdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+    if (resendCountdown === 0 && !canResend) setCanResend(true);
+  }, [resendCountdown, canResend]);
 
   function setDigit(i: number, v: string) {
     const d = v.replace(/\D/g, "").slice(-1);
@@ -55,10 +66,33 @@ function VerifyOtpForm() {
     }
   }
 
+  async function handleResend() {
+    setCanResend(false);
+    setResendCountdown(60);
+    try {
+      const res = await fetch("/api/auth/resend-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, purpose }),
+      });
+      if (!res.ok) {
+        setError("Failed to resend OTP");
+        setCanResend(true);
+        setResendCountdown(0);
+      }
+    } catch {
+      setError("Failed to resend OTP");
+      setCanResend(true);
+      setResendCountdown(0);
+    }
+  }
+
   return (
     <AuthSplitShell
-      title="Verify OTP"
-      subtitle={`Enter the code we sent to your mobile number ending …${phone.slice(-4)}`}
+      title="Verify your number"
+      subtitle={`Enter the 6-digit code we sent to ${phone}`}
+      currentStep={2}
+      totalSteps={2}
     >
       <form className="space-y-6" onSubmit={onSubmit}>
         {process.env.NODE_ENV === "development" && devOtpHint ? (
@@ -96,6 +130,19 @@ function VerifyOtpForm() {
         >
           {loading ? "Verifying…" : "Continue"}
         </button>
+
+        {/* Resend OTP section */}
+        <div className="text-center">
+          <p className="text-sm text-mp-muted mb-2">Didn't receive code?</p>
+          <button
+            type="button"
+            onClick={handleResend}
+            disabled={!canResend}
+            className="text-sm font-medium text-mp-accent hover:text-mp-charcoal disabled:opacity-50"
+          >
+            {canResend ? "Resend OTP" : `Resend in ${resendCountdown}s`}
+          </button>
+        </div>
       </form>
     </AuthSplitShell>
   );

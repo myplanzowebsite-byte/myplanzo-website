@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 export default async function VendorDashboardPage() {
   const session = await readSession();
-  if (!session || session.role !== "VENDOR") redirect("/login");
+  if (!session || session.role !== "VENDOR") redirect("/");
   const vendor = await prisma.vendorProfile.findUnique({
     where: { userId: session.sub },
     include: { listings: true, bookings: true },

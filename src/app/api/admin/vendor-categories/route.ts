@@ -14,8 +14,12 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const { session, error: authError } = await requireSession(["ADMIN", "SUBADMIN"]);
+  if (authError || !session) {
+    return NextResponse.json({ error: authError ?? "Unauthorized" }, { status: authError === "Forbidden" ? 403 : 401 });
+  }
+
   try {
-    await requireSession(request);
     const body = await request.json();
     const { emoji, title, sortOrder, active } = body;
 
@@ -33,10 +37,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(category, { status: 201 });
-  } catch (error: any) {
-    if (error.message === "Unauthorized") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  } catch {
     return NextResponse.json({ error: "Failed to create vendor category" }, { status: 500 });
   }
 }

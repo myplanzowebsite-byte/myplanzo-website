@@ -27,6 +27,7 @@ export async function POST(req: Request) {
     where: { razorpayOrderId: orderId },
   });
   if (!payment) return NextResponse.json({ ok: true });
+  if (payment.status === "CAPTURED") return NextResponse.json({ ok: true });
 
   await prisma.payment.update({
     where: { id: payment.id },

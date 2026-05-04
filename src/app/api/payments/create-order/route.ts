@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     where: {
       id: parsed.data.bookingId,
       customerId: session.sub,
-      status: "CONFIRMED",
+      status: "PENDING",
     },
     include: { payments: true },
   });

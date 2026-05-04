@@ -19,7 +19,14 @@ export async function GET(req: Request) {
           }
         : {}),
     },
-    include: { vendor: { include: { user: { select: { id: true } } } } },
+    include: {
+      vendor: {
+        include: {
+          reviews: { select: { rating: true } },
+          user: { select: { id: true } },
+        },
+      },
+    },
     orderBy: { updatedAt: "desc" },
     take: 60,
   });
