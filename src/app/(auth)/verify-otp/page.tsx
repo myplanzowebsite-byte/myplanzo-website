@@ -95,10 +95,9 @@ function VerifyOtpForm() {
       totalSteps={2}
     >
       <form className="space-y-6" onSubmit={onSubmit}>
-        {process.env.NODE_ENV === "development" && devOtpHint ? (
+        {devOtpHint ? (
           <p className="rounded-md border border-mp-border bg-mp-warm px-3 py-2 text-sm text-mp-charcoal" role="status">
-            <strong>Development only:</strong> your OTP is <strong className="tracking-widest">{devOtpHint}</strong>{" "}
-            (also logged in the terminal as <code className="text-xs">[SMS mock]</code>).
+            <strong>Your OTP is:</strong> <strong className="tracking-widest">{devOtpHint}</strong>
           </p>
         ) : null}
         {error ? (

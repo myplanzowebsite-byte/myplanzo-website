@@ -41,7 +41,8 @@ export default function RegisterPage() {
         return;
       }
       if (data.devOtp) setDevOtp(data.devOtp);
-      router.push(`/verify-otp?phone=${encodeURIComponent(phone)}&purpose=register`);
+      const otpParam = data.devOtp ? `&devOtp=${encodeURIComponent(data.devOtp)}` : "";
+      router.push(`/verify-otp?phone=${encodeURIComponent(phone)}&purpose=register${otpParam}`);
     } finally {
       setLoading(false);
     }
