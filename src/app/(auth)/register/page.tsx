@@ -53,7 +53,7 @@ export default function RegisterPage() {
       title="Create your account"
       subtitle="Choose whether you are booking events or offering services."
     >
-      <form className="space-y-5" onSubmit={onSubmit}>
+      <form className="space-y-4" onSubmit={onSubmit}>
         {error ? (
           <p
             className="rounded-md border border-mp-accent/20 bg-mp-accent-soft px-3 py-2 text-sm text-mp-accent"
@@ -67,7 +67,7 @@ export default function RegisterPage() {
             Dev OTP: <strong>{devOtp}</strong>
           </p>
         ) : null}
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           {(["CUSTOMER", "VENDOR"] as const).map((r) => (
             <button
               key={r}
@@ -93,7 +93,7 @@ export default function RegisterPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1.5 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2.5 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
+            className="mt-2 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2.5 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
           />
         </div>
         <div>
@@ -106,7 +106,7 @@ export default function RegisterPage() {
             required
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="mt-1.5 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2.5 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
+            className="mt-2 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2.5 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
           />
         </div>
         <div>
@@ -120,7 +120,7 @@ export default function RegisterPage() {
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1.5 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2.5 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
+            className="mt-2 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2.5 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
           />
         </div>
         {role === "CUSTOMER" ? (
@@ -133,7 +133,7 @@ export default function RegisterPage() {
               type="text"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              className="mt-1.5 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2.5 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
+              className="mt-2 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2.5 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
             />
           </div>
         ) : (
@@ -147,7 +147,7 @@ export default function RegisterPage() {
               required
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
-              className="mt-1.5 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2.5 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
+              className="mt-2 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2.5 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
             />
           </div>
         )}

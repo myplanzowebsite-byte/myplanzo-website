@@ -10,7 +10,7 @@ export default function VendorLayout({ children }: { children: React.ReactNode }
           <Link href="/vendor" className="font-semibold text-mp-charcoal">
             MyPlanzo — Vendor
           </Link>
-          <nav className="flex flex-wrap items-center gap-2 text-sm">
+          <nav className="flex flex-wrap items-center gap-1 text-sm">
             <Link
               href="/vendor/listings"
               className="rounded-full px-3 py-1.5 text-mp-muted transition-colors hover:bg-mp-accent-soft hover:text-mp-charcoal"

@@ -36,7 +36,7 @@ export function CustomerShortlistPageClient({
           <p className="text-sm text-mp-muted mt-1">Review your saved vendors</p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex gap-2">
+          <div className="flex gap-2 sm:gap-3">
             <button
               onClick={() => setViewMode("list")}
               className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${

@@ -94,7 +94,7 @@ function VerifyOtpForm() {
       currentStep={2}
       totalSteps={2}
     >
-      <form className="space-y-6" onSubmit={onSubmit}>
+      <form className="space-y-4" onSubmit={onSubmit}>
         {devOtpHint ? (
           <p className="rounded-md border border-mp-border bg-mp-warm px-3 py-2 text-sm text-mp-charcoal" role="status">
             <strong>Your OTP is:</strong> <strong className="tracking-widest">{devOtpHint}</strong>
@@ -108,7 +108,7 @@ function VerifyOtpForm() {
             {error}
           </p>
         ) : null}
-        <div className="flex justify-between gap-2">
+        <div className="flex justify-between gap-1.5 sm:gap-2">
           {digits.map((d, i) => (
             <input
               key={i}
@@ -118,7 +118,7 @@ function VerifyOtpForm() {
               maxLength={1}
               value={d}
               onChange={(e) => setDigit(i, e.target.value)}
-              className="h-12 w-12 rounded-md border border-mp-border bg-mp-card text-center text-lg font-semibold outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
+              className="h-11 w-11 rounded-md border border-mp-border bg-mp-card text-center text-lg font-semibold outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2 sm:h-12 sm:w-12"
             />
           ))}
         </div>
@@ -132,7 +132,7 @@ function VerifyOtpForm() {
 
         {/* Resend OTP section */}
         <div className="text-center">
-          <p className="text-sm text-mp-muted mb-2">Didn&apos;t receive code?</p>
+          <p className="text-sm text-mp-muted">Didn&apos;t receive code?</p>
           <button
             type="button"
             onClick={handleResend}

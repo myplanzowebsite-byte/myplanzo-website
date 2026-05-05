@@ -10,7 +10,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
           <Link href="/" className="font-semibold text-mp-charcoal">
             MyPlanzo
           </Link>
-          <nav className="flex flex-wrap items-center gap-2 text-sm">
+          <nav className="flex flex-wrap items-center gap-1 text-sm">
             <Link
               href="/customer/browse"
               className="rounded-full px-3 py-1.5 text-mp-muted transition-colors hover:bg-mp-accent-soft hover:text-mp-charcoal"

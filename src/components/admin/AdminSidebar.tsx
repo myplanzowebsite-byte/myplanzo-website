@@ -77,7 +77,7 @@ export function AdminSidebar() {
         </div>
         <span className="text-lg font-semibold text-mp-charcoal">MyPlanzo</span>
       </div>
-      <nav className="flex flex-1 flex-col gap-1 text-sm font-medium">
+      <nav className="flex flex-1 flex-col gap-0.5 text-sm font-medium">
         {nav.map((item) => {
           const active =
             item.href === "/admin"
@@ -90,7 +90,7 @@ export function AdminSidebar() {
               {hasChildren ? (
                 <div
                   className={cn(
-                    "flex items-center justify-between rounded-xl px-3 py-2.5 transition-colors",
+                    "flex items-center justify-between rounded-xl px-3 py-2 transition-colors",
                     active ? "bg-mp-nav-active text-mp-panel" : "text-mp-charcoal hover:bg-mp-card/60",
                   )}
                 >
@@ -104,7 +104,7 @@ export function AdminSidebar() {
                 <Link
                   href={item.href}
                   className={cn(
-                    "flex items-center justify-between rounded-xl px-3 py-2.5 transition-colors",
+                    "flex items-center justify-between rounded-xl px-3 py-2 transition-colors",
                     pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href))
                       ? "bg-mp-nav-active text-mp-panel"
                       : "text-mp-charcoal hover:bg-mp-card/60",
@@ -127,7 +127,7 @@ export function AdminSidebar() {
                 </Link>
               )}
               {hasChildren && (
-                <ul className="ml-4 mt-1 space-y-1 border-l border-mp-border/70 pl-4">
+                <ul className="ml-4 mt-1 space-y-0.5 border-l border-mp-border/70 pl-4">
                   {item.children!.map((ch) => {
                     const childActive = pathname === ch.href || pathname.startsWith(ch.href + "/");
                     return (

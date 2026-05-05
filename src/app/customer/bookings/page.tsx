@@ -14,20 +14,20 @@ export default async function CustomerBookingsPage() {
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <h1 className="text-2xl font-semibold text-mp-charcoal">Bookings</h1>
-      <ul className="space-y-2">
+      <ul className="space-y-3">
         {bookings.map((b) => (
           <li key={b.id}>
             <Link
               href={`/customer/bookings/${b.id}`}
               className="block rounded-[var(--radius-mp-card)] bg-mp-card p-4 shadow-[var(--shadow-mp-card)] hover:ring-2 ring-mp-charcoal/10"
             >
-              <div className="flex justify-between gap-2">
+              <div className="flex justify-between gap-3">
                 <span className="font-medium">{b.vendor.businessName}</span>
-                <span className="text-xs text-mp-muted">{b.status}</span>
+                <span className="text-xs text-mp-muted shrink-0">{b.status}</span>
               </div>
-              <p className="text-sm text-mp-muted mt-1 line-clamp-2">{b.eventDetails}</p>
+              <p className="text-sm text-mp-muted mt-2 line-clamp-2">{b.eventDetails}</p>
             </Link>
           </li>
         ))}

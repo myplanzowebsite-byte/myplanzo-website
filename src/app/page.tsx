@@ -78,51 +78,20 @@ const footerGroups = [
   },
 ];
 
-const getCategoryEmoji = (category: string) => {
-  const map: Record<string, string> = {
-    Venues: "🏛️", Decorators: "🎈", Caterers: "🍽️",
-    "Photographers and videographers": "📸",
-  };
-  return map[category] || "🏢";
-};
 
 const heroCards = [
   { name: "Signature Venues", category: "Venues", price: "₹25,000+", meta: "Banquet halls • lawns • intimate spaces", emoji: "🏛️" },
   { name: "Bloom Decor Co.", category: "Decorators", price: "₹12,000+", meta: "Backdrops • florals • stage styling", emoji: "🎈" },
 ];
 
-type HomeListingReview = {
-  rating: number;
-};
-
-type HomeListing = {
-  id: string;
-  title: string;
-  description: string;
-  priceMin?: number | null;
-  priceMax?: number | null;
-  photos?: string[] | null;
-  location?: string | null;
-  vendor: {
-    reviews?: HomeListingReview[] | null;
-    eventsCompleted?: number | null;
-  };
-};
-
 export default function HomePage() {
   const [eventTypes, setEventTypes] = useState(defaultEventTypes);
-  const [listings, setListings] = useState<HomeListing[]>([]);
 
   useEffect(() => {
     fetch("/api/event-types")
       .then((r) => r.json())
       .then(setEventTypes)
       .catch(() => setEventTypes(defaultEventTypes));
-
-    fetch("/api/listings")
-      .then((r) => r.json())
-      .then((d) => setListings(d.listings || []))
-      .catch(() => setListings([]));
   }, []);
 
   return (
@@ -154,23 +123,23 @@ export default function HomePage() {
           </Link>
 
           <nav className="hidden items-center gap-6 text-sm md:flex">
-            {[["Events", "#events"], ["Vendors", "#vendors"], ["How it works", "#how"], ["About", "#about"]].map(([label, href]) => (
+            {[["Events", "#events"], ["How it works", "#how"], ["About", "#about"]].map(([label, href]) => (
               <a key={label} href={href} className="text-mp-muted transition-colors hover:text-mp-charcoal">
                 {label}
               </a>
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Link
               href="/vendor"
-              className="rounded-full border border-mp-accent px-4 py-2 text-sm font-medium text-mp-accent transition-colors hover:bg-mp-accent hover:text-white"
+              className="rounded-full border border-mp-accent px-2.5 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-medium text-mp-accent transition-colors hover:bg-mp-accent hover:text-white"
             >
               List your business
             </Link>
             <Link
               href="/customer/browse"
-              className="rounded-full bg-mp-charcoal px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-mp-accent"
+              className="rounded-full bg-mp-charcoal px-2.5 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-medium text-white transition-colors hover:bg-mp-accent"
             >
               Start planning
             </Link>
@@ -204,7 +173,7 @@ export default function HomePage() {
               action="/customer/browse"
               className="mt-8 overflow-hidden rounded-[20px] border border-mp-border bg-mp-card p-2 shadow-[var(--shadow-mp-card)]"
             >
-              <div className="grid gap-2 md:grid-cols-[0.95fr_1.1fr_auto]">
+              <div className="grid gap-2 sm:gap-3 md:grid-cols-[0.95fr_1.1fr_auto]">
                 <select
                   name="event"
                   defaultValue="Birthday Party"
@@ -287,7 +256,7 @@ export default function HomePage() {
             From intimate family setups to polished office farewells, MyPlanzo helps you find the right support faster.
           </p>
         </div>
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {eventTypes.map((item) => (
             <div key={item.title} className="rounded-[22px] border border-mp-border bg-mp-card p-5 shadow-[var(--shadow-mp-card)]">
               <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-mp-steel-light text-2xl">
@@ -301,75 +270,13 @@ export default function HomePage() {
       </section>
 
       {/* ── Vendors — transparent, white cards ── */}
-      <section id="vendors" className="border-y border-mp-border">
-        <div className="mx-auto max-w-6xl px-4 py-16">
-          <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-mp-accent">Top vendors</p>
-              <h2 className="mt-2 text-2xl font-semibold text-mp-charcoal sm:text-3xl">Event professionals on the platform</h2>
-            </div>
-            <Link href="/customer/browse" className="text-sm font-medium text-mp-accent hover:text-mp-accent-strong">
-              View all vendors →
-            </Link>
-          </div>
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {listings.slice(0, 8).map((listing) => {
-              const parts = listing.title.split(" - ");
-              const name = parts[0];
-              const category = parts[1] || "Service";
-              const emoji = getCategoryEmoji(category);
-              const price = listing.priceMin ? `₹${listing.priceMin.toLocaleString()}+` : "Contact for pricing";
-              const meta = listing.description.length > 55 ? listing.description.slice(0, 55) + "…" : listing.description;
-              const reviews = listing.vendor.reviews ?? [];
-              const avgRating = reviews.length
-                ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length
-                : 0;
-
-              return (
-                <div key={listing.id} className="flex flex-col overflow-hidden rounded-[22px] border border-mp-border bg-mp-card shadow-[var(--shadow-mp-card)]">
-                  <div className="h-28 overflow-hidden bg-mp-steel-light flex items-center justify-center text-4xl">
-                    {listing.photos?.[0]
-                      ? <img src={listing.photos[0]} alt={listing.title} className="h-full w-full object-cover" />
-                      : emoji}
-                  </div>
-                  <div className="flex flex-1 flex-col p-4">
-                    <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-mp-accent">{category}</p>
-                    <h3 className="text-sm font-semibold text-mp-charcoal">{name}</h3>
-                    {avgRating > 0 && (
-                      <div className="mt-1.5 flex items-center gap-1">
-                        <span className="flex gap-px">
-                          {[...Array(5)].map((_, i) => (
-                            <span key={i} className={`text-xs ${i < Math.floor(avgRating) ? "text-mp-accent" : "text-mp-border"}`}>★</span>
-                          ))}
-                        </span>
-                        <span className="text-xs text-mp-muted">{avgRating.toFixed(1)} ({reviews.length})</span>
-                      </div>
-                    )}
-                    {listing.vendor.eventsCompleted && listing.vendor.eventsCompleted > 0 && (
-                      <p className="mt-1 text-xs text-mp-muted">✓ {listing.vendor.eventsCompleted} events done</p>
-                    )}
-                    <p className="mt-2 line-clamp-2 text-xs text-mp-muted">{meta}</p>
-                    <div className="mt-auto mt-4 flex items-center justify-between border-t border-mp-border pt-3">
-                      <span className="text-sm font-semibold text-mp-charcoal">{price}</span>
-                      <Link href={`/customer/listings/${listing.id}`} className="text-xs font-medium text-mp-accent hover:text-mp-accent-strong">
-                        View →
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       {/* ── How it works — transparent, white cards ── */}
       <section id="how" className="mx-auto max-w-6xl px-4 py-16">
         <div className="mb-8 max-w-2xl text-center md:mx-auto">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-mp-accent">How it works</p>
           <h2 className="mt-2 text-2xl font-semibold text-mp-charcoal sm:text-3xl">A simpler way to plan in four steps</h2>
         </div>
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {processSteps.map((step, i) => {
             const Icon = step.icon;
             return (
@@ -418,7 +325,7 @@ export default function HomePage() {
       {/* ── Vendor CTA — mint white card, steel blue secondary button ── */}
       <section className="mx-auto max-w-6xl px-4 py-16">
         <div className="rounded-[28px] border border-mp-border bg-white px-6 py-8 shadow-[var(--shadow-mp-card)] md:px-8">
-          <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
+          <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-mp-accent">For vendors and professionals</p>
               <h2 className="mt-2 text-2xl font-semibold text-mp-charcoal">Grow your event business with a cleaner workflow.</h2>
@@ -426,7 +333,7 @@ export default function HomePage() {
                 Create listings, respond to inquiries, and manage bookings from a single dashboard.
               </p>
             </div>
-            <div className="flex flex-col gap-2 sm:min-w-[200px]">
+            <div className="flex flex-col gap-3 sm:min-w-[200px]">
               <Link
                 href="/register"
                 className="rounded-full bg-mp-charcoal px-4 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-mp-accent"

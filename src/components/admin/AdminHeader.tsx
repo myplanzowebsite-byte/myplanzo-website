@@ -14,7 +14,7 @@ export function AdminHeader({ title, subtitle, breadcrumbs }: AdminHeaderProps) 
       <div>
         {breadcrumbs?.length ? <p className="mb-1 text-xs text-mp-muted">{breadcrumbs.join(" > ")}</p> : null}
         <h1 className="text-2xl font-semibold text-mp-charcoal">{title}</h1>
-        {subtitle ? <p className="mt-0.5 text-sm text-mp-muted">{subtitle}</p> : null}
+        {subtitle ? <p className="mt-1 text-sm text-mp-muted">{subtitle}</p> : null}
       </div>
       <div className="flex flex-1 flex-wrap items-center justify-end gap-3">
         <div className="relative min-w-[200px] max-w-md flex-1">
@@ -22,12 +22,12 @@ export function AdminHeader({ title, subtitle, breadcrumbs }: AdminHeaderProps) 
           <input
             type="search"
             placeholder="Search"
-            className="w-full rounded-full border border-mp-border bg-mp-card py-2.5 pl-10 pr-4 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
+            className="w-full rounded-full border border-mp-border bg-mp-card py-2 pl-10 pr-4 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
           />
         </div>
         <button
           type="button"
-          className="rounded-lg bg-mp-charcoal px-4 py-2.5 text-sm font-medium text-mp-panel transition-colors hover:bg-mp-accent"
+          className="rounded-lg bg-mp-charcoal px-4 py-2 text-sm font-medium text-mp-panel transition-colors hover:bg-mp-accent"
         >
           Export Data
         </button>

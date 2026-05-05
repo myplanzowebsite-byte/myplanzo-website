@@ -78,7 +78,7 @@ export function AuthSplitShell({
               <div className="flex items-center justify-between text-xs text-mp-muted mb-2">
                 <span>Step {currentStep} of {totalSteps}</span>
               </div>
-              <div className="h-1 w-full rounded-full bg-mp-border overflow-hidden">
+              <div className="h-1.5 w-full rounded-full bg-mp-border overflow-hidden">
                 <div 
                   className="h-full bg-mp-accent transition-all duration-300"
                   style={{ width: `${(currentStep / totalSteps) * 100}%` }}
@@ -88,8 +88,8 @@ export function AuthSplitShell({
           )}
 
           <h1 className="text-2xl font-semibold text-mp-charcoal">{title}</h1>
-          {subtitle ? <p className="mt-2 text-sm leading-6 text-mp-muted">{subtitle}</p> : null}
-          <div className="mt-8">{children}</div>
+          {subtitle ? <p className="mt-1.5 text-sm leading-6 text-mp-muted">{subtitle}</p> : null}
+          <div className="mt-6">{children}</div>
         </div>
       </div>
     </div>

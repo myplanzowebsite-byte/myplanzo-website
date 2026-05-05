@@ -61,7 +61,7 @@ function LoginForm() {
       currentStep={1}
       totalSteps={2}
     >
-      <form className="space-y-5" onSubmit={onSubmit}>
+      <form className="space-y-4" onSubmit={onSubmit}>
         {error ? (
           <p
             className="rounded-md border border-mp-accent/20 bg-mp-accent-soft px-3 py-2 text-sm text-mp-accent"
@@ -81,7 +81,7 @@ function LoginForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1.5 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2.5 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
+            className="mt-2 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2.5 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
           />
         </div>
         <div>
@@ -103,10 +103,10 @@ function LoginForm() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1.5 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2.5 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
+            className="mt-2 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2.5 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
           />
         </div>
-        <label className="flex items-center gap-2 text-sm text-mp-muted">
+        <label className="flex items-center gap-3 text-sm text-mp-muted">
           <input
             type="checkbox"
             checked={remember}

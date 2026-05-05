@@ -27,20 +27,15 @@ export async function issueOtp(phone: string, purpose: string, userId?: string) 
 }
 
 export async function consumeOtp(phone: string, purpose: string, code: string) {
-  const result = await prisma.$transaction(async (tx) => {
-    const row = await tx.otpCode.findFirst({
-      where: {
-        phone,
-        purpose,
-        consumed: false,
-        code,
-        expiresAt: { gt: new Date() },
-      },
-      orderBy: { createdAt: "desc" },
-    });
-    if (!row) return false;
-    await tx.otpCode.update({ where: { id: row.id }, data: { consumed: true } });
-    return true;
+  const result = await prisma.otpCode.updateMany({
+    where: {
+      phone,
+      purpose,
+      consumed: false,
+      code,
+      expiresAt: { gt: new Date() },
+    },
+    data: { consumed: true },
   });
-  return result;
+  return result.count > 0;
 }
