@@ -50,6 +50,10 @@ export async function middleware(request: NextRequest) {
   }
 
   if (pathname.startsWith("/customer")) {
+    // Shortlist shows a login prompt when unauthenticated — don't hard-block
+    if (pathname.startsWith("/customer/shortlist")) {
+      return NextResponse.next();
+    }
     if (!token) {
       return NextResponse.redirect(
         new URL(`/login?next=${encodeURIComponent(pathname)}`, request.url),

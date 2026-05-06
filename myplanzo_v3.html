@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyPlanzo — Plan your celebration</title>
+<meta name="description" content="Discover and book verified event vendors in Mumbai. Decorators, caterers, photographers and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+:root {
+  --bg: #f0fffc;
+  --surface: #ffffff;
+  --surface2: #f8fffe;
+  --border: #d9c9c0;
+  --text: #3d3a38;
+  --text2: #7a6a65;
+  --text3: #b0a09a;
+  --coral: #7aafc0;
+  --coral-dim: rgba(122,175,192,0.13);
+  --green: #3aab6e;
+  --gold: #c4956a;
+  --accent: #7a4e5d;
+  --beige: #d9bfb3;
+  --font: 'Plus Jakarta Sans', sans-serif;
+}
+body { font-family: var(--font); background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+/* NAV */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(240,255,252,0.96); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 24px; height: 60px; gap: 14px;
+}
+.nav-logo { display: flex; align-items: center; gap: 8px; font-size: 1.05rem; font-weight: 700; color: var(--text); text-decoration: none; flex-shrink: 0; }
+.logo-box { width: 30px; height: 30px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.nav-search {
+  flex: 1; max-width: 500px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  display: flex; align-items: center; padding: 0 14px; gap: 8px; height: 38px;
+  transition: border-color .2s;
+}
+.nav-search:focus-within { border-color: var(--coral); }
+.nav-search input { flex: 1; background: none; border: none; outline: none; font-family: var(--font); font-size: .85rem; color: var(--text); caret-color: var(--coral); }
+.nav-search input::placeholder { color: var(--text3); }
+.nav-loc { display: flex; align-items: center; gap: 5px; padding-left: 10px; border-left: 1px solid var(--border); font-size: .75rem; color: var(--text2); cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.btn-ghost { padding: 7px 14px; border-radius: 8px; font-size: .8rem; font-weight: 500; border: 1px solid var(--border); background: none; color: var(--text2); cursor: pointer; font-family: var(--font); text-decoration: none; transition: all .15s; }
+.btn-ghost:hover { color: var(--text); border-color: #444; }
+.btn-primary { padding: 7px 16px; border-radius: 8px; font-size: .8rem; font-weight: 600; background: var(--coral); color: #fff; border: none; cursor: pointer; font-family: var(--font); text-decoration: none; transition: opacity .15s; }
+.btn-primary:hover { opacity: .85; }
+
+/* HERO */
+.hero { padding: 52px 24px 36px; text-align: center; background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(122,175,192,.12) 0%, transparent 70%); }
+.hero-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--coral-dim); border: 1px solid rgba(255,92,53,.22); color: var(--coral); border-radius: 20px; font-size: .7rem; font-weight: 600; padding: 4px 12px; margin-bottom: 18px; letter-spacing: .04em; text-transform: uppercase; }
+.dot-live { width: 6px; height: 6px; background: var(--coral); border-radius: 50%; animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.hero h1 { font-size: clamp(1.9rem, 4.5vw, 3rem); font-weight: 700; letter-spacing: -.03em; line-height: 1.12; color: var(--text); margin-bottom: 12px; }
+.hero h1 span { color: var(--coral); }
+.hero p { font-size: .95rem; color: var(--text2); max-width: 380px; margin: 0 auto 28px; line-height: 1.65; }
+
+/* HERO SEARCH BAR */
+.hero-search { max-width: 580px; margin: 0 auto 32px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; display: flex; align-items: center; padding: 6px 6px 6px 20px; gap: 8px; transition: box-shadow .2s; }
+.hero-search:focus-within { box-shadow: 0 0 0 2px var(--coral); border-color: transparent; }
+.hs-f { flex: 1; }
+.hs-f label { display: block; font-size: .6rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 2px; }
+.hs-f input { width: 100%; background: none; border: none; outline: none; font-family: var(--font); font-size: .875rem; color: var(--text); caret-color: var(--coral); }
+.hs-f input::placeholder { color: var(--text3); }
+.hs-div { width: 1px; height: 30px; background: var(--border); flex-shrink: 0; }
+.hs-btn { background: var(--coral); color: #fff; border: none; cursor: pointer; border-radius: 10px; padding: 10px 20px; font-size: .85rem; font-weight: 600; font-family: var(--font); white-space: nowrap; transition: opacity .15s; display: flex; align-items: center; gap: 6px; }
+.hs-btn:hover { opacity: .87; }
+
+/* CATEGORIES */
+.cats { padding: 0 24px 44px; }
+.cats-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.cats-row::-webkit-scrollbar { display: none; }
+.cat { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 7px; cursor: pointer; padding: 14px 18px; border-radius: 13px; border: 1px solid var(--border); background: var(--surface); transition: all .18s; min-width: 80px; }
+.cat:hover, .cat.on { border-color: var(--coral); background: var(--coral-dim); }
+.cat-e { font-size: 1.5rem; line-height: 1; }
+.cat-l { font-size: .68rem; font-weight: 600; color: var(--text2); }
+.cat:hover .cat-l, .cat.on .cat-l { color: var(--coral); }
+
+/* SECTION HEADER */
+.sh { display: flex; align-items: center; justify-content: space-between; padding: 0 24px; margin-bottom: 18px; }
+.sh-t { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+.sh-a { font-size: .8rem; color: var(--coral); text-decoration: none; font-weight: 500; }
+.sh-a:hover { opacity: .8; }
+
+/* VENDOR CARDS */
+.vendors { padding: 0 24px 56px; }
+.vgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; }
+
+.vc { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; cursor: pointer; transition: transform .2s, border-color .2s, box-shadow .2s; }
+.vc:hover { transform: translateY(-3px); border-color: #383838; box-shadow: 0 14px 44px rgba(0,0,0,.45); }
+
+.vc-img { height: 170px; position: relative; overflow: hidden; background: var(--beige); }
+.vc-img-bg { position: absolute; inset: 0; }
+.vc-emoji { position: relative; z-index: 1; }
+.vc-tag { position: absolute; top: 10px; left: 10px; z-index: 2; background: rgba(0,0,0,.52); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,.15); border-radius: 6px; padding: 3px 9px; font-size: .65rem; font-weight: 600; color: #fff; letter-spacing: .04em; text-transform: uppercase; }
+.vc-verified { position: absolute; top: 10px; right: 10px; z-index: 2; background: var(--green); border-radius: 6px; padding: 3px 8px; font-size: .62rem; font-weight: 700; color: #fff; }
+
+.vc-body { padding: 14px 14px 12px; }
+.vc-name { font-size: .9rem; font-weight: 700; color: var(--text); margin-bottom: 4px; letter-spacing: -.01em; }
+.vc-meta { font-size: .72rem; color: var(--text3); margin-bottom: 10px; }
+.vc-stats { display: flex; gap: 10px; margin-bottom: 12px; }
+.vs { display: flex; align-items: center; gap: 3px; font-size: .75rem; color: var(--text2); }
+.vs-star { color: var(--gold); }
+.vc-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 10px; border-top: 1px solid var(--border); }
+.vc-price { font-size: .9rem; font-weight: 700; color: var(--text); }
+.vc-price small { font-size: .65rem; color: var(--text3); font-weight: 400; }
+.vc-btns { display: flex; gap: 7px; }
+.wa-b { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: #22c55e; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+.wa-b:hover { background: rgba(34,197,94,.15); border-color: #22c55e; }
+.bk-b { padding: 6px 14px; border-radius: 8px; border: none; background: var(--coral); color: #fff; font-size: .75rem; font-weight: 600; font-family: var(--font); cursor: pointer; transition: opacity .15s; }
+.bk-b:hover { opacity: .87; }
+
+/* HOW IT WORKS */
+.how { margin: 0 24px 56px; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 32px 28px; }
+.how h3 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 24px; }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.step { text-align: center; padding: 10px 6px; }
+.step-n { width: 38px; height: 38px; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: .85rem; font-weight: 700; border: 2px solid var(--border); color: var(--text3); }
+.step:first-child .step-n { border-color: var(--coral); color: var(--coral); background: var(--coral-dim); }
+.step-t { font-size: .78rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.step-d { font-size: .7rem; color: var(--text3); line-height: 1.5; }
+
+/* VENDOR CTA BANNER */
+.vcta { margin: 0 24px 56px; background: linear-gradient(135deg, var(--accent) 0%, #5c3044 100%); border-radius: 18px; padding: 36px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; overflow: hidden; position: relative; }
+.vcta::after { content: ''; position: absolute; right: -30px; top: -30px; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,.06); pointer-events: none; }
+.vcta-l { position: relative; z-index: 1; }
+.vcta-l h2 { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 6px; letter-spacing: -.02em; }
+.vcta-l p { font-size: .82rem; color: rgba(255,255,255,.75); max-width: 300px; line-height: 1.6; }
+.vcta-btn { position: relative; z-index: 1; flex-shrink: 0; background: #fff; color: var(--accent); font-weight: 700; padding: 11px 24px; border-radius: 10px; border: none; font-family: var(--font); font-size: .85rem; cursor: pointer; text-decoration: none; display: inline-block; transition: opacity .15s; white-space: nowrap; }
+.vcta-btn:hover { opacity: .92; }
+
+/* REVIEWS */
+.reviews { padding: 0 0 56px; overflow: hidden; }
+.r-track { display: flex; gap: 12px; animation: marquee 26s linear infinite; width: max-content; }
+.r-track:hover { animation-play-state: paused; }
+@keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+.rc { flex-shrink: 0; width: 268px; background: var(--surface); border: 1px solid var(--border); border-radius: 13px; padding: 18px; }
+.rc-stars { color: var(--gold); font-size: .75rem; margin-bottom: 9px; }
+.rc-text { font-size: .79rem; color: var(--text2); line-height: 1.65; margin-bottom: 12px; font-style: italic; }
+.rc-user { display: flex; align-items: center; gap: 8px; }
+.rc-av { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .68rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+.rc-name { font-size: .77rem; font-weight: 600; color: var(--text); }
+.rc-ev { font-size: .65rem; color: var(--text3); }
+
+/* FOOTER */
+footer { border-top: 1px solid var(--border); padding: 32px 24px 22px; }
+.ft { display: flex; justify-content: space-between; gap: 32px; flex-wrap: wrap; margin-bottom: 28px; }
+.ft-brand p { font-size: .75rem; color: var(--text3); max-width: 200px; line-height: 1.6; margin-top: 8px; }
+.ft-brand .logo { display: flex; align-items: center; gap: 7px; font-size: .95rem; font-weight: 700; color: var(--text); }
+.fc h4 { font-size: .68rem; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 12px; }
+.fc ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.fc li a { font-size: .77rem; color: var(--text2); text-decoration: none; transition: color .15s; }
+.fc li a:hover { color: var(--text); }
+.ft-bot { border-top: 1px solid var(--border); padding-top: 18px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.ft-bot p { font-size: .68rem; color: var(--text3); }
+
+/* WA FLOAT */
+.wa-float { position: fixed; bottom: 22px; right: 22px; z-index: 99; width: 50px; height: 50px; border-radius: 50%; background: #25D366; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 4px 18px rgba(37,211,102,.4); text-decoration: none; transition: transform .2s, box-shadow .2s; }
+.wa-float:hover { transform: scale(1.08); box-shadow: 0 6px 26px rgba(37,211,102,.55); }
+
+/* REVEAL */
+.r { opacity: 0; transform: translateY(18px); transition: opacity .5s ease, transform .5s ease; }
+.r.on { opacity: 1; transform: none; }
+
+/* RESPONSIVE */
+@media (max-width: 760px) {
+  .nav-search { display: none; }
+  .hero { padding: 36px 16px 28px; }
+  .hs-div { display: none; }
+  .hero-search { flex-wrap: wrap; padding: 10px; gap: 8px; }
+  .hs-f { width: 100%; }
+  .hs-btn { width: 100%; justify-content: center; }
+  .cats { padding: 0 16px 36px; }
+  .sh { padding: 0 16px; }
+  .vendors { padding: 0 16px 44px; }
+  .vgrid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .how { margin: 0 16px 44px; padding: 24px 18px; }
+  .steps { grid-template-columns: 1fr 1fr; gap: 14px; }
+  .vcta { margin: 0 16px 44px; flex-direction: column; padding: 26px 20px; text-align: center; }
+  .vcta-l p { max-width: 100%; }
+  .vcta-btn { width: 100%; text-align: center; }
+  footer { padding: 28px 16px 18px; }
+}
+@media (max-width: 460px) {
+  .vgrid { grid-template-columns: 1fr; }
+  .btn-ghost { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#" class="nav-logo">
+    <div class="logo-box">🎉</div>
+    MyPlanzo
+  </a>
+  <div class="nav-search">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" placeholder="Search vendors, services…">
+    <div class="nav-loc">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Mumbai ▾
+    </div>
+  </div>
+  <div class="nav-right">
+    <a href="#" class="btn-ghost">Log in</a>
+    <a href="#" class="btn-primary">Sign up free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge"><div class="dot-live"></div>Live in Mumbai</div>
+  <h1>Book the best vendors<br>for your <span>celebration.</span></h1>
+  <p>Decorators, caterers, photographers, venues — all in one place. No calls, no hassle.</p>
+  <div class="hero-search">
+    <div class="hs-f">
+      <label>What are you planning?</label>
+      <input type="text" placeholder="Birthday party, baby shower…">
+    </div>
+    <div class="hs-div"></div>
+    <div class="hs-f">
+      <label>Where in Mumbai?</label>
+      <input type="text" placeholder="Andheri, Bandra, Thane…">
+    </div>
+    <button class="hs-btn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Search
+    </button>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="cats">
+  <div class="cats-row">
+    <div class="cat on"><div class="cat-e">🎂</div><div class="cat-l">Birthday</div></div>
+    <div class="cat"><div class="cat-e">👶</div><div class="cat-l">Baby Shower</div></div>
+    <div class="cat"><div class="cat-e">💍</div><div class="cat-l">Anniversary</div></div>
+    <div class="cat"><div class="cat-e">👋</div><div class="cat-l">Farewell</div></div>
+    <div class="cat"><div class="cat-e">🏢</div><div class="cat-l">Corporate</div></div>
+    <div class="cat"><div class="cat-e">🌸</div><div class="cat-l">Kitty Party</div></div>
+    <div class="cat"><div class="cat-e">🎀</div><div class="cat-l">Decorators</div></div>
+    <div class="cat"><div class="cat-e">📸</div><div class="cat-l">Photography</div></div>
+    <div class="cat"><div class="cat-e">🍽️</div><div class="cat-l">Catering</div></div>
+    <div class="cat"><div class="cat-e">🏛️</div><div class="cat-l">Venue</div></div>
+    <div class="cat"><div class="cat-e">🎵</div><div class="cat-l">DJ & Music</div></div>
+    <div class="cat"><div class="cat-e">🎂</div><div class="cat-l">Cake</div></div>
+  </div>
+</section>
+
+<!-- VENDORS -->
+<div class="sh r"><span class="sh-t">Featured in Mumbai</span><a href="#" class="sh-a">See all →</a></div>
+<section class="vendors">
+  <div class="vgrid">
+
+    <div class="vc r">
+      <div class="vc-img"><img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&q=80" alt="Bloom Decor Co." style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"><div class="vc-tag">Decorator</div><div class="vc-verified">✓ Verified</div></div>
+      <div class="vc-body">
+        <div class="vc-name">Bloom Decor Co.</div>
+        <div class="vc-meta">Andheri West · Replies in ~1 hr</div>
+        <div class="vc-stats"><div class="vs"><span class="vs-star">★</span> 4.9</div><div class="vs">142 events</div></div>
+        <div class="vc-foot">
+          <div class="vc-price">₹8,000 <small>starting</small></div>
+          <div class="vc-btns">
+            <button class="wa-b"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
+            <button class="bk-b">Book now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vc r">
+      <div class="vc-img"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80" alt="Lens & Light Studio" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"><div class="vc-tag">Photographer</div><div class="vc-verified">✓ Verified</div></div>
+      <div class="vc-body">
+        <div class="vc-name">Lens & Light Studio</div>
+        <div class="vc-meta">Bandra · Replies in ~2 hrs</div>
+        <div class="vc-stats"><div class="vs"><span class="vs-star">★</span> 4.8</div><div class="vs">98 events</div></div>
+        <div class="vc-foot">
+          <div class="vc-price">₹6,500 <small>starting</small></div>
+          <div class="vc-btns">
+            <button class="wa-b"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
+            <button class="bk-b">Book now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vc r">
+      <div class="vc-img"><img src="https://images.unsplash.com/photo-1555244162-803834f70033?w=600&q=80" alt="Flavours of Bombay" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"><div class="vc-tag">Caterer</div><div class="vc-verified">✓ Verified</div></div>
+      <div class="vc-body">
+        <div class="vc-name">Flavours of Bombay</div>
+        <div class="vc-meta">Powai · Replies in ~30 min</div>
+        <div class="vc-stats"><div class="vs"><span class="vs-star">★</span> 4.9</div><div class="vs">215 events</div></div>
+        <div class="vc-foot">
+          <div class="vc-price">₹350 <small>/ plate</small></div>
+          <div class="vc-btns">
+            <button class="wa-b"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
+            <button class="bk-b">Book now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vc r">
+      <div class="vc-img"><img src="https://images.unsplash.com/photo-1571935441005-ec0c432da1fa?w=600&q=80" alt="Rhythm House Events" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"><div class="vc-tag">DJ & Music</div><div class="vc-verified">✓ Verified</div></div>
+      <div class="vc-body">
+        <div class="vc-name">Rhythm House Events</div>
+        <div class="vc-meta">Juhu · Replies in ~3 hrs</div>
+        <div class="vc-stats"><div class="vs"><span class="vs-star">★</span> 4.7</div><div class="vs">76 events</div></div>
+        <div class="vc-foot">
+          <div class="vc-price">₹12,000 <small>starting</small></div>
+          <div class="vc-btns">
+            <button class="wa-b"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
+            <button class="bk-b">Book now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vc r">
+      <div class="vc-img"><img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=80" alt="The Sweet Affair" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"><div class="vc-tag">Cake Artist</div><div class="vc-verified">✓ Verified</div></div>
+      <div class="vc-body">
+        <div class="vc-name">The Sweet Affair</div>
+        <div class="vc-meta">Malad · Replies in ~1 hr</div>
+        <div class="vc-stats"><div class="vs"><span class="vs-star">★</span> 4.9</div><div class="vs">189 cakes</div></div>
+        <div class="vc-foot">
+          <div class="vc-price">₹2,500 <small>starting</small></div>
+          <div class="vc-btns">
+            <button class="wa-b"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
+            <button class="bk-b">Book now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vc r">
+      <div class="vc-img"><img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&q=80" alt="Signature Garden Hall" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"><div class="vc-tag">Venue</div><div class="vc-verified">✓ Verified</div></div>
+      <div class="vc-body">
+        <div class="vc-name">Signature Garden Hall</div>
+        <div class="vc-meta">Goregaon · Replies in ~4 hrs</div>
+        <div class="vc-stats"><div class="vs"><span class="vs-star">★</span> 4.6</div><div class="vs">54 bookings</div></div>
+        <div class="vc-foot">
+          <div class="vc-price">₹18,000 <small>/ day</small></div>
+          <div class="vc-btns">
+            <button class="wa-b"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
+            <button class="bk-b">Book now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<div class="how r">
+  <h3>How MyPlanzo works</h3>
+  <div class="steps">
+    <div class="step"><div class="step-n">1</div><div class="step-t">Search</div><div class="step-d">Browse verified vendors by event type and area in Mumbai</div></div>
+    <div class="step"><div class="step-n">2</div><div class="step-t">Chat & Quote</div><div class="step-d">Discuss your requirements in-app — vendor sends you a custom quote card</div></div>
+    <div class="step"><div class="step-n">3</div><div class="step-t">Pay Securely</div><div class="step-d">Accept the quote and pay through MyPlanzo — your money is held safely until the event</div></div>
+    <div class="step"><div class="step-n">4</div><div class="step-t">Celebrate</div><div class="step-d">Event done? Confirm completion — vendor is paid automatically. Zero hassle.</div></div>
+  </div>
+</div>
+
+<!-- REVIEWS -->
+<div class="sh r" style="margin-bottom: 18px;"><span class="sh-t">What people are saying</span></div>
+<section class="reviews">
+  <div style="padding-left:24px; overflow:hidden;">
+    <div class="r-track">
+      <div class="rc"><div class="rc-stars">★★★★★</div><div class="rc-text">"Found a decorator in 5 minutes. My daughter's birthday setup was beyond what I imagined."</div><div class="rc-user"><div class="rc-av" style="background:#7aafc0">PR</div><div><div class="rc-name">Priya Rao</div><div class="rc-ev">Birthday · Andheri</div></div></div></div>
+      <div class="rc"><div class="rc-stars">★★★★★</div><div class="rc-text">"Caterer fed 80 guests at our baby shower. Food was incredible and booked in 20 minutes."</div><div class="rc-user"><div class="rc-av" style="background:#c4956a">NK</div><div><div class="rc-name">Neha Kulkarni</div><div class="rc-ev">Baby Shower · Powai</div></div></div></div>
+      <div class="rc"><div class="rc-stars">★★★★★</div><div class="rc-text">"Organized my team farewell entirely through MyPlanzo. Venue, photographer, cake — one afternoon."</div><div class="rc-user"><div class="rc-av" style="background:#3aab6e">AS</div><div><div class="rc-name">Arjun Shah</div><div class="rc-ev">Farewell · BKC</div></div></div></div>
+      <div class="rc"><div class="rc-stars">★★★★★</div><div class="rc-text">"Real prices shown upfront. No 'call for pricing' nonsense. Booked our anniversary venue confidently."</div><div class="rc-user"><div class="rc-av" style="background:#7a4e5d">SM</div><div><div class="rc-name">Sanjana & Mehul</div><div class="rc-ev">Anniversary · Bandra</div></div></div></div>
+      <div class="rc"><div class="rc-stars">★★★★★</div><div class="rc-text">"WhatsApp button is a lifesaver. Chatted with 3 decorators, compared, confirmed same evening."</div><div class="rc-user"><div class="rc-av" style="background:#7aafc0">RD</div><div><div class="rc-name">Ruchika Desai</div><div class="rc-ev">Kitty Party · Malad</div></div></div></div>
+      <div class="rc"><div class="rc-stars">★★★★★</div><div class="rc-text">"Used MyPlanzo for our product launch. Professional vendors, zero drama. Using it for every event now."</div><div class="rc-user"><div class="rc-av" style="background:#c4956a">VJ</div><div><div class="rc-name">Vikram Joshi</div><div class="rc-ev">Corporate · Lower Parel</div></div></div></div>
+      <!-- duplicate for seamless loop -->
+      <div class="rc"><div class="rc-stars">★★★★★</div><div class="rc-text">"Found a decorator in 5 minutes. My daughter's birthday setup was beyond what I imagined."</div><div class="rc-user"><div class="rc-av" style="background:#7aafc0">PR</div><div><div class="rc-name">Priya Rao</div><div class="rc-ev">Birthday · Andheri</div></div></div></div>
+      <div class="rc"><div class="rc-stars">★★★★★</div><div class="rc-text">"Caterer fed 80 guests at our baby shower. Food was incredible and booked in 20 minutes."</div><div class="rc-user"><div class="rc-av" style="background:#c4956a">NK</div><div><div class="rc-name">Neha Kulkarni</div><div class="rc-ev">Baby Shower · Powai</div></div></div></div>
+      <div class="rc"><div class="rc-stars">★★★★★</div><div class="rc-text">"Organized my team farewell entirely through MyPlanzo. Venue, photographer, cake — one afternoon."</div><div class="rc-user"><div class="rc-av" style="background:#3aab6e">AS</div><div><div class="rc-name">Arjun Shah</div><div class="rc-ev">Farewell · BKC</div></div></div></div>
+      <div class="rc"><div class="rc-stars">★★★★★</div><div class="rc-text">"Real prices shown upfront. No 'call for pricing' nonsense. Booked our anniversary venue confidently."</div><div class="rc-user"><div class="rc-av" style="background:#7a4e5d">SM</div><div><div class="rc-name">Sanjana & Mehul</div><div class="rc-ev">Anniversary · Bandra</div></div></div></div>
+      <div class="rc"><div class="rc-stars">★★★★★</div><div class="rc-text">"WhatsApp button is a lifesaver. Chatted with 3 decorators, compared, confirmed same evening."</div><div class="rc-user"><div class="rc-av" style="background:#7aafc0">RD</div><div><div class="rc-name">Ruchika Desai</div><div class="rc-ev">Kitty Party · Malad</div></div></div></div>
+      <div class="rc"><div class="rc-stars">★★★★★</div><div class="rc-text">"Used MyPlanzo for our product launch. Professional vendors, zero drama. Using it for every event now."</div><div class="rc-user"><div class="rc-av" style="background:#c4956a">VJ</div><div><div class="rc-name">Vikram Joshi</div><div class="rc-ev">Corporate · Lower Parel</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- VENDOR CTA -->
+<div class="vcta r">
+  <div class="vcta-l">
+    <h2>Are you an event vendor in Mumbai?</h2>
+    <p>List free. Get real inquiries. Pay only 15% when you earn — zero upfront cost.</p>
+  </div>
+  <a href="#" class="vcta-btn">List your business →</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft">
+    <div class="ft-brand">
+      <div class="logo"><div class="logo-box" style="width:26px;height:26px;border-radius:7px;font-size:13px;background:var(--accent);">🎉</div> MyPlanzo</div>
+      <p>Mumbai's marketplace for personal celebrations. Trusted vendors, stress-free booking.</p>
+    </div>
+    <div class="fc">
+      <h4>Customers</h4>
+      <ul>
+        <li><a href="#">Browse vendors</a></li>
+        <li><a href="#">How it works</a></li>
+        <li><a href="#">Birthday</a></li>
+        <li><a href="#">Baby shower</a></li>
+      </ul>
+    </div>
+    <div class="fc">
+      <h4>Vendors</h4>
+      <ul>
+        <li><a href="#">List your business</a></li>
+        <li><a href="#">Vendor dashboard</a></li>
+        <li><a href="#">Commission model</a></li>
+      </ul>
+    </div>
+    <div class="fc">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About us</a></li>
+        <li><a href="mailto:hello@myplanzo.com">Contact</a></li>
+        <li><a href="#">Terms & conditions</a></li>
+        <li><a href="#">Privacy policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <p>© 2026 MyPlanzo Pvt. Ltd. · Mumbai, Maharashtra</p>
+    <p>hello@myplanzo.com</p>
+  </div>
+</footer>
+
+<!-- WhatsApp float -->
+<a class="wa-float" href="https://wa.me/919999999999?text=Hi%20MyPlanzo!" target="_blank">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<script>
+document.querySelectorAll('.cat').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.cat').forEach(x => x.classList.remove('on'));
+    c.classList.add('on');
+  });
+});
+const ro = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); ro.unobserve(e.target); } }), { threshold: 0.1 });
+document.querySelectorAll('.r').forEach(el => ro.observe(el));
+</script>
+</body>
+</html>

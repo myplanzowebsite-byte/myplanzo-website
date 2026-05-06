@@ -30,8 +30,8 @@ export default async function CustomerListingPage({
 
   return (
     <div className="space-y-6">
-      <Link href="/customer/browse" className="text-sm text-mp-charcoal underline">
-        ← Back
+      <Link href="/browse" className="text-sm text-mp-charcoal underline">
+        ← Back to browse
       </Link>
 
       {/* Hero image */}

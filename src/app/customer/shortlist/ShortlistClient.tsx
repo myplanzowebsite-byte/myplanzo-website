@@ -61,7 +61,7 @@ export function CustomerShortlistPageClient({
               Compare ({items.length})
             </button>
           </div>
-          <Link href="/customer/browse" className="text-sm text-mp-accent underline">
+          <Link href="/browse" className="text-sm text-mp-accent underline">
             ← Add more
           </Link>
         </div>

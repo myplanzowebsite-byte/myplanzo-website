@@ -1,38 +1,101 @@
 @import "tailwindcss";
 
 @theme {
+  /* ─────────────────────────────────────────────────────────────────────────
+     FONT
+     Landing page uses Plus Jakarta Sans; all other pages fall back to Inter.
+  ───────────────────────────────────────────────────────────────────────── */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-jakarta: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
 
-  /* ── Core palette (from brand swatches) ── */
-  --color-mp-steel:         #82afbf;   /* steel blue  — hero bg, icons, highlights */
-  --color-mp-steel-light:   #d6e8ee;   /* steel blue tint — subtle fills */
-  --color-mp-canvas:        #f2fffc;   /* mint white  — page background */
-  --color-mp-taupe:         #cfbcac;   /* warm taupe  — warm sections, auth panels */
-  --color-mp-taupe-light:   #f0e8e0;   /* light taupe — borders, warm card fills */
-  --color-mp-accent:        #7a5366;   /* dusty mauve — CTAs, links, tags */
-  --color-mp-charcoal:      #3d3d3d;   /* near-black  — primary text, dark buttons */
+  /* ─────────────────────────────────────────────────────────────────────────
+     BRAND PALETTE  — change only these to retheme the whole site
+     ─────────────────────────────────────────────────────────────────────────
 
-  /* ── Derived / system colours ── */
-  --color-mp-panel:         #f7fffd;   /* slightly off-canvas, secondary panels */
-  --color-mp-card:          #ffffff;   /* floating cards */
-  --color-mp-muted:         #7a5366;   /* secondary text (same hue as accent, intentional) */
-  --color-mp-border:        #e4d5ca;   /* taupe-derived border */
-  --color-mp-accent-strong: #5e3f52;   /* deeper mauve — pressed / active states */
-  --color-mp-accent-soft:   #e8dde4;   /* mauve tint — subtle icon bg */
+     mp-steel        Steel / teal blue used for primary actions on landing
+     mp-steel-light  Pale tint of steel — subtle fills, icon backgrounds
+     mp-canvas       Mint-white — main page background
+     mp-taupe        Warm taupe — auth panels, warm secondary sections
+     mp-taupe-light  Light taupe — warm card fills
+     mp-accent       Dusty mauve — CTAs, links, tag text, Why-choose-us bg
+     mp-charcoal     Near-black — primary text, dark buttons, footer bg
+  ───────────────────────────────────────────────────────────────────────── */
+  --color-mp-steel:         #82afbf;
+  --color-mp-steel-light:   #d6e8ee;
+  --color-mp-canvas:        #f0fffc;   /* ← landing page bg */
+  --color-mp-taupe:         #cfbcac;
+  --color-mp-taupe-light:   #f0e8e0;
+  --color-mp-accent:        #7a4e5d;   /* ← mauve CTA colour */
+  --color-mp-charcoal:      #3d3a38;   /* ← primary text */
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     DERIVED / SEMANTIC TOKENS  — computed from the brand palette above
+     These rarely need changing unless the brand palette changes too.
+  ───────────────────────────────────────────────────────────────────────── */
+  --color-mp-panel:         #f7fffd;   /* secondary panels, slightly off-canvas */
+  --color-mp-card:          #ffffff;   /* floating white cards */
+  --color-mp-muted:         #7a6a65;   /* secondary body text */
+  --color-mp-text3:         #b0a09a;   /* tertiary text — placeholders, timestamps */
+  --color-mp-border:        #d9c9c0;   /* taupe-derived card/section borders */
+  --color-mp-accent-strong: #5c3044;   /* deeper mauve — pressed / active states */
+  --color-mp-accent-soft:   #e8dde4;   /* mauve tint — subtle icon backgrounds */
   --color-mp-warm:          #f5ede6;   /* warm off-white — badges, highlights */
   --color-mp-sidebar:       #9ec4cf;   /* admin sidebar (steel-derived) */
   --color-mp-auth-left:     #cfbcac;   /* auth split-shell left panel = taupe */
   --color-mp-logout:        #5e3f52;
-  --color-mp-nav-active:    #3d3d3d;
+  --color-mp-nav-active:    #3d3a38;
   --color-mp-soft-blue:     #d6e8ee;   /* alias for steel-light */
 
+  /* ─────────────────────────────────────────────────────────────────────────
+     EXTRA COLOURS used specifically on the landing page
+  ───────────────────────────────────────────────────────────────────────── */
+  --color-mp-gold:          #c4956a;   /* amber/gold — star rating icons */
+  --color-mp-green:         #3aab6e;   /* verified-badge green */
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     SHAPE / SHADOW
+  ───────────────────────────────────────────────────────────────────────── */
   --radius-mp-card: 1rem;
   --shadow-mp-card: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
 }
 
+/* ── Base ──────────────────────────────────────────────────────────────────── */
 body {
   min-height: 100vh;
   font-family: var(--font-sans);
   background: var(--color-mp-canvas);
   color: var(--color-mp-charcoal);
+}
+
+/* ── Landing-page animations ───────────────────────────────────────────────── */
+@keyframes lp-marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes lp-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* Applied via className on the reviews strip */
+.lp-marquee {
+  animation: lp-marquee 26s linear infinite;
+}
+.lp-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Live-status dot blink */
+.lp-blink {
+  animation: lp-blink 2s infinite;
+}
+
+/* Hide scrollbar on category strip (all browsers) */
+.lp-no-scrollbar {
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* IE/Edge */
+}
+.lp-no-scrollbar::-webkit-scrollbar {
+  display: none;                  /* Chrome/Safari */
 }

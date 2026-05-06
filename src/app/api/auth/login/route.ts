@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/auth/password";
-import { issueOtp } from "@/lib/auth/otp";
+import { issueOtp, isMockSms } from "@/lib/auth/otp";
 
 const bodySchema = z.object({
   email: z.string().email(),
@@ -47,20 +47,13 @@ export async function POST(req: Request) {
     );
   }
 
-  await issueOtp(user.phone, "login", user.id);
-  const devRow =
-    process.env.NODE_ENV === "development"
-      ? await prisma.otpCode.findFirst({
-          where: { phone: user.phone, purpose: "login", consumed: false },
-          orderBy: { createdAt: "desc" },
-        })
-      : null;
+  const otp = await issueOtp(user.phone, "login", user.id);
 
   return NextResponse.json({
     ok: true,
     next: "verify-otp",
     phone: user.phone,
     phoneHint: user.phone.slice(-4),
-    ...(process.env.NODE_ENV === "development" && devRow ? { devOtp: devRow.code } : {}),
+    ...(isMockSms() ? { devOtp: otp } : {}),
   });
 }

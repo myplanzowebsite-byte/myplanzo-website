@@ -42,7 +42,7 @@ function LoginForm() {
           next,
         });
         if (remember) q.set("remember", "1");
-        if (process.env.NODE_ENV === "development" && typeof data.devOtp === "string") {
+        if (typeof data.devOtp === "string") {
           q.set("devOtp", data.devOtp);
         }
         router.push(`/verify-otp?${q.toString()}`);

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth/password";
-import { issueOtp } from "@/lib/auth/otp";
+import { issueOtp, isMockSms } from "@/lib/auth/otp";
 
 const bodySchema = z.object({
   email: z.string().email(),
@@ -61,6 +61,6 @@ export async function POST(req: Request) {
     ok: true,
     userId: user.id,
     next: "verify-otp",
-    devOtp: otp,
+    ...(isMockSms() ? { devOtp: otp } : {}),
   });
 }

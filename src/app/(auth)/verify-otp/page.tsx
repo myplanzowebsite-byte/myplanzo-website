@@ -16,6 +16,7 @@ function VerifyOtpForm() {
   const [loading, setLoading] = useState(false);
   const [canResend, setCanResend] = useState(false);
   const [resendCountdown, setResendCountdown] = useState(0);
+  const [mockOtp, setMockOtp] = useState<string | null>(devOtpHint);
 
   const code = useMemo(() => digits.join(""), [digits]);
 
@@ -58,7 +59,10 @@ function VerifyOtpForm() {
         setError(data.error || "Verification failed");
         return;
       }
-      const dest = data.redirect || next;
+      // Prefer the ?next= param (user's intended destination) over the
+      // API's generic role-based default. Fall back to API redirect only
+      // when next is still the bare default "/customer".
+      const dest = (next && next !== "/customer") ? next : (data.redirect || next);
       router.push(dest);
       router.refresh();
     } finally {
@@ -75,10 +79,13 @@ function VerifyOtpForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, purpose }),
       });
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         setError("Failed to resend OTP");
         setCanResend(true);
         setResendCountdown(0);
+      } else if (data.devOtp) {
+        setMockOtp(data.devOtp);
       }
     } catch {
       setError("Failed to resend OTP");
@@ -95,9 +102,9 @@ function VerifyOtpForm() {
       totalSteps={2}
     >
       <form className="space-y-4" onSubmit={onSubmit}>
-        {devOtpHint ? (
+        {mockOtp ? (
           <p className="rounded-md border border-mp-border bg-mp-warm px-3 py-2 text-sm text-mp-charcoal" role="status">
-            <strong>Your OTP is:</strong> <strong className="tracking-widest">{devOtpHint}</strong>
+            <strong>Your OTP is:</strong> <strong className="tracking-widest">{mockOtp}</strong>
           </p>
         ) : null}
         {error ? (
