@@ -20,43 +20,43 @@
      mp-accent       Dusty mauve — CTAs, links, tag text, Why-choose-us bg
      mp-charcoal     Near-black — primary text, dark buttons, footer bg
   ───────────────────────────────────────────────────────────────────────── */
-  --color-mp-steel:         #82afbf;
-  --color-mp-steel-light:   #d6e8ee;
-  --color-mp-canvas:        #f0fffc;   /* ← landing page bg */
-  --color-mp-taupe:         #cfbcac;
-  --color-mp-taupe-light:   #f0e8e0;
-  --color-mp-accent:        #7a4e5d;   /* ← mauve CTA colour */
-  --color-mp-charcoal:      #3d3a38;   /* ← primary text */
+  --color-mp-steel:         #0e8aa6;   /* primary teal — CTA buttons, links */
+  --color-mp-steel-light:   rgba(14,138,166,0.12); /* teal dim — badge fills */
+  --color-mp-canvas:        #0f0f0f;   /* ← main page background (dark) */
+  --color-mp-taupe:         #1e3a42;   /* warm dark teal — auth panels, secondary sections */
+  --color-mp-taupe-light:   #222222;   /* surface2 — card fills */
+  --color-mp-accent:        #0e8aa6;   /* ← teal CTA colour */
+  --color-mp-charcoal:      #f0f0f0;   /* ← primary text (light on dark) */
 
   /* ─────────────────────────────────────────────────────────────────────────
      DERIVED / SEMANTIC TOKENS  — computed from the brand palette above
      These rarely need changing unless the brand palette changes too.
   ───────────────────────────────────────────────────────────────────────── */
-  --color-mp-panel:         #f7fffd;   /* secondary panels, slightly off-canvas */
-  --color-mp-card:          #ffffff;   /* floating white cards */
-  --color-mp-muted:         #7a6a65;   /* secondary body text */
-  --color-mp-text3:         #b0a09a;   /* tertiary text — placeholders, timestamps */
-  --color-mp-border:        #d9c9c0;   /* taupe-derived card/section borders */
-  --color-mp-accent-strong: #5c3044;   /* deeper mauve — pressed / active states */
-  --color-mp-accent-soft:   #e8dde4;   /* mauve tint — subtle icon backgrounds */
-  --color-mp-warm:          #f5ede6;   /* warm off-white — badges, highlights */
-  --color-mp-sidebar:       #9ec4cf;   /* admin sidebar (steel-derived) */
-  --color-mp-auth-left:     #cfbcac;   /* auth split-shell left panel = taupe */
-  --color-mp-logout:        #5e3f52;
-  --color-mp-nav-active:    #3d3a38;
-  --color-mp-soft-blue:     #d6e8ee;   /* alias for steel-light */
+  --color-mp-panel:         #1a1a1a;   /* surface — nav, card backgrounds */
+  --color-mp-card:          #1a1a1a;   /* floating cards */
+  --color-mp-muted:         #888888;   /* secondary body text */
+  --color-mp-text3:         #555555;   /* tertiary text — placeholders, timestamps */
+  --color-mp-border:        #2a2a2a;   /* dark borders */
+  --color-mp-accent-strong: #0a6880;   /* deeper teal — pressed / active states */
+  --color-mp-accent-soft:   rgba(14,138,166,0.12); /* teal tint — subtle backgrounds */
+  --color-mp-warm:          #222222;   /* surface2 — badges, highlights */
+  --color-mp-sidebar:       #0a6880;   /* admin sidebar (accent-derived) */
+  --color-mp-auth-left:     #1e3a42;   /* auth split-shell left panel */
+  --color-mp-logout:        #0a6880;
+  --color-mp-nav-active:    #f0f0f0;
+  --color-mp-soft-blue:     rgba(14,138,166,0.12); /* alias for steel-light */
 
   /* ─────────────────────────────────────────────────────────────────────────
      EXTRA COLOURS used specifically on the landing page
   ───────────────────────────────────────────────────────────────────────── */
-  --color-mp-gold:          #c4956a;   /* amber/gold — star rating icons */
-  --color-mp-green:         #3aab6e;   /* verified-badge green */
+  --color-mp-gold:          #f59e0b;   /* amber/gold — star rating icons */
+  --color-mp-green:         #22c55e;   /* verified-badge green */
 
   /* ─────────────────────────────────────────────────────────────────────────
      SHAPE / SHADOW
   ───────────────────────────────────────────────────────────────────────── */
   --radius-mp-card: 1rem;
-  --shadow-mp-card: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-mp-card: 0 1px 2px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.45);
 }
 
 /* ── Base ──────────────────────────────────────────────────────────────────── */

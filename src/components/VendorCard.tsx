@@ -40,7 +40,7 @@ export function VendorCard({ v }: { v: VendorCardData }) {
   return (
     <div
       className="cursor-pointer overflow-hidden rounded-2xl border transition-all duration-200 hover:-translate-y-0.5 hover:border-[#383838] hover:shadow-[0_14px_44px_rgba(0,0,0,0.45)]"
-      style={{ background: "#fff", borderColor: "var(--color-mp-border)" }}
+      style={{ background: "var(--color-mp-panel)", borderColor: "var(--color-mp-border)" }}
     >
       {/* Image / emoji fallback */}
       <div className="relative h-[170px] overflow-hidden" style={{ background: "var(--color-mp-taupe)" }}>

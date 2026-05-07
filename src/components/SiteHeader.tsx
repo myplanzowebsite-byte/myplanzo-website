@@ -24,32 +24,27 @@ export function SiteHeader({ navLinks, isLoggedIn }: SiteHeaderProps) {
     <nav
       className="sticky top-0 z-50 flex items-center gap-3.5 border-b px-6 backdrop-blur-md"
       style={{
-        background: "rgba(240,255,252,0.96)",
+        background: "rgba(15,15,15,0.94)",
         borderColor: "var(--color-mp-border)",
         height: 60,
         fontFamily: "var(--font-jakarta, var(--font-sans))",
       }}
     >
       {/* Logo */}
-      <Link
-        href="/"
-        className="flex flex-shrink-0 items-center gap-2 font-bold no-underline"
-        style={{ fontSize: "1.05rem", color: "var(--color-mp-charcoal)" }}
-      >
-        <div
-          className="flex items-center justify-center rounded-lg text-[15px]"
-          style={{ width: 30, height: 30, background: "var(--color-mp-accent)" }}
-        >
-          🎉
-        </div>
-        MyPlanzo
+      <Link href="/" className="flex flex-shrink-0 items-center no-underline">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logo.jpg"
+          alt="MyPlanzo"
+          style={{ height: 36, width: "auto", filter: "invert(1)" }}
+        />
       </Link>
 
       {/* Inline search (hidden on mobile) */}
       <form
         onSubmit={handleNavSearch}
         className="hidden flex-1 items-center gap-2 rounded-[10px] border px-3.5 transition-colors focus-within:border-[var(--color-mp-steel)] md:flex"
-        style={{ maxWidth: 500, background: "#fff", borderColor: "var(--color-mp-border)", height: 38 }}
+        style={{ maxWidth: 500, background: "var(--color-mp-panel)", borderColor: "var(--color-mp-border)", height: 38 }}
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2" strokeLinecap="round">
           <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />

@@ -81,15 +81,15 @@ export default function HomePage() {
       <section
         className="px-6 pb-9 pt-[52px] text-center"
         style={{
-          background: "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(130,175,191,.12) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(14,138,166,.10) 0%, transparent 70%)",
         }}
       >
         {/* Live badge */}
         <div
           className="mb-[18px] inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.04em]"
           style={{
-            background: "rgba(130,175,191,0.13)",
-            borderColor: "rgba(130,175,191,0.22)",
+            background: "rgba(14,138,166,0.12)",
+            borderColor: "rgba(14,138,166,0.30)",
             color: "var(--color-mp-steel)",
           }}
         >
@@ -119,7 +119,7 @@ export default function HomePage() {
         <form
           onSubmit={handleSearch}
           className="mx-auto mb-8 flex items-center gap-2 rounded-[14px] border px-5 py-1.5 transition-shadow focus-within:shadow-[0_0_0_2px_var(--color-mp-steel)] focus-within:border-transparent"
-          style={{ maxWidth: 580, background: "#fff", borderColor: "var(--color-mp-border)" }}
+          style={{ maxWidth: 580, background: "var(--color-mp-panel)", borderColor: "var(--color-mp-border)" }}
         >
           <div className="flex-1">
             <label className="block text-[0.6rem] font-bold uppercase tracking-[0.07em]" style={{ color: "var(--color-mp-text3)" }}>
@@ -172,7 +172,7 @@ export default function HomePage() {
               className="flex flex-shrink-0 cursor-pointer flex-col items-center gap-1.5 rounded-[13px] border px-4 py-3.5 transition-all"
               style={{
                 minWidth: 80,
-                background: activeCat === i ? "rgba(130,175,191,0.13)" : "#fff",
+                background: activeCat === i ? "rgba(14,138,166,0.12)" : "var(--color-mp-panel)",
                 borderColor: activeCat === i ? "var(--color-mp-steel)" : "var(--color-mp-border)",
                 fontFamily: "inherit",
               }}
@@ -210,7 +210,7 @@ export default function HomePage() {
       {/* ── HOW IT WORKS ────────────────────────────────────────────────────── */}
       <div
         className="mx-6 mb-14 rounded-[18px] border p-8"
-        style={{ background: "#fff", borderColor: "var(--color-mp-border)" }}
+        style={{ background: "var(--color-mp-panel)", borderColor: "var(--color-mp-border)" }}
       >
         <h3 className="mb-6 text-[1rem] font-bold" style={{ color: "var(--color-mp-charcoal)" }}>
           How MyPlanzo works
@@ -223,7 +223,7 @@ export default function HomePage() {
                 style={{
                   borderColor: i === 0 ? "var(--color-mp-steel)" : "var(--color-mp-border)",
                   color: i === 0 ? "var(--color-mp-steel)" : "var(--color-mp-text3)",
-                  background: i === 0 ? "rgba(130,175,191,0.13)" : "transparent",
+                  background: i === 0 ? "rgba(14,138,166,0.12)" : "transparent",
                 }}
               >
                 {step.n}
@@ -253,7 +253,7 @@ export default function HomePage() {
               <div
                 key={i}
                 className="w-[268px] flex-shrink-0 rounded-[13px] border p-4"
-                style={{ background: "#fff", borderColor: "var(--color-mp-border)" }}
+                style={{ background: "var(--color-mp-panel)", borderColor: "var(--color-mp-border)" }}
               >
                 <div className="mb-2 text-[0.75rem]" style={{ color: "var(--color-mp-gold)" }}>★★★★★</div>
                 <p className="mb-3 text-[0.79rem] italic leading-[1.65]" style={{ color: "var(--color-mp-muted)" }}>
@@ -280,7 +280,7 @@ export default function HomePage() {
       {/* ── VENDOR CTA BANNER ───────────────────────────────────────────────── */}
       <div
         className="relative mx-6 mb-14 flex flex-col items-start justify-between gap-6 overflow-hidden rounded-[18px] px-8 py-9 sm:flex-row sm:items-center"
-        style={{ background: "linear-gradient(135deg, var(--color-mp-accent) 0%, #5c3044 100%)" }}
+        style={{ background: "linear-gradient(135deg, #0e8aa6 0%, #075f75 100%)" }}
       >
         {/* Decorative circle */}
         <div
