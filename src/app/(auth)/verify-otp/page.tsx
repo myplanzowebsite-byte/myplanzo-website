@@ -1,22 +1,28 @@
 "use client";
 
-import { Suspense, useMemo, useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useMemo, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { AuthSplitShell } from "@/components/auth/AuthSplitShell";
 
-function VerifyOtpForm() {
+export default function VerifyOtpPage() {
   const router = useRouter();
-  const search = useSearchParams();
-  const phone = search.get("phone") || "";
-  const purpose = (search.get("purpose") || "register") as "register" | "login";
-  const next = search.get("next") || "/customer";
-  const devOtpHint = search.get("devOtp");
+  const [phone, setPhone] = useState("");
+  const [purpose, setPurpose] = useState<"register" | "login">("register");
+  const [next, setNext] = useState("/customer");
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    setPhone(p.get("phone") || "");
+    setPurpose((p.get("purpose") || "register") as "register" | "login");
+    setNext(p.get("next") || "/customer");
+    const dev = p.get("devOtp");
+    if (dev) setMockOtp(dev);
+  }, []);
   const [digits, setDigits] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [canResend, setCanResend] = useState(false);
   const [resendCountdown, setResendCountdown] = useState(0);
-  const [mockOtp, setMockOtp] = useState<string | null>(devOtpHint);
+  const [mockOtp, setMockOtp] = useState<string | null>(null);
 
   const code = useMemo(() => digits.join(""), [digits]);
 
@@ -151,19 +157,5 @@ function VerifyOtpForm() {
         </div>
       </form>
     </AuthSplitShell>
-  );
-}
-
-export default function VerifyOtpPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-screen items-center justify-center bg-mp-panel text-sm text-mp-muted">
-          Loading…
-        </div>
-      }
-    >
-      <VerifyOtpForm />
-    </Suspense>
   );
 }

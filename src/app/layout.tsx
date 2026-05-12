@@ -15,8 +15,35 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "MyPlanzo",
-  description: "All your plans in one place",
+  title: {
+    default: "MyPlanzo — Book event vendors in Mumbai",
+    template: "%s · MyPlanzo",
+  },
+  description:
+    "Find verified decorators, caterers, photographers & venues for birthdays, baby showers, and more. No calls, no hassle.",
+  openGraph: {
+    title: "MyPlanzo — Book event vendors in Mumbai",
+    description:
+      "Find verified decorators, caterers, photographers & venues for birthdays, baby showers, and more. No calls, no hassle.",
+    siteName: "MyPlanzo",
+    images: [
+      {
+        url: "/logo.jpg",
+        width: 1200,
+        height: 630,
+        alt: "MyPlanzo — Book event vendors in Mumbai",
+      },
+    ],
+    locale: "en_IN",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MyPlanzo — Book event vendors in Mumbai",
+    description:
+      "Find verified decorators, caterers, photographers & venues for birthdays, baby showers, and more.",
+    images: ["/logo.jpg"],
+  },
 };
 
 export default function RootLayout({

@@ -82,18 +82,22 @@ export function VendorCard({ v }: { v: VendorCardData }) {
           </div>
         )}
 
-        {(v.rating || v.countLabel) && (
-          <div className="mb-3 flex gap-2.5">
-            {v.rating && (
+        <div className="mb-3 flex min-h-[18px] gap-2.5">
+          {v.rating ? (
+            <>
               <div className="flex items-center gap-0.5 text-[0.75rem]" style={{ color: "var(--color-mp-muted)" }}>
                 <span style={{ color: "var(--color-mp-gold)" }}>★</span> {v.rating}
               </div>
-            )}
-            {v.countLabel && (
-              <div className="text-[0.75rem]" style={{ color: "var(--color-mp-muted)" }}>{v.countLabel}</div>
-            )}
-          </div>
-        )}
+              {v.countLabel && (
+                <div className="text-[0.75rem]" style={{ color: "var(--color-mp-muted)" }}>{v.countLabel}</div>
+              )}
+            </>
+          ) : (
+            <div className="text-[0.75rem] italic" style={{ color: "var(--color-mp-text3)" }}>
+              No reviews yet
+            </div>
+          )}
+        </div>
 
         {/* Footer row */}
         <div

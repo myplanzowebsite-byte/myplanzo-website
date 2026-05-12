@@ -34,9 +34,9 @@ export function SiteHeader({ navLinks, isLoggedIn }: SiteHeaderProps) {
       <Link href="/" className="flex flex-shrink-0 items-center no-underline">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/logo.jpg"
+          src="/logo.svg"
           alt="MyPlanzo"
-          style={{ height: 36, width: "auto", filter: "invert(1)" }}
+          style={{ height: 40, width: "auto", filter: "invert(1)" }}
         />
       </Link>
 
@@ -57,15 +57,6 @@ export function SiteHeader({ navLinks, isLoggedIn }: SiteHeaderProps) {
           className="flex-1 bg-transparent text-sm outline-none"
           style={{ color: "var(--color-mp-charcoal)", fontFamily: "inherit" }}
         />
-        <div
-          className="flex cursor-pointer items-center gap-1 border-l pl-2.5 text-xs"
-          style={{ borderColor: "var(--color-mp-border)", color: "var(--color-mp-muted)" }}
-        >
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
-          </svg>
-          Mumbai ▾
-        </div>
       </form>
 
       {/* Optional extra nav links (logged-in customer) */}

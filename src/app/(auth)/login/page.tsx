@@ -1,14 +1,17 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { AuthSplitShell } from "@/components/auth/AuthSplitShell";
 
-function LoginForm() {
+export default function LoginPage() {
   const router = useRouter();
-  const search = useSearchParams();
-  const next = search.get("next") || "/customer";
+  const [next, setNext] = useState("/customer");
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    setNext(p.get("next") || "/customer");
+  }, []);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
@@ -133,19 +136,5 @@ function LoginForm() {
         </p>
       </form>
     </AuthSplitShell>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-screen items-center justify-center bg-mp-panel text-sm text-mp-muted">
-          Loading…
-        </div>
-      }
-    >
-      <LoginForm />
-    </Suspense>
   );
 }

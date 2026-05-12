@@ -60,8 +60,10 @@ export default function HomePage() {
     e.preventDefault();
     const params = new URLSearchParams();
     if (searchWhat) params.set("event", searchWhat);
-    if (searchWhere) params.set("location", searchWhere);
-    router.push(`/browse?${params}`);
+    if (searchWhere) params.set("zone", searchWhere);
+    // Even with empty fields, send the user to /browse so the search bar
+    // always has a useful destination.
+    router.push(`/browse${params.toString() ? `?${params}` : ""}`);
   }
 
   return (
@@ -84,22 +86,6 @@ export default function HomePage() {
           background: "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(14,138,166,.10) 0%, transparent 70%)",
         }}
       >
-        {/* Live badge */}
-        <div
-          className="mb-[18px] inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.04em]"
-          style={{
-            background: "rgba(14,138,166,0.12)",
-            borderColor: "rgba(14,138,166,0.30)",
-            color: "var(--color-mp-steel)",
-          }}
-        >
-          <div
-            className="lp-blink h-1.5 w-1.5 rounded-full"
-            style={{ background: "var(--color-mp-steel)" }}
-          />
-          Live in Mumbai
-        </div>
-
         <h1
           className="mb-3 font-bold leading-[1.12] tracking-[-0.03em]"
           style={{ fontSize: "clamp(1.9rem, 4.5vw, 3rem)", color: "var(--color-mp-charcoal)" }}
@@ -329,7 +315,7 @@ export default function HomePage() {
               Customers
             </h4>
             <ul className="flex flex-col gap-2">
-              {[["Browse vendors", "/browse"], ["How it works", "#how"], ["Birthday", "#"], ["Baby shower", "#"]].map(([label, href]) => (
+              {[["Browse vendors", "/browse"], ["How it works", "#how"], ["Birthday", "/browse?event=Birthday"], ["Baby shower", "/browse?event=Baby%20Shower"]].map(([label, href]) => (
                 <li key={label}>
                   <Link href={href} className="text-[0.77rem] transition-colors hover:text-[var(--color-mp-charcoal)]" style={{ color: "var(--color-mp-muted)", textDecoration: "none" }}>
                     {label}
@@ -345,7 +331,7 @@ export default function HomePage() {
               Vendors
             </h4>
             <ul className="flex flex-col gap-2">
-              {[["List your business", "/register"], ["Vendor dashboard", "/vendor"], ["Commission model", "#"]].map(([label, href]) => (
+              {[["List your business", "/register"], ["Vendor dashboard", "/vendor"], ["Commission model", "/terms-and-conditions#commission"]].map(([label, href]) => (
                 <li key={label}>
                   <Link href={href} className="text-[0.77rem] transition-colors hover:text-[var(--color-mp-charcoal)]" style={{ color: "var(--color-mp-muted)", textDecoration: "none" }}>
                     {label}
@@ -361,7 +347,7 @@ export default function HomePage() {
               Company
             </h4>
             <ul className="flex flex-col gap-2">
-              {[["About us", "#"], ["Contact", "mailto:hello@myplanzo.com"], ["Terms & conditions", "#"], ["Privacy policy", "#"]].map(([label, href]) => (
+              {[["About us", "/about"], ["Contact", "mailto:hello@myplanzo.com"], ["Terms & conditions", "/terms-and-conditions"], ["Privacy policy", "/privacy-policy"]].map(([label, href]) => (
                 <li key={label}>
                   <a href={href} className="text-[0.77rem] transition-colors hover:text-[var(--color-mp-charcoal)]" style={{ color: "var(--color-mp-muted)", textDecoration: "none" }}>
                     {label}

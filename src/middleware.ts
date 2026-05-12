@@ -50,6 +50,11 @@ export async function middleware(request: NextRequest) {
   }
 
   if (pathname.startsWith("/customer")) {
+    // Listing pages live at /listings/[id] now (public); the /customer/listings/[id]
+    // route is just a redirect shim, so let it through without auth.
+    if (pathname.startsWith("/customer/listings")) {
+      return NextResponse.next();
+    }
     // Shortlist shows a login prompt when unauthenticated — don't hard-block
     if (pathname.startsWith("/customer/shortlist")) {
       return NextResponse.next();

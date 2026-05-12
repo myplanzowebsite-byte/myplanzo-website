@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth/requireSession";
 import { listBookingMessages, sendBookingMessage } from "@/lib/messaging/messageService";
+import { notifyNewMessage } from "@/lib/notifications/chat";
 
 export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { session, error } = await requireSession(["CUSTOMER", "VENDOR"]);
@@ -64,5 +65,15 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     receiverRole,
     body: parsed.data.body,
   });
+
+  // Fire and forget — never block the response on SMS provider latency.
+  void notifyNewMessage({
+    bookingId: id,
+    newMessageId: msg.id,
+    senderId,
+    receiverId,
+    receiverRole,
+  }).catch((err) => console.error("[notify] chat SMS failed:", err));
+
   return NextResponse.json({ message: msg });
 }

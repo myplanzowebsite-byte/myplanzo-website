@@ -95,7 +95,7 @@ function ListViewContent({ items }: { items: ShortlistItem[] }) {
             </div>
           </div>
           <Link
-            href={`/customer/listings/${s.listingId}`}
+            href={`/listings/${s.listingId}`}
             className="ml-4 px-3 py-1.5 rounded-md bg-mp-charcoal text-mp-panel text-sm font-medium hover:bg-mp-accent"
           >
             Book
@@ -201,7 +201,7 @@ function CompareViewContent({ items }: { items: ShortlistItem[] }) {
             {compareItems.map((item) => (
               <td key={item.id} className="text-center p-4">
                 <Link
-                  href={`/customer/listings/${item.listingId}`}
+                  href={`/listings/${item.listingId}`}
                   className="inline-block px-3 py-1.5 bg-mp-charcoal text-mp-panel rounded-md text-sm font-medium hover:bg-mp-accent"
                 >
                   Book
