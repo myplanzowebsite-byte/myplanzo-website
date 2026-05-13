@@ -115,6 +115,7 @@ model ServiceListing {
   priceMin    Int?
   priceMax    Int?
   eventTags   String[]      @default([])
+  category    String? // Decorators | Photographers | Caterers | Venues | DJ & Music | Cake
   location    String?
   status      ListingStatus @default(DRAFT)
   createdAt   DateTime      @default(now())

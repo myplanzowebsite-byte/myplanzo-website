@@ -5,32 +5,43 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SiteHeader } from "@/components/SiteHeader";
 import { VendorCard, type VendorCardData } from "@/components/VendorCard";
+import { MOCK_LISTINGS, normalizeSearchInput } from "@/lib/mockListings";
+import { formatINR, priceUnitForListing } from "@/lib/format";
 
 // ── Static data ───────────────────────────────────────────────────────────────
 
-const CATEGORIES = [
-  { emoji: "🎂", label: "Birthday" },
-  { emoji: "👶", label: "Baby Shower" },
-  { emoji: "💍", label: "Anniversary" },
-  { emoji: "👋", label: "Farewell" },
-  { emoji: "🏢", label: "Corporate" },
-  { emoji: "🌸", label: "Kitty Party" },
-  { emoji: "🎀", label: "Decorators" },
-  { emoji: "📸", label: "Photography" },
-  { emoji: "🍽️", label: "Catering" },
-  { emoji: "🏛️", label: "Venue" },
-  { emoji: "🎵", label: "DJ & Music" },
-  { emoji: "🎂", label: "Cake" },
+// Mixed strip: event types first, then vendor categories. Clicking a chip
+// routes to /browse with the right query param (event= or category=).
+const CATEGORIES: { emoji: string; label: string; kind: "event" | "category" }[] = [
+  { emoji: "🎂", label: "Birthday", kind: "event" },
+  { emoji: "👶", label: "Baby Shower", kind: "event" },
+  { emoji: "💍", label: "Anniversary", kind: "event" },
+  { emoji: "👋", label: "Farewell", kind: "event" },
+  { emoji: "🏢", label: "Corporate", kind: "event" },
+  { emoji: "🌸", label: "Kitty Party", kind: "event" },
+  { emoji: "🎀", label: "Decorators", kind: "category" },
+  { emoji: "📸", label: "Photographers", kind: "category" },
+  { emoji: "🍽️", label: "Caterers", kind: "category" },
+  { emoji: "🏛️", label: "Venues", kind: "category" },
+  { emoji: "🎵", label: "DJ & Music", kind: "category" },
+  { emoji: "🎂", label: "Cake", kind: "category" },
 ];
 
-const VENDORS: VendorCardData[] = [
-  { id: 1, name: "Bloom Decor Co.", category: "Decorator", meta: "Andheri West · Replies in ~1 hr", rating: 4.9, countLabel: "142 events", price: "₹8,000", unit: "starting", img: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&q=80", waPhone: "919999999999", href: "/browse", buttonLabel: "Book now" },
-  { id: 2, name: "Lens & Light Studio", category: "Photographer", meta: "Bandra · Replies in ~2 hrs", rating: 4.8, countLabel: "98 events", price: "₹6,500", unit: "starting", img: "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80", waPhone: "919999999999", href: "/browse", buttonLabel: "Book now" },
-  { id: 3, name: "Flavours of Bombay", category: "Caterer", meta: "Powai · Replies in ~30 min", rating: 4.9, countLabel: "215 events", price: "₹350", unit: "/ plate", img: "https://images.unsplash.com/photo-1555244162-803834f70033?w=600&q=80", waPhone: "919999999999", href: "/browse", buttonLabel: "Book now" },
-  { id: 4, name: "Rhythm House Events", category: "DJ & Music", meta: "Juhu · Replies in ~3 hrs", rating: 4.7, countLabel: "76 events", price: "₹12,000", unit: "starting", img: "https://images.unsplash.com/photo-1571935441005-ec0c432da1fa?w=600&q=80", waPhone: "919999999999", href: "/browse", buttonLabel: "Book now" },
-  { id: 5, name: "The Sweet Affair", category: "Cake Artist", meta: "Malad · Replies in ~1 hr", rating: 4.9, countLabel: "189 cakes", price: "₹2,500", unit: "starting", img: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=80", waPhone: "919999999999", href: "/browse", buttonLabel: "Book now" },
-  { id: 6, name: "Signature Garden Hall", category: "Venue", meta: "Goregaon · Replies in ~4 hrs", rating: 4.6, countLabel: "54 bookings", price: "₹18,000", unit: "/ day", img: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&q=80", waPhone: "919999999999", href: "/browse", buttonLabel: "Book now" },
-];
+const VENDORS: VendorCardData[] = MOCK_LISTINGS.slice(0, 6).map((m) => ({
+  id: m.id,
+  name: m.vendorName,
+  category: m.category,
+  meta: `${m.location} · ${m.reviewCount} events`,
+  rating: m.rating,
+  countLabel: `${m.reviewCount} events`,
+  price: formatINR(m.priceMin),
+  unit: priceUnitForListing({ title: m.title, eventTags: m.eventTags }),
+  img: m.photos[0],
+  waPhone: m.waPhone,
+  href: `/listings/${m.id}`,
+  buttonLabel: "View →",
+  verified: true,
+}));
 
 const REVIEWS = [
   { text: "Found a decorator in 5 minutes. My daughter's birthday setup was beyond what I imagined.", name: "Priya Rao", event: "Birthday · Andheri", initials: "PR", color: "#7aafc0" },
@@ -59,10 +70,15 @@ export default function HomePage() {
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     const params = new URLSearchParams();
-    if (searchWhat) params.set("event", searchWhat);
+    if (searchWhat) {
+      // Try to map "Birthday party", "decorator", "photography" etc. to the
+      // canonical category/event filter. Anything else falls through as `q`.
+      const norm = normalizeSearchInput(searchWhat);
+      if (norm.category) params.set("category", norm.category);
+      else if (norm.event) params.set("event", norm.event);
+      else if (norm.q) params.set("q", norm.q);
+    }
     if (searchWhere) params.set("zone", searchWhere);
-    // Even with empty fields, send the user to /browse so the search bar
-    // always has a useful destination.
     router.push(`/browse${params.toString() ? `?${params}` : ""}`);
   }
 
@@ -151,27 +167,33 @@ export default function HomePage() {
       {/* ── CATEGORIES ──────────────────────────────────────────────────────── */}
       <section className="px-6 pb-11">
         <div className="lp-no-scrollbar flex gap-2.5 overflow-x-auto pb-0.5">
-          {CATEGORIES.map((cat, i) => (
-            <button
-              key={cat.label + i}
-              onClick={() => setActiveCat(i)}
-              className="flex flex-shrink-0 cursor-pointer flex-col items-center gap-1.5 rounded-[13px] border px-4 py-3.5 transition-all"
-              style={{
-                minWidth: 80,
-                background: activeCat === i ? "rgba(14,138,166,0.12)" : "var(--color-mp-panel)",
-                borderColor: activeCat === i ? "var(--color-mp-steel)" : "var(--color-mp-border)",
-                fontFamily: "inherit",
-              }}
-            >
-              <span className="text-2xl leading-none">{cat.emoji}</span>
-              <span
-                className="text-[0.68rem] font-semibold"
-                style={{ color: activeCat === i ? "var(--color-mp-steel)" : "var(--color-mp-muted)" }}
+          {CATEGORIES.map((cat, i) => {
+            const param = cat.kind === "category" ? "category" : "event";
+            const href = `/browse?${param}=${encodeURIComponent(cat.label)}`;
+            return (
+              <Link
+                key={cat.label + i}
+                href={href}
+                onClick={() => setActiveCat(i)}
+                className="flex flex-shrink-0 cursor-pointer flex-col items-center gap-1.5 rounded-[13px] border px-4 py-3.5 transition-all"
+                style={{
+                  minWidth: 80,
+                  background: activeCat === i ? "rgba(14,138,166,0.12)" : "var(--color-mp-panel)",
+                  borderColor: activeCat === i ? "var(--color-mp-steel)" : "var(--color-mp-border)",
+                  fontFamily: "inherit",
+                  textDecoration: "none",
+                }}
               >
-                {cat.label}
-              </span>
-            </button>
-          ))}
+                <span className="text-2xl leading-none">{cat.emoji}</span>
+                <span
+                  className="text-[0.68rem] font-semibold text-center"
+                  style={{ color: activeCat === i ? "var(--color-mp-steel)" : "var(--color-mp-muted)" }}
+                >
+                  {cat.label}
+                </span>
+              </Link>
+            );
+          })}
         </div>
       </section>
 

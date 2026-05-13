@@ -39,6 +39,7 @@ const createSchema = z.object({
   priceMin: z.number().int().optional(),
   priceMax: z.number().int().optional(),
   eventTags: z.array(z.string()).optional(),
+  category: z.string().optional(),
   location: z.string().optional(),
   status: z.enum(["DRAFT", "ACTIVE"]).optional(),
 });
@@ -65,6 +66,7 @@ export async function POST(req: Request) {
       priceMin: parsed.data.priceMin,
       priceMax: parsed.data.priceMax,
       eventTags: parsed.data.eventTags ?? [],
+      category: parsed.data.category,
       location: parsed.data.location,
       status: parsed.data.status ?? "DRAFT",
     },

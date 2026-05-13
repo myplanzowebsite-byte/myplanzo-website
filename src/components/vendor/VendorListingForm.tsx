@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { VENDOR_CATEGORIES } from "@/lib/mockListings";
 
 export function VendorListingForm() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState<string>("");
   const [status, setStatus] = useState<"DRAFT" | "ACTIVE">("DRAFT");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,7 +21,7 @@ export function VendorListingForm() {
       const res = await fetch("/api/listings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description, status }),
+        body: JSON.stringify({ title, description, category: category || undefined, status }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -28,6 +30,7 @@ export function VendorListingForm() {
       }
       setTitle("");
       setDescription("");
+      setCategory("");
       router.refresh();
     } finally {
       setLoading(false);
@@ -58,6 +61,21 @@ export function VendorListingForm() {
         rows={3}
         className="w-full rounded-md border border-mp-border bg-mp-panel px-3 py-2 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
       />
+      <select
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+        required
+        className="w-full rounded-md border border-mp-border bg-mp-panel px-3 py-2 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
+      >
+        <option value="" disabled>
+          Select category…
+        </option>
+        {VENDOR_CATEGORIES.map((c) => (
+          <option key={c.label} value={c.label}>
+            {c.emoji} {c.label}
+          </option>
+        ))}
+      </select>
       <select
         value={status}
         onChange={(e) => setStatus(e.target.value as "DRAFT" | "ACTIVE")}

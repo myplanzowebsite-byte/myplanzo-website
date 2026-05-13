@@ -5,6 +5,8 @@ import { readSession } from "@/lib/auth/session";
 import { ShortlistButton } from "@/components/customer/ShortlistButton";
 import { BookingRequestForm } from "@/components/customer/BookingRequestForm";
 import { formatINR, priceUnitForListing } from "@/lib/format";
+import { isMockId, getMockListing } from "@/lib/mockListings";
+import { MockListingDetail } from "./MockListingDetail";
 
 type ListingReview = {
   rating: number;
@@ -18,6 +20,16 @@ export default async function PublicListingPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+
+  // Mock preview listings — render a static detail view so categories on the
+  // homepage and /browse can be previewed end-to-end before any vendor signs up.
+  if (isMockId(id)) {
+    const mock = getMockListing(id);
+    if (!mock) notFound();
+    const session = await readSession();
+    return <MockListingDetail listing={mock} isLoggedIn={!!session?.sub} />;
+  }
+
   const [listing, session] = await Promise.all([
     prisma.serviceListing.findFirst({
       where: { id, status: "ACTIVE", vendor: { verificationStatus: "ACTIVE" } },
