@@ -2,9 +2,13 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth/requireSession";
+import { createNotification } from "@/lib/notifications/notify";
 
+// The vendor's only direct action on a pending booking is to decline it.
+// To take the booking, the vendor sends a quote (see /api/bookings/[id]/quotes);
+// the customer accepting that quote is what confirms the booking.
 const bodySchema = z.object({
-  action: z.enum(["accept", "decline"]),
+  action: z.literal("decline"),
 });
 
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
@@ -19,15 +23,25 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     where: { id, vendorId: vendor.id, status: "PENDING" },
   });
   if (!booking) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
   const json = await req.json().catch(() => null);
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
-  const nextStatus = parsed.data.action === "accept" ? "CONFIRMED" : "CANCELLED";
+
   const updated = await prisma.booking.update({
     where: { id },
-    data: { status: nextStatus },
+    data: { status: "CANCELLED" },
   });
+
+  void createNotification({
+    userId: booking.customerId,
+    type: "booking",
+    title: "Booking declined",
+    body: `${vendor.businessName} could not take this booking.`,
+    link: `/customer/bookings/${id}`,
+  }).catch((e) => console.error("[notify] booking declined:", e));
+
   return NextResponse.json({ booking: updated });
 }

@@ -1,14 +1,11 @@
-import { SiteHeader } from "@/components/SiteHeader";
-import { readSession } from "@/lib/auth/session";
+import { AppHeader } from "@/components/AppHeader";
 
 export const dynamic = "force-dynamic";
 
-export default async function ListingsLayout({ children }: { children: React.ReactNode }) {
-  const session = await readSession();
-  const isLoggedIn = !!session?.sub;
+export default function ListingsLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-mp-canvas">
-      <SiteHeader isLoggedIn={isLoggedIn} />
+      <AppHeader />
       <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
     </div>
   );

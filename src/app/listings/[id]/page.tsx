@@ -7,6 +7,7 @@ import { BookingRequestForm } from "@/components/customer/BookingRequestForm";
 import { formatINR, priceUnitForListing } from "@/lib/format";
 import { isMockId, getMockListing } from "@/lib/mockListings";
 import { MockListingDetail } from "./MockListingDetail";
+import { MonthCalendar } from "@/components/MonthCalendar";
 
 type ListingReview = {
   rating: number;
@@ -33,11 +34,23 @@ export default async function PublicListingPage({
   const [listing, session] = await Promise.all([
     prisma.serviceListing.findFirst({
       where: { id, status: "ACTIVE", vendor: { verificationStatus: "ACTIVE" } },
-      include: { vendor: { include: { reviews: { select: { rating: true, title: true, comment: true } } } } },
+      include: {
+        vendor: {
+          include: {
+            reviews: { select: { rating: true, title: true, comment: true } },
+            availability: { select: { date: true } },
+          },
+        },
+      },
     }),
     readSession(),
   ]);
   if (!listing) notFound();
+
+  // Rough profile-view metric for the vendor dashboard — fire and forget.
+  void prisma.vendorProfile
+    .update({ where: { id: listing.vendorId }, data: { profileViews: { increment: 1 } } })
+    .catch(() => {});
 
   const isLoggedIn = !!session?.sub;
   const reviews: ListingReview[] = listing.vendor.reviews ?? [];
@@ -137,6 +150,15 @@ export default async function PublicListingPage({
         </div>
 
         <p className="text-sm text-mp-charcoal whitespace-pre-wrap border-t border-mp-border pt-4">{listing.description}</p>
+
+        <div className="border-t border-mp-border pt-4">
+          <p className="text-sm font-semibold text-mp-charcoal mb-3">Availability</p>
+          <MonthCalendar
+            blockedDates={listing.vendor.availability.map((a) =>
+              a.date.toISOString().slice(0, 10),
+            )}
+          />
+        </div>
 
         {isLoggedIn ? (
           <BookingRequestForm listingId={listing.id} />

@@ -11,6 +11,9 @@ import {
   ChevronRight,
   ChevronDown,
   CalendarDays,
+  ShieldAlert,
+  BarChart3,
+  LifeBuoy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +30,21 @@ const nav: NavItem[] = [
     href: "/admin/bookings",
     label: "Bookings",
     icon: <CalendarDays className="size-5" />,
+  },
+  {
+    href: "/admin/disputes",
+    label: "Disputes",
+    icon: <ShieldAlert className="size-5" />,
+  },
+  {
+    href: "/admin/reports",
+    label: "Reports",
+    icon: <BarChart3 className="size-5" />,
+  },
+  {
+    href: "/admin/support",
+    label: "Support Inbox",
+    icon: <LifeBuoy className="size-5" />,
   },
   {
     href: "/admin/users",

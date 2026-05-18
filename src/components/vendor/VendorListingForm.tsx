@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { VENDOR_CATEGORIES } from "@/lib/mockListings";
+import { ImageUploader } from "@/components/ImageUploader";
+
+const MAX_PHOTOS = 10;
 
 export function VendorListingForm() {
   const router = useRouter();
@@ -10,6 +13,7 @@ export function VendorListingForm() {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState<string>("");
   const [status, setStatus] = useState<"DRAFT" | "ACTIVE">("DRAFT");
+  const [photos, setPhotos] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,7 +25,13 @@ export function VendorListingForm() {
       const res = await fetch("/api/listings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description, category: category || undefined, status }),
+        body: JSON.stringify({
+          title,
+          description,
+          category: category || undefined,
+          status,
+          photos,
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -31,6 +41,7 @@ export function VendorListingForm() {
       setTitle("");
       setDescription("");
       setCategory("");
+      setPhotos([]);
       router.refresh();
     } finally {
       setLoading(false);
@@ -76,6 +87,35 @@ export function VendorListingForm() {
           </option>
         ))}
       </select>
+
+      {/* Photos — up to 10 */}
+      <div className="space-y-2">
+        <span className="text-xs font-medium text-mp-muted">Photos ({photos.length}/{MAX_PHOTOS})</span>
+        {photos.length > 0 && (
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+            {photos.map((u) => (
+              <div key={u} className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={u} alt="Listing" className="h-20 w-full rounded-md object-cover" />
+                <button
+                  type="button"
+                  onClick={() => setPhotos((p) => p.filter((x) => x !== u))}
+                  className="absolute right-1 top-1 rounded bg-mp-charcoal/80 px-1.5 py-0.5 text-[10px] text-white"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        {photos.length < MAX_PHOTOS && (
+          <ImageUploader
+            label="Add photo"
+            onUploaded={(u) => setPhotos((p) => (p.length < MAX_PHOTOS ? [...p, u] : p))}
+          />
+        )}
+      </div>
+
       <select
         value={status}
         onChange={(e) => setStatus(e.target.value as "DRAFT" | "ACTIVE")}

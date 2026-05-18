@@ -45,6 +45,8 @@ export async function POST(req: Request) {
   let redirect = "/customer";
   if (user.role === "VENDOR") redirect = "/vendor";
   if (user.role === "ADMIN" || user.role === "SUBADMIN") redirect = "/admin";
+  // New customers land on the welcome / preferences screen.
+  if (purpose === "register" && user.role === "CUSTOMER") redirect = "/welcome";
 
   return NextResponse.json({ ok: true, redirect });
 }

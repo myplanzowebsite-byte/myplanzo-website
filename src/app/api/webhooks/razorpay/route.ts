@@ -1,44 +1,48 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
+import { capturePayment } from "@/lib/payments/capturePayment";
 
-/** Minimal webhook: mark payment captured when signature valid (extend for production idempotency). */
+/**
+ * Razorpay webhook — the source of truth for payment capture. Fires
+ * server-to-server regardless of what the customer's browser does.
+ * Handles the `payment_link.paid` event. Idempotent via capturePayment().
+ */
 export async function POST(req: Request) {
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
   const body = await req.text();
   const signature = req.headers.get("x-razorpay-signature");
-  if (secret && signature) {
+
+  if (secret) {
+    if (!signature) {
+      return NextResponse.json({ error: "Missing signature" }, { status: 400 });
+    }
     const expected = crypto.createHmac("sha256", secret).update(body).digest("hex");
     if (expected !== signature) {
       return NextResponse.json({ error: "Bad signature" }, { status: 400 });
     }
   }
-  let payload: { event?: string; payload?: { payment?: { entity?: { order_id?: string; id?: string } } } };
+
+  let payload: {
+    event?: string;
+    payload?: {
+      payment_link?: { entity?: { id?: string } };
+      payment?: { entity?: { id?: string } };
+    };
+  };
   try {
     payload = JSON.parse(body);
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const orderId = payload.payload?.payment?.entity?.order_id;
-  const payId = payload.payload?.payment?.entity?.id;
-  if (!orderId) return NextResponse.json({ ok: true });
 
-  const payment = await prisma.payment.findFirst({
-    where: { razorpayOrderId: orderId },
-  });
-  if (!payment) return NextResponse.json({ ok: true });
-  if (payment.status === "CAPTURED") return NextResponse.json({ ok: true });
+  if (payload.event === "payment_link.paid") {
+    const paymentLinkId = payload.payload?.payment_link?.entity?.id;
+    const paymentId = payload.payload?.payment?.entity?.id;
+    if (paymentLinkId && paymentId) {
+      await capturePayment({ paymentLinkId, paymentId });
+    }
+  }
 
-  await prisma.payment.update({
-    where: { id: payment.id },
-    data: {
-      status: "CAPTURED",
-      razorpayPaymentId: payId ?? payment.razorpayPaymentId,
-    },
-  });
-  await prisma.booking.update({
-    where: { id: payment.bookingId },
-    data: { status: "CONFIRMED" },
-  });
+  // Always 200 for handled/ignored events so Razorpay doesn't retry forever.
   return NextResponse.json({ ok: true });
 }

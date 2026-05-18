@@ -45,6 +45,18 @@ enum PaymentStatus {
   FAILED
 }
 
+enum QuoteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum DisputeStatus {
+  OPEN
+  RESOLVED
+  REJECTED
+}
+
 model User {
   id           String    @id @default(cuid())
   email        String    @unique
@@ -54,6 +66,7 @@ model User {
   isBlocked      Boolean   @default(false)
   phoneVerified  Boolean   @default(false)
   permissions    Json? // SUBADMIN module flags
+  deletedAt      DateTime? // set on account deletion (PII anonymised, login blocked)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
@@ -66,6 +79,9 @@ model User {
   accessLogs         AccessLog[]
   bookingsAsCustomer Booking[]        @relation("CustomerBookings")
   reviews            Review[]         @relation("CustomerReviews")
+  notifications      Notification[]
+  events             Event[]          @relation("CustomerEvents")
+  disputesRaised     Dispute[]        @relation("DisputesRaised")
 }
 
 model OtpCode {
@@ -88,6 +104,7 @@ model CustomerProfile {
   displayName String?
   photoUrl    String?
   preferences Json?
+  notificationPrefs Json? // { bookingUpdates, quotes, messages } booleans
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
@@ -97,13 +114,31 @@ model VendorProfile {
   businessName       String
   description        String?
   location           String?
+  photoUrl           String?
+  coverImageUrl      String?
+  categories         String[]                 @default([])
+  contactPreference  String? // e.g. "Chat only" | "Chat & calls"
   verificationStatus VendorVerificationStatus @default(PENDING)
   portfolioUrls      String[]                 @default([])
   user               User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
   listings           ServiceListing[]
   bookings           Booking[]                @relation("VendorBookings")
   reviews            Review[]                 @relation("VendorReviews")
+  quotes             Quote[]
+  availability       VendorAvailability[]
   eventsCompleted    Int                      @default(0)
+  profileViews       Int                      @default(0)
+}
+
+model VendorAvailability {
+  id        String        @id @default(cuid())
+  vendorId  String
+  date      DateTime // a blocked day, stored at UTC midnight
+  createdAt DateTime      @default(now())
+  vendor    VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@unique([vendorId, date])
+  @@index([vendorId])
 }
 
 model ServiceListing {
@@ -141,19 +176,85 @@ model Booking {
   customerId      String
   vendorId        String
   listingId       String?
+  eventId         String?
   status          BookingStatus @default(PENDING)
   eventDate       DateTime?
   eventDetails    String?
   amountPaise     Int           @default(0)
+  cancelledAt        DateTime?
+  cancellationReason String?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
   customer        User          @relation("CustomerBookings", fields: [customerId], references: [id], onDelete: Cascade)
   vendor          VendorProfile @relation("VendorBookings", fields: [vendorId], references: [id], onDelete: Cascade)
   listing         ServiceListing? @relation(fields: [listingId], references: [id])
+  event           Event?          @relation(fields: [eventId], references: [id], onDelete: SetNull)
   payments        Payment[]
   messages        Message[]
   checklistItems  EventChecklistItem[]
   review          Review?                    @relation("BookingReview")
+  quotes          Quote[]
+  disputes        Dispute[]
+}
+
+model Dispute {
+  id          String        @id @default(cuid())
+  bookingId   String
+  raisedById  String
+  reason      String
+  status      DisputeStatus @default(OPEN)
+  resolution  String? // admin resolution note
+  resolvedAt  DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  booking     Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  raisedBy    User          @relation("DisputesRaised", fields: [raisedById], references: [id], onDelete: Cascade)
+
+  @@index([status, createdAt])
+}
+
+model Quote {
+  id          String      @id @default(cuid())
+  bookingId   String
+  vendorId    String
+  amountPaise Int
+  note        String?
+  status      QuoteStatus @default(PENDING)
+  respondedAt DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  booking     Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  vendor      VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId, createdAt])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  type      String // quote | booking | payment | message | reminder | system
+  title     String
+  body      String?
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model Event {
+  id         String    @id @default(cuid())
+  customerId String
+  name       String
+  eventType  String?
+  eventDate  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  customer   User      @relation("CustomerEvents", fields: [customerId], references: [id], onDelete: Cascade)
+  bookings   Booking[]
+
+  @@index([customerId, eventDate])
 }
 
 model Payment {
@@ -251,6 +352,18 @@ model PushNotificationCampaign {
   audience  String   @default("all")
   sentAt    DateTime?
   createdAt DateTime @default(now())
+}
+
+model SupportMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  handled   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([handled, createdAt])
 }
 
 model AccessLog {

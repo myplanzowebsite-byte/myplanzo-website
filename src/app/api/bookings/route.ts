@@ -7,7 +7,6 @@ const createSchema = z.object({
   listingId: z.string(),
   eventDate: z.string().datetime().optional(),
   eventDetails: z.string().min(4),
-  amountPaise: z.number().int().positive(),
 });
 
 export async function POST(req: Request) {
@@ -38,7 +37,8 @@ export async function POST(req: Request) {
       status: "PENDING",
       eventDate: parsed.data.eventDate ? new Date(parsed.data.eventDate) : null,
       eventDetails: parsed.data.eventDetails,
-      amountPaise: parsed.data.amountPaise,
+      // Unpriced — the amount is set when the customer accepts a vendor quote.
+      amountPaise: 0,
     },
   });
   return NextResponse.json({ booking });

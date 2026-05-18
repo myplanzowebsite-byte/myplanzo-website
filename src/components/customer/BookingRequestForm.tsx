@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 export function BookingRequestForm({ listingId }: { listingId: string }) {
   const router = useRouter();
   const [eventDetails, setEventDetails] = useState("");
-  const [amount, setAmount] = useState("50000");
+  const [eventDate, setEventDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,7 +21,9 @@ export function BookingRequestForm({ listingId }: { listingId: string }) {
         body: JSON.stringify({
           listingId,
           eventDetails,
-          amountPaise: Math.round(Number(amount) * 100) || 0,
+          eventDate: eventDate
+            ? new Date(`${eventDate}T00:00:00.000Z`).toISOString()
+            : undefined,
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -38,9 +40,21 @@ export function BookingRequestForm({ listingId }: { listingId: string }) {
   return (
     <form onSubmit={submit} className="space-y-3 border-t border-mp-border pt-4">
       <h2 className="text-sm font-semibold text-mp-charcoal">Request booking</h2>
+      <p className="text-xs text-mp-muted">
+        Tell the vendor what you need. They&apos;ll reply with a quote you can accept and pay.
+      </p>
       {error ? (
         <p className="rounded-md border border-mp-accent/20 bg-mp-accent-soft px-3 py-2 text-sm text-mp-accent">{error}</p>
       ) : null}
+      <div>
+        <label className="text-xs font-medium text-mp-muted">Event date</label>
+        <input
+          type="date"
+          value={eventDate}
+          onChange={(e) => setEventDate(e.target.value)}
+          className="mt-1 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
+        />
+      </div>
       <div>
         <label className="text-xs font-medium text-mp-muted">Event details</label>
         <textarea
@@ -49,16 +63,7 @@ export function BookingRequestForm({ listingId }: { listingId: string }) {
           onChange={(e) => setEventDetails(e.target.value)}
           className="mt-1 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
           rows={3}
-        />
-      </div>
-      <div>
-        <label className="text-xs font-medium text-mp-muted">Offer amount (INR)</label>
-        <input
-          type="number"
-          min={1}
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className="mt-1 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
+          placeholder="Guest count, what you're looking for…"
         />
       </div>
       <button

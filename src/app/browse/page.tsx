@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { VendorCard, type VendorCardData } from "@/components/VendorCard";
+import { BrowseFilters } from "@/components/BrowseFilters";
 import { formatINR, priceUnitForListing } from "@/lib/format";
 import {
   VENDOR_CATEGORIES,
@@ -23,7 +24,15 @@ export const metadata: Metadata = {
 };
 
 export default async function BrowsePage(props: {
-  searchParams?: Promise<{ category?: string; event?: string; zone?: string; q?: string }>;
+  searchParams?: Promise<{
+    category?: string;
+    event?: string;
+    zone?: string;
+    q?: string;
+    maxBudget?: string;
+    minRating?: string;
+    date?: string;
+  }>;
 }) {
   const searchParams = await props.searchParams;
   const selectedCategory = searchParams?.category;
@@ -31,13 +40,25 @@ export default async function BrowsePage(props: {
   const zone = searchParams?.zone;
   const q = searchParams?.q;
 
+  const maxBudget = Number(searchParams?.maxBudget) || undefined;
+  const minRating = Number(searchParams?.minRating) || undefined;
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(searchParams?.date ?? "")
+    ? searchParams!.date!
+    : undefined;
+
   const listings = await prisma.serviceListing.findMany({
     where: {
       status: "ACTIVE",
-      vendor: { verificationStatus: "ACTIVE" },
+      vendor: {
+        verificationStatus: "ACTIVE",
+        ...(date
+          ? { availability: { none: { date: new Date(`${date}T00:00:00.000Z`) } } }
+          : {}),
+      },
       ...(selectedCategory ? { category: { equals: selectedCategory, mode: "insensitive" } } : {}),
       ...(selectedEvent ? { eventTags: { has: selectedEvent } } : {}),
       ...(zone ? { location: { contains: zone, mode: "insensitive" } } : {}),
+      ...(maxBudget ? { priceMin: { lte: maxBudget } } : {}),
       ...(q
         ? {
             OR: [
@@ -56,7 +77,7 @@ export default async function BrowsePage(props: {
     take: 40,
   });
 
-  const dbCards: VendorCardData[] = listings.map((l) => {
+  let dbCards: VendorCardData[] = listings.map((l) => {
     const ratings = l.vendor.reviews.map((r) => r.rating);
     const avgRating = ratings.length
       ? Math.round((ratings.reduce((a, b) => a + b, 0) / ratings.length) * 10) / 10
@@ -79,15 +100,17 @@ export default async function BrowsePage(props: {
       verified: true,
     };
   });
+  if (minRating) {
+    dbCards = dbCards.filter((c) => (c.rating ?? 0) >= minRating);
+  }
 
-  // Append filtered mock listings so categories preview cleanly even before
-  // real vendors exist. Each mock has its own /listings/mock-* detail page.
-  const mockCards: VendorCardData[] = filterMockListings({
-    category: selectedCategory,
-    event: selectedEvent,
-    zone,
-    q,
-  }).map((m) => ({
+  // Mock listings preview cleanly even before real vendors exist. They have no
+  // availability data, so the date filter never excludes them.
+  let mocks = filterMockListings({ category: selectedCategory, event: selectedEvent, zone, q });
+  if (maxBudget) mocks = mocks.filter((m) => m.priceMin <= maxBudget);
+  if (minRating) mocks = mocks.filter((m) => m.rating >= minRating);
+
+  const mockCards: VendorCardData[] = mocks.map((m) => ({
     id: m.id,
     name: m.vendorName,
     category: m.category,
@@ -105,18 +128,28 @@ export default async function BrowsePage(props: {
 
   const cards = [...dbCards, ...mockCards];
 
-  const hasFilter = !!(selectedCategory || selectedEvent || zone || q);
+  const hasFilter = !!(
+    selectedCategory || selectedEvent || zone || q || maxBudget || minRating || date
+  );
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold text-mp-charcoal">Browse vendors</h1>
-        <p className="text-sm text-mp-muted">
-          {hasFilter
-            ? "Filtered results — clear filters to see all categories."
-            : "Pick a category to find verified vendors in Mumbai."}
-        </p>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold text-mp-charcoal">Browse vendors</h1>
+          <p className="text-sm text-mp-muted">
+            {hasFilter
+              ? "Filtered results — clear filters to see all categories."
+              : "Pick a category to find verified vendors in Mumbai."}
+          </p>
+        </div>
+        <Link
+          href="/customer/discover"
+          className="shrink-0 rounded-full border border-mp-border bg-mp-card px-3 py-1.5 text-sm text-mp-charcoal transition hover:border-mp-accent"
+        >
+          ✨ Discover (swipe)
+        </Link>
       </div>
 
       {/* Category chips (primary filter) */}
@@ -179,11 +212,15 @@ export default async function BrowsePage(props: {
         )}
       </div>
 
+      {/* Budget / rating / availability filters */}
+      <BrowseFilters />
+
       {/* Active filter summary */}
-      {(zone || q) && (
+      {(zone || q || date) && (
         <div className="flex flex-wrap gap-2 text-xs text-mp-muted">
           {zone && <span>Zone: <span className="text-mp-charcoal">{zone}</span></span>}
           {q && <span>Search: <span className="text-mp-charcoal">&ldquo;{q}&rdquo;</span></span>}
+          {date && <span>Available on: <span className="text-mp-charcoal">{date}</span></span>}
           <Link href="/browse" className="underline">Clear all</Link>
         </div>
       )}
@@ -194,11 +231,7 @@ export default async function BrowsePage(props: {
           <VendorCard key={c.id} v={c} />
         ))}
         {cards.length === 0 && (
-          <p className="text-sm text-mp-muted">
-            No matches{selectedCategory ? ` in ${selectedCategory}` : ""}
-            {zone ? ` near ${zone}` : ""}
-            {q ? ` for "${q}"` : ""}. Try clearing filters.
-          </p>
+          <p className="text-sm text-mp-muted">No matches. Try clearing filters.</p>
         )}
       </div>
 

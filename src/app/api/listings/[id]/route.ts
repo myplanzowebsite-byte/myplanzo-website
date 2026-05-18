@@ -20,6 +20,8 @@ const patchSchema = z.object({
   priceMax: z.number().int().nullable().optional(),
   eventTags: z.array(z.string()).optional(),
   location: z.string().nullable().optional(),
+  photos: z.array(z.string().url()).max(10).optional(),
+  category: z.string().nullable().optional(),
   status: z.enum(["DRAFT", "ACTIVE", "ARCHIVED"]).optional(),
 });
 

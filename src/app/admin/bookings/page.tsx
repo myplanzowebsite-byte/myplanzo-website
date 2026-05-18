@@ -45,7 +45,8 @@ export default async function AdminBookingsPage() {
         </table>
       </div>
       <p className="mt-4 text-xs text-mp-muted">
-        Dispute overrides can extend this table with admin actions (stub per agreement).
+        Disputes and admin overrides are managed under{" "}
+        <a href="/admin/disputes" className="underline">Disputes</a>.
       </p>
     </>
   );

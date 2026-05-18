@@ -41,6 +41,7 @@ const createSchema = z.object({
   eventTags: z.array(z.string()).optional(),
   category: z.string().optional(),
   location: z.string().optional(),
+  photos: z.array(z.string().url()).max(10).optional(),
   status: z.enum(["DRAFT", "ACTIVE"]).optional(),
 });
 
@@ -68,6 +69,7 @@ export async function POST(req: Request) {
       eventTags: parsed.data.eventTags ?? [],
       category: parsed.data.category,
       location: parsed.data.location,
+      photos: parsed.data.photos ?? [],
       status: parsed.data.status ?? "DRAFT",
     },
   });

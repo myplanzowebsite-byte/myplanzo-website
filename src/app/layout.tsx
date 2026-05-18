@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
@@ -44,6 +44,20 @@ export const metadata: Metadata = {
       "Find verified decorators, caterers, photographers & venues for birthdays, baby showers, and more.",
     images: ["/logo.jpg"],
   },
+  // PWA — installable on iOS Safari / Android Chrome.
+  appleWebApp: {
+    capable: true,
+    title: "MyPlanzo",
+    statusBarStyle: "black-translucent",
+  },
+  icons: {
+    icon: "/logo.svg",
+    apple: "/logo.jpg",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0f0f0f",
 };
 
 export default function RootLayout({

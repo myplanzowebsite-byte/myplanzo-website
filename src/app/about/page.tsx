@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SiteHeader } from "@/components/SiteHeader";
+import { AppHeader } from "@/components/AppHeader";
 
 export const metadata: Metadata = {
   title: "About",
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-mp-canvas">
-      <SiteHeader />
+      <AppHeader />
       <main className="mx-auto max-w-3xl px-4 py-10 text-mp-charcoal">
         <h1 className="mb-4 text-3xl font-bold">About MyPlanzo</h1>
         <p className="mb-4 text-sm leading-relaxed text-mp-muted">
