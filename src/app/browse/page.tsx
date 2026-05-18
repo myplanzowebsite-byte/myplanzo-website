@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { VendorCard, type VendorCardData } from "@/components/VendorCard";
@@ -8,6 +9,18 @@ import {
   MOCK_LISTINGS,
   filterMockListings,
 } from "@/lib/mockListings";
+
+export const metadata: Metadata = {
+  title: "Browse vendors",
+  description:
+    "Browse verified decorators, caterers, photographers, venues, DJs & cake makers for events in Mumbai.",
+  openGraph: {
+    title: "Browse vendors · MyPlanzo",
+    description:
+      "Browse verified decorators, caterers, photographers, venues, DJs & cake makers for events in Mumbai.",
+    images: [{ url: "/logo.jpg", width: 1200, height: 630, alt: "MyPlanzo" }],
+  },
+};
 
 export default async function BrowsePage(props: {
   searchParams?: Promise<{ category?: string; event?: string; zone?: string; q?: string }>;
