@@ -16,8 +16,6 @@ export function WelcomePreferences() {
   const [budgetMax, setBudgetMax] = useState<number>(50000);
   const [categories, setCategories] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [termsError, setTermsError] = useState<string | null>(null);
 
   function set(key: keyof typeof form, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -30,11 +28,6 @@ export function WelcomePreferences() {
   }
 
   async function save() {
-    setTermsError(null);
-    if (!acceptedTerms) {
-      setTermsError("Please agree to the Terms and Privacy Policy to continue.");
-      return;
-    }
     setBusy(true);
     try {
       await fetch("/api/customer/profile", {
@@ -49,7 +42,15 @@ export function WelcomePreferences() {
           },
         }),
       });
-      router.push("/browse");
+      const params = new URLSearchParams();
+      if (form.eventType) params.set("event", form.eventType);
+      if (form.location) params.set("location", form.location);
+      if (budgetMax > 0) params.set("maxBudget", String(budgetMax));
+      // First selected category becomes the category chip; multiple categories
+      // collapse to a single filter so the URL stays clean.
+      if (categories.length === 1) params.set("category", categories[0]);
+      const qs = params.toString();
+      router.push(qs ? `/browse?${qs}` : "/browse");
     } finally {
       setBusy(false);
     }
@@ -125,29 +126,6 @@ export function WelcomePreferences() {
             );
           })}
         </div>
-      </div>
-
-      <div className="rounded-md border border-mp-border bg-mp-warm p-3 text-xs text-mp-charcoal">
-        <label className="flex items-start gap-2">
-          <input
-            type="checkbox"
-            checked={acceptedTerms}
-            onChange={(e) => setAcceptedTerms(e.target.checked)}
-            className="mt-0.5 accent-mp-accent"
-          />
-          <span>
-            I agree to the{" "}
-            <a href="/terms-and-conditions" target="_blank" rel="noreferrer" className="underline">
-              Terms &amp; Conditions
-            </a>{" "}
-            and{" "}
-            <a href="/privacy-policy" target="_blank" rel="noreferrer" className="underline">
-              Privacy Policy
-            </a>
-            .
-          </span>
-        </label>
-        {termsError && <p className="mt-2 text-mp-accent">{termsError}</p>}
       </div>
 
       <div className="flex gap-2">

@@ -9,6 +9,10 @@ import { isMockId, getMockListing } from "@/lib/mockListings";
 import { MockListingDetail } from "./MockListingDetail";
 import { MonthCalendar } from "@/components/MonthCalendar";
 
+// Render the standalone availability calendar only for logged-out viewers so
+// they can still gauge a vendor's booked-up dates before signing in. Logged-in
+// customers get a single combined calendar inside the booking form instead.
+
 type ListingReview = {
   rating: number;
   title?: string | null;
@@ -151,21 +155,31 @@ export default async function PublicListingPage({
 
         <p className="text-sm text-mp-charcoal whitespace-pre-wrap border-t border-mp-border pt-4">{listing.description}</p>
 
-        <div className="border-t border-mp-border pt-4">
-          <p className="text-sm font-semibold text-mp-charcoal mb-3">Availability</p>
-          <MonthCalendar
+        {isLoggedIn ? (
+          <BookingRequestForm
+            listingId={listing.id}
             blockedDates={listing.vendor.availability.map((a) =>
               a.date.toISOString().slice(0, 10),
             )}
           />
-        </div>
-
-        {isLoggedIn ? (
-          <BookingRequestForm listingId={listing.id} />
         ) : (
-          <div className="border-t border-mp-border pt-4">
-            <p className="text-sm text-mp-muted">Sign in to send a booking request to this vendor.</p>
-          </div>
+          <>
+            <div className="border-t border-mp-border pt-4">
+              <p className="text-sm font-semibold text-mp-charcoal mb-3">Availability</p>
+              <div className="lg:max-w-[50%]">
+                <MonthCalendar
+                  blockedDates={listing.vendor.availability.map((a) =>
+                    a.date.toISOString().slice(0, 10),
+                  )}
+                />
+              </div>
+            </div>
+            <div className="border-t border-mp-border pt-4">
+              <p className="text-sm text-mp-muted">
+                Sign in to send a booking request to this vendor.
+              </p>
+            </div>
+          </>
         )}
       </div>
 

@@ -16,8 +16,10 @@ function todayYmd() {
 }
 
 /**
- * Month grid showing a vendor's blocked (unavailable) dates.
- * `editable` mode lets a vendor toggle dates; otherwise it's read-only.
+ * Month grid that supports three modes:
+ *  - read-only (default): shows availability; past + blocked dates are struck through.
+ *  - `editable`: vendor toggles unavailable dates on/off.
+ *  - `selectable`: customer picks an event date; blocked + past dates are disabled.
  * Dates are plain YYYY-MM-DD strings — no timezone math.
  */
 export function MonthCalendar({
@@ -27,6 +29,9 @@ export function MonthCalendar({
   busyDate,
   highlightDates = [],
   highlightLabel = "Booking",
+  selectable = false,
+  selectedDate,
+  onSelect,
 }: {
   blockedDates: string[];
   editable?: boolean;
@@ -35,6 +40,10 @@ export function MonthCalendar({
   /** Dates to mark in a distinct colour (e.g. upcoming bookings). */
   highlightDates?: string[];
   highlightLabel?: string;
+  /** When true, available dates are clickable and call `onSelect`. */
+  selectable?: boolean;
+  selectedDate?: string | null;
+  onSelect?: (ymd: string) => void;
 }) {
   const now = new Date();
   const [view, setView] = useState({ y: now.getFullYear(), m: now.getMonth() });
@@ -93,15 +102,18 @@ export function MonthCalendar({
           const isBlocked = blocked.has(ymd);
           const isHighlighted = highlighted.has(ymd);
           const isBusy = busyDate === ymd;
+          const isSelected = selectable && selectedDate === ymd;
 
           const base = "aspect-square rounded text-xs flex items-center justify-center relative";
           const style = isPast
             ? "text-mp-text3 line-through decoration-mp-border"
             : isBlocked
               ? "text-mp-text3 bg-mp-warm line-through decoration-mp-accent decoration-2"
-              : isHighlighted
-                ? "bg-mp-steel text-white"
-                : "bg-mp-card text-mp-charcoal hover:bg-mp-warm";
+              : isSelected
+                ? "bg-mp-charcoal text-mp-panel ring-2 ring-mp-accent"
+                : isHighlighted
+                  ? "bg-mp-steel text-white"
+                  : "bg-mp-card text-mp-charcoal hover:bg-mp-warm";
 
           if (editable && !isPast) {
             return (
@@ -116,6 +128,25 @@ export function MonthCalendar({
               </button>
             );
           }
+
+          if (selectable) {
+            const disabled = isPast || isBlocked;
+            return (
+              <button
+                key={ymd}
+                type="button"
+                disabled={disabled}
+                onClick={() => !disabled && onSelect?.(ymd)}
+                aria-pressed={isSelected}
+                className={`${base} ${style} transition-opacity ${
+                  disabled ? "cursor-not-allowed" : "hover:opacity-80"
+                }`}
+              >
+                {day}
+              </button>
+            );
+          }
+
           return (
             <span key={ymd} className={`${base} ${style}`}>
               {day}
@@ -133,6 +164,12 @@ export function MonthCalendar({
             Unavailable
           </span>
         )}
+        {selectable && (
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block h-2.5 w-2.5 rounded-sm bg-mp-charcoal" />
+            Your pick
+          </span>
+        )}
         {highlightDates.length > 0 && (
           <span className="flex items-center gap-1.5">
             <span className="inline-block h-2.5 w-2.5 rounded-sm bg-mp-steel" />
@@ -140,6 +177,7 @@ export function MonthCalendar({
           </span>
         )}
         {editable && <span>Tap a date to toggle</span>}
+        {selectable && !editable && <span>Tap any available date to pick it</span>}
       </p>
     </div>
   );

@@ -3,11 +3,18 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { EVENT_TYPES, GUEST_COUNT_PRESETS } from "@/lib/mockListings";
+import { MonthCalendar } from "@/components/MonthCalendar";
 
 const FIELD =
   "mt-1 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2";
 
-export function BookingRequestForm({ listingId }: { listingId: string }) {
+export function BookingRequestForm({
+  listingId,
+  blockedDates = [],
+}: {
+  listingId: string;
+  blockedDates?: string[];
+}) {
   const router = useRouter();
   const [eventType, setEventType] = useState("");
   const [guestCount, setGuestCount] = useState("");
@@ -74,27 +81,33 @@ export function BookingRequestForm({ listingId }: { listingId: string }) {
         <p className="rounded-md border border-mp-accent/20 bg-mp-accent-soft px-3 py-2 text-sm text-mp-accent">{error}</p>
       ) : null}
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div>
-          <label className="text-xs font-medium text-mp-muted">Event type</label>
-          <select
-            value={eventType}
-            onChange={(e) => setEventType(e.target.value)}
-            className={FIELD}
-          >
-            <option value="">Select…</option>
-            {EVENT_TYPES.map((t) => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="text-xs font-medium text-mp-muted">Event date</label>
-          <input
-            type="date"
-            value={eventDate}
-            onChange={(e) => setEventDate(e.target.value)}
-            className={FIELD}
+      <div>
+        <label className="text-xs font-medium text-mp-muted">Event type</label>
+        <select
+          value={eventType}
+          onChange={(e) => setEventType(e.target.value)}
+          className={FIELD}
+        >
+          <option value="">Select…</option>
+          {EVENT_TYPES.map((t) => (
+            <option key={t} value={t}>{t}</option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label className="text-xs font-medium text-mp-muted">
+          Pick an event date
+          {eventDate && (
+            <span className="ml-1 font-normal text-mp-charcoal">— {eventDate}</span>
+          )}
+        </label>
+        <div className="mt-1 lg:max-w-[50%]">
+          <MonthCalendar
+            blockedDates={blockedDates}
+            selectable
+            selectedDate={eventDate}
+            onSelect={(ymd) => setEventDate(ymd)}
           />
         </div>
       </div>

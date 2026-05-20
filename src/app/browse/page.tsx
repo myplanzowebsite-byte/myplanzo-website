@@ -6,10 +6,67 @@ import { BrowseFilters } from "@/components/BrowseFilters";
 import { formatINR, priceUnitForListing } from "@/lib/format";
 import {
   VENDOR_CATEGORIES,
-  EVENT_TAGS,
+  EVENT_TYPES,
   MOCK_LISTINGS,
   filterMockListings,
 } from "@/lib/mockListings";
+
+// Builds /browse?... preserving the current filter state, with `patch`
+// overrides (null clears a key). Keeps the chips/pills synced.
+type FilterState = {
+  selectedCategory?: string;
+  selectedEvent?: string;
+  zone?: string;
+  q?: string;
+  maxBudget?: number;
+  minRating?: number;
+  date?: string;
+};
+type FilterPatch = Partial<{
+  category: string | null;
+  event: string | null;
+  zone: string | null;
+  location: string | null;
+  q: string | null;
+  maxBudget: number | string | null;
+  minRating: number | string | null;
+  date: string | null;
+}>;
+
+function buildBrowseHref(state: FilterState, patch: FilterPatch = {}): string {
+  const p = new URLSearchParams();
+  const cur: Record<string, string | undefined> = {
+    category: state.selectedCategory,
+    event: state.selectedEvent,
+    location: state.zone,
+    q: state.q,
+    maxBudget: state.maxBudget ? String(state.maxBudget) : undefined,
+    minRating: state.minRating ? String(state.minRating) : undefined,
+    date: state.date,
+  };
+  // Apply patch — null clears, defined value sets, undefined leaves current.
+  for (const [k, v] of Object.entries(patch)) {
+    if (v === null) cur[k === "zone" ? "location" : k] = undefined;
+    else if (v !== undefined) cur[k === "zone" ? "location" : k] = String(v);
+  }
+  for (const [k, v] of Object.entries(cur)) {
+    if (v) p.set(k, v);
+  }
+  const qs = p.toString();
+  return qs ? `/browse?${qs}` : "/browse";
+}
+
+function FilterPill({ label, href }: { label: string; href: string }) {
+  return (
+    <Link
+      href={href}
+      className="inline-flex items-center gap-1 rounded-full border border-mp-charcoal bg-mp-charcoal px-2.5 py-0.5 text-[11px] font-medium text-mp-panel hover:bg-mp-accent"
+    >
+      <span>{label}</span>
+      <span aria-hidden className="text-mp-panel/80">✕</span>
+    </Link>
+  );
+}
 
 export const metadata: Metadata = {
   title: "Browse vendors",
@@ -153,46 +210,54 @@ export default async function BrowsePage(props: {
         </Link>
       </div>
 
+      {/* Helper to build a hrefs that keeps the other filters intact */}
+      {(() => null)()}
+
       {/* Category chips (primary filter) */}
       <div className="flex flex-wrap gap-2">
         <Link
-          href="/browse"
+          href={buildBrowseHref({ selectedEvent, zone, q, maxBudget, minRating, date }, { category: null })}
           className={`rounded-full border px-3 py-1.5 text-sm transition ${
-            !selectedCategory && !selectedEvent
+            !selectedCategory
               ? "border-mp-charcoal bg-mp-charcoal text-mp-panel"
               : "border-mp-border bg-mp-card text-mp-charcoal"
           }`}
         >
           All
         </Link>
-        {VENDOR_CATEGORIES.map((c) => (
-          <Link
-            key={c.label}
-            href={`/browse?category=${encodeURIComponent(c.label)}`}
-            className={`rounded-full border px-3 py-1.5 text-sm transition ${
-              selectedCategory === c.label
-                ? "border-mp-charcoal bg-mp-charcoal text-mp-panel"
-                : "border-mp-border bg-mp-card text-mp-charcoal"
-            }`}
-          >
-            {c.emoji} {c.label}
-          </Link>
-        ))}
+        {VENDOR_CATEGORIES.map((c) => {
+          const isActive = selectedCategory === c.label;
+          return (
+            <Link
+              key={c.label}
+              href={buildBrowseHref(
+                { selectedCategory, selectedEvent, zone, q, maxBudget, minRating, date },
+                { category: isActive ? null : c.label },
+              )}
+              className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                isActive
+                  ? "border-mp-charcoal bg-mp-charcoal text-mp-panel"
+                  : "border-mp-border bg-mp-card text-mp-charcoal"
+              }`}
+            >
+              {c.emoji} {c.label}
+            </Link>
+          );
+        })}
       </div>
 
       {/* Event tag filter (secondary) */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs uppercase tracking-wider text-mp-muted mr-1">Event:</span>
-        {EVENT_TAGS.map((evt) => {
-          const params = new URLSearchParams();
-          if (selectedCategory) params.set("category", selectedCategory);
-          if (zone) params.set("zone", zone);
-          params.set("event", evt);
+        {EVENT_TYPES.map((evt) => {
           const isActive = selectedEvent === evt;
           return (
             <Link
               key={evt}
-              href={`/browse?${params.toString()}`}
+              href={buildBrowseHref(
+                { selectedCategory, selectedEvent, zone, q, maxBudget, minRating, date },
+                { event: isActive ? null : evt },
+              )}
               className={`rounded-full border px-2.5 py-1 text-xs transition ${
                 isActive
                   ? "border-mp-steel bg-mp-steel/15 text-mp-steel"
@@ -205,7 +270,10 @@ export default async function BrowsePage(props: {
         })}
         {selectedEvent && (
           <Link
-            href={`/browse${selectedCategory ? `?category=${encodeURIComponent(selectedCategory)}` : ""}`}
+            href={buildBrowseHref(
+              { selectedCategory, zone, q, maxBudget, minRating, date },
+              { event: null },
+            )}
             className="text-xs text-mp-muted underline ml-1"
           >
             clear event
@@ -216,13 +284,76 @@ export default async function BrowsePage(props: {
       {/* Budget / rating / availability filters */}
       <BrowseFilters />
 
-      {/* Active filter summary */}
-      {(zone || q || date) && (
-        <div className="flex flex-wrap gap-2 text-xs text-mp-muted">
-          {zone && <span>Zone: <span className="text-mp-charcoal">{zone}</span></span>}
-          {q && <span>Search: <span className="text-mp-charcoal">&ldquo;{q}&rdquo;</span></span>}
-          {date && <span>Available on: <span className="text-mp-charcoal">{date}</span></span>}
-          <Link href="/browse" className="underline">Clear all</Link>
+      {/* Active filter summary — shows every applied filter as a removable chip */}
+      {hasFilter && (
+        <div className="flex flex-wrap items-center gap-2 rounded-md border border-mp-border bg-mp-warm px-3 py-2 text-xs">
+          <span className="font-semibold uppercase tracking-wide text-mp-muted">Active filters:</span>
+          {selectedCategory && (
+            <FilterPill
+              label={`Category: ${selectedCategory}`}
+              href={buildBrowseHref(
+                { selectedEvent, zone, q, maxBudget, minRating, date },
+                { category: null },
+              )}
+            />
+          )}
+          {selectedEvent && (
+            <FilterPill
+              label={`Event: ${selectedEvent}`}
+              href={buildBrowseHref(
+                { selectedCategory, zone, q, maxBudget, minRating, date },
+                { event: null },
+              )}
+            />
+          )}
+          {zone && (
+            <FilterPill
+              label={`Location: ${zone}`}
+              href={buildBrowseHref(
+                { selectedCategory, selectedEvent, q, maxBudget, minRating, date },
+                { zone: null, location: null },
+              )}
+            />
+          )}
+          {maxBudget && (
+            <FilterPill
+              label={`Up to ₹${maxBudget.toLocaleString("en-IN")}`}
+              href={buildBrowseHref(
+                { selectedCategory, selectedEvent, zone, q, minRating, date },
+                { maxBudget: null },
+              )}
+            />
+          )}
+          {minRating && (
+            <FilterPill
+              label={`${minRating}★ & up`}
+              href={buildBrowseHref(
+                { selectedCategory, selectedEvent, zone, q, maxBudget, date },
+                { minRating: null },
+              )}
+            />
+          )}
+          {date && (
+            <FilterPill
+              label={`Available ${date}`}
+              href={buildBrowseHref(
+                { selectedCategory, selectedEvent, zone, q, maxBudget, minRating },
+                { date: null },
+              )}
+            />
+          )}
+          {q && (
+            <FilterPill
+              label={`Search: "${q}"`}
+              href={buildBrowseHref(
+                { selectedCategory, selectedEvent, zone, maxBudget, minRating, date },
+                { q: null },
+              )}
+            />
+          )}
+          <Link href="/browse" className="ml-auto text-mp-charcoal underline">
+            Clear all
+          </Link>
         </div>
       )}
 
