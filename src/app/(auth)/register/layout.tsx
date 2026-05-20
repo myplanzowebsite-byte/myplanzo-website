@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     title: "Create your account · MyPlanzo",
     description:
       "Sign up for MyPlanzo to book verified event vendors in Mumbai, or list your services as a vendor.",
-    images: [{ url: "/logo.jpg", width: 1200, height: 630, alt: "MyPlanzo" }],
+    images: [{ url: "/logo1.jpeg", width: 1200, height: 630, alt: "MyPlanzo" }],
   },
 };
 

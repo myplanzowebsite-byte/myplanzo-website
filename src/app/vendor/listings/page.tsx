@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { readSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import { VendorListingForm } from "@/components/vendor/VendorListingForm";
+import { VendorListingEditRow } from "@/components/vendor/VendorListingEditRow";
 
 export default async function VendorListingsPage() {
   const session = await readSession();
@@ -12,24 +13,65 @@ export default async function VendorListingsPage() {
   });
   if (!vendor) redirect("/login");
 
+  const active = vendor.listings.filter((l) => l.status === "ACTIVE");
+  const drafts = vendor.listings.filter((l) => l.status === "DRAFT");
+  const archived = vendor.listings.filter((l) => l.status === "ARCHIVED");
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold text-mp-charcoal">Service listings</h1>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-2xl font-semibold text-mp-charcoal">Service listings</h1>
+        <p className="text-sm text-mp-muted mt-1">
+          Manage what customers see. Draft listings are hidden until you publish them.
+        </p>
+      </div>
+
       <VendorListingForm />
-      <ul className="space-y-2">
-        {vendor.listings.map((l) => (
-          <li
-            key={l.id}
-            className="rounded-[var(--radius-mp-card)] bg-mp-card p-4 shadow-[var(--shadow-mp-card)] text-sm flex justify-between gap-2"
-          >
-            <div>
-              <p className="font-medium">{l.title}</p>
-              <p className="text-mp-muted text-xs mt-1">{l.status}</p>
-            </div>
-          </li>
-        ))}
-        {vendor.listings.length === 0 ? <p className="text-mp-muted text-sm">No listings yet.</p> : null}
-      </ul>
+
+      {vendor.listings.length === 0 ? (
+        <p className="text-mp-muted text-sm">No listings yet — create your first one above.</p>
+      ) : (
+        <div className="space-y-6">
+          {active.length > 0 && (
+            <section className="space-y-2">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-mp-muted">
+                Active ({active.length})
+              </h2>
+              <ul className="space-y-2">
+                {active.map((l) => (
+                  <VendorListingEditRow key={l.id} listing={l} />
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {drafts.length > 0 && (
+            <section className="space-y-2">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-mp-muted">
+                Drafts ({drafts.length})
+              </h2>
+              <ul className="space-y-2">
+                {drafts.map((l) => (
+                  <VendorListingEditRow key={l.id} listing={l} />
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {archived.length > 0 && (
+            <section className="space-y-2">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-mp-muted">
+                Archived ({archived.length})
+              </h2>
+              <ul className="space-y-2">
+                {archived.map((l) => (
+                  <VendorListingEditRow key={l.id} listing={l} />
+                ))}
+              </ul>
+            </section>
+          )}
+        </div>
+      )}
     </div>
   );
 }

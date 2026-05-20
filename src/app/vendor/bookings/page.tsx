@@ -22,7 +22,17 @@ export default async function VendorBookingsPage() {
         {bookings.map((b) => (
           <VendorBookingRow key={b.id} booking={b} />
         ))}
-        {bookings.length === 0 ? <p className="text-mp-muted text-sm">No bookings yet.</p> : null}
+        {bookings.length === 0 ? (
+          <div className="rounded-[var(--radius-mp-card)] border border-dashed border-mp-border bg-mp-card p-8 text-center">
+            <div className="text-3xl">📅</div>
+            <p className="mt-2 text-sm font-medium text-mp-charcoal">
+              Once a customer books you, it will appear here.
+            </p>
+            <p className="mt-1 text-xs text-mp-muted">
+              Tip — keep your listings active and your availability calendar up to date so customers can find you.
+            </p>
+          </div>
+        ) : null}
       </div>
     </div>
   );

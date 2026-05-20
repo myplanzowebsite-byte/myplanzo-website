@@ -26,6 +26,7 @@ export async function AppHeader() {
           { label: "Messages", href: "/customer/messages" },
           { label: "Alerts", href: "/customer/notifications", badge: unread },
           { label: "Profile", href: "/customer/profile" },
+          { label: "Support", href: "/help" },
         ]
       : session.role === "VENDOR"
         ? [
@@ -35,6 +36,7 @@ export async function AppHeader() {
             { label: "Messages", href: "/vendor/messages" },
             { label: "Alerts", href: "/vendor/notifications", badge: unread },
             { label: "Profile", href: "/vendor/profile" },
+            { label: "Support", href: "/help" },
           ]
         : undefined;
 

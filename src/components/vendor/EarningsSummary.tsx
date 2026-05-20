@@ -69,20 +69,40 @@ export function EarningsSummary({ payments }: { payments: EarningsPayment[] }) {
       </div>
 
       <section className="rounded-[var(--radius-mp-card)] bg-mp-card p-6 shadow-[var(--shadow-mp-card)]">
-        <h3 className="mb-4 text-sm font-semibold text-mp-charcoal">Net payout — last 6 months</h3>
-        <div className="flex h-44 items-end gap-3">
-          {months.map((m) => (
-            <div key={m.key} className="flex flex-1 flex-col items-center gap-1">
-              <span className="text-[10px] text-mp-muted">
-                {m.total > 0 ? formatINR(Math.round(m.total / 100)) : ""}
-              </span>
+        <div className="mb-3 flex items-baseline justify-between">
+          <h3 className="text-sm font-semibold text-mp-charcoal">Net payout — last 6 months</h3>
+          {grossPaise === 0 && (
+            <span className="text-[11px] text-mp-muted">No payouts yet</span>
+          )}
+        </div>
+        <div className="relative flex h-44 items-end gap-3 border-b border-mp-border">
+          {/* gridlines */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-[130px]">
+            {[0, 1, 2, 3].map((i) => (
               <div
-                className="w-full rounded-t bg-mp-accent/70"
-                style={{ height: `${Math.max(2, (m.total / monthMax) * 130)}px` }}
+                key={i}
+                className="absolute left-0 right-0 border-t border-dashed border-mp-border/60"
+                style={{ top: `${(i / 3) * 100}%` }}
               />
-              <span className="text-[10px] text-mp-muted">{m.label}</span>
-            </div>
-          ))}
+            ))}
+          </div>
+          {months.map((m) => {
+            const isZero = m.total === 0;
+            const heightPx = isZero ? 4 : Math.max(8, (m.total / monthMax) * 130);
+            return (
+              <div key={m.key} className="relative z-10 flex flex-1 flex-col items-center gap-1">
+                <span className="text-[10px] text-mp-muted">
+                  {isZero ? "₹0" : formatINR(Math.round(m.total / 100))}
+                </span>
+                <div
+                  className={`w-full rounded-t ${isZero ? "bg-mp-border" : "bg-mp-accent/70"}`}
+                  style={{ height: `${heightPx}px` }}
+                  aria-label={`${m.label}: ${isZero ? "no payout" : formatINR(Math.round(m.total / 100))}`}
+                />
+                <span className="text-[10px] text-mp-muted">{m.label}</span>
+              </div>
+            );
+          })}
         </div>
       </section>
 

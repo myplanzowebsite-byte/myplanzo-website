@@ -31,7 +31,23 @@ export default async function CustomerBookingsPage() {
             </Link>
           </li>
         ))}
-        {bookings.length === 0 ? <p className="text-mp-muted text-sm">No bookings yet.</p> : null}
+        {bookings.length === 0 ? (
+          <div className="rounded-[var(--radius-mp-card)] border border-dashed border-mp-border bg-mp-card p-8 text-center">
+            <div className="text-3xl">🎉</div>
+            <p className="mt-2 text-sm font-medium text-mp-charcoal">
+              Once a vendor agrees to your quote, it will appear here.
+            </p>
+            <p className="mt-1 text-xs text-mp-muted">
+              Browse vendors, send an enquiry, and accept a quote to get your first booking rolling.
+            </p>
+            <Link
+              href="/browse"
+              className="mt-4 inline-block rounded-md bg-mp-charcoal px-4 py-2 text-xs font-medium text-mp-panel transition-colors hover:bg-mp-accent"
+            >
+              Browse vendors
+            </Link>
+          </div>
+        ) : null}
       </ul>
     </div>
   );

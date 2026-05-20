@@ -49,9 +49,9 @@ export function SiteHeader({ navLinks, isLoggedIn }: SiteHeaderProps) {
         <Link href="/" className="flex flex-shrink-0 items-center no-underline">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/logo.svg"
+            src="/logo1.jpeg"
             alt="MyPlanzo"
-            style={{ height: 40, width: "auto", filter: "invert(1)" }}
+            style={{ height: 40, width: "auto", borderRadius: 8 }}
           />
         </Link>
 

@@ -23,6 +23,7 @@ export default function VerifyOtpPage() {
   const [canResend, setCanResend] = useState(false);
   const [resendCountdown, setResendCountdown] = useState(0);
   const [mockOtp, setMockOtp] = useState<string | null>(null);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const code = useMemo(() => digits.join(""), [digits]);
 
@@ -51,6 +52,10 @@ export default function VerifyOtpPage() {
     setError(null);
     if (code.length !== 6) {
       setError("Enter the 6-digit code");
+      return;
+    }
+    if (purpose === "register" && !acceptedTerms) {
+      setError("Please agree to the Terms and Privacy Policy to continue.");
       return;
     }
     setLoading(true);
@@ -135,6 +140,27 @@ export default function VerifyOtpPage() {
             />
           ))}
         </div>
+        {purpose === "register" && (
+          <label className="flex items-start gap-2 rounded-md border border-mp-border bg-mp-warm p-3 text-xs text-mp-charcoal">
+            <input
+              type="checkbox"
+              checked={acceptedTerms}
+              onChange={(e) => setAcceptedTerms(e.target.checked)}
+              className="mt-0.5 accent-mp-accent"
+            />
+            <span>
+              I agree to the{" "}
+              <a href="/terms-and-conditions" target="_blank" rel="noreferrer" className="underline">
+                Terms &amp; Conditions
+              </a>{" "}
+              and{" "}
+              <a href="/privacy-policy" target="_blank" rel="noreferrer" className="underline">
+                Privacy Policy
+              </a>
+              .
+            </span>
+          </label>
+        )}
         <button
           type="submit"
           disabled={loading}

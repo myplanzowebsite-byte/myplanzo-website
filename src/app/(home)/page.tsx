@@ -300,7 +300,7 @@ export default function HomePage() {
           </p>
         </div>
         <Link
-          href="/register"
+          href="/register?role=VENDOR"
           className="relative z-10 flex-shrink-0 rounded-[10px] bg-white px-6 py-3 text-[0.85rem] font-bold transition-opacity hover:opacity-92 sm:w-auto w-full text-center"
           style={{ color: "var(--color-mp-accent)", textDecoration: "none" }}
         >
@@ -349,7 +349,7 @@ export default function HomePage() {
               Vendors
             </h4>
             <ul className="flex flex-col gap-2">
-              {[["List your business", "/register"], ["Vendor dashboard", "/vendor"], ["Commission model", "/terms-and-conditions#commission"]].map(([label, href]) => (
+              {[["List your business", "/register?role=VENDOR"], ["Vendor dashboard", "/vendor"], ["Commission model", "/terms-and-conditions#commission"]].map(([label, href]) => (
                 <li key={label}>
                   <Link href={href} className="text-[0.77rem] transition-colors hover:text-[var(--color-mp-charcoal)]" style={{ color: "var(--color-mp-muted)", textDecoration: "none" }}>
                     {label}

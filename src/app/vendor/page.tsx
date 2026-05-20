@@ -123,6 +123,38 @@ export default async function VendorDashboardPage() {
         <StatCard label="Conversion" value={conversion} />
       </div>
 
+      {vendor.listings.length === 0 && (
+        <section
+          className="relative overflow-hidden rounded-[var(--radius-mp-card)] p-6 text-mp-panel shadow-[var(--shadow-mp-card)]"
+          style={{ background: "linear-gradient(135deg, #0e8aa6 0%, #075f75 100%)" }}
+        >
+          <div
+            className="pointer-events-none absolute -right-6 -top-6 h-32 w-32 rounded-full"
+            style={{ background: "rgba(255,255,255,0.08)" }}
+          />
+          <div className="relative z-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">
+                Get discovered
+              </p>
+              <h2 className="mt-1 text-lg font-semibold text-white">
+                You don&apos;t have any listings yet.
+              </h2>
+              <p className="mt-1 max-w-sm text-sm text-white/80">
+                Add your first listing — title, photos, pricing — and start receiving enquiries from
+                Mumbai customers.
+              </p>
+            </div>
+            <Link
+              href="/vendor/listings"
+              className="rounded-[10px] bg-white px-5 py-2.5 text-sm font-bold text-mp-charcoal transition-opacity hover:opacity-90"
+            >
+              + Add your first listing
+            </Link>
+          </div>
+        </section>
+      )}
+
       {/* Earnings — on the dashboard itself */}
       <div>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-mp-muted">
@@ -146,22 +178,6 @@ export default async function VendorDashboardPage() {
             </Link>
           ))}
         </div>
-      </section>
-
-      {/* Payout setup — client-blocked on Razorpay Route activation */}
-      <section className="rounded-[var(--radius-mp-card)] border border-mp-border bg-mp-card p-6 shadow-[var(--shadow-mp-card)]">
-        <h2 className="text-sm font-semibold text-mp-charcoal">Payout account</h2>
-        <p className="mt-1 text-xs text-mp-muted">
-          Bank / UPI payouts are settled by Razorpay — your account details are held by Razorpay,
-          never stored on MyPlanzo. Payout account linking opens once Razorpay Route is activated
-          for the platform.
-        </p>
-        <button
-          disabled
-          className="mt-3 cursor-not-allowed rounded-md border border-mp-border px-4 py-2 text-sm text-mp-muted opacity-60"
-        >
-          Link payout account (coming soon)
-        </button>
       </section>
 
       {/* Upcoming bookings calendar */}

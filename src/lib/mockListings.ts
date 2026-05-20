@@ -20,6 +20,51 @@ export const EVENT_TAGS = [
   "Kitty Party",
 ] as const;
 
+// Shared, user-facing list of event types used in every "Event type" picker
+// across the app. "Others" stays at the end so the dropdown reads naturally.
+export const EVENT_TYPES = [
+  "Birthday",
+  "Baby Shower",
+  "Anniversary",
+  "Wedding",
+  "Engagement",
+  "House Warming",
+  "Farewell",
+  "Corporate",
+  "Kitty Party",
+  "Cocktail / Party",
+  "Festival / Pooja",
+  "Others",
+] as const;
+
+// Preset guest-count buckets used by the customer booking form so users don't
+// have to type an exact number — vendors only need a rough size to quote.
+export const GUEST_COUNT_PRESETS = [
+  { label: "Up to 25", value: "<=25" },
+  { label: "25 – 50", value: "25-50" },
+  { label: "50 – 100", value: "50-100" },
+  { label: ">100", value: ">100" },
+  { label: ">200", value: ">200" },
+  { label: ">500", value: ">500" },
+] as const;
+
+// City / area presets for the customer browse-filter "Location" dropdown and
+// the welcome / profile preference forms. Mumbai-first for the current market.
+export const LOCATIONS = [
+  "Andheri",
+  "Bandra",
+  "Borivali",
+  "Dadar",
+  "Goregaon",
+  "Juhu",
+  "Lower Parel",
+  "Malad",
+  "Powai",
+  "Thane",
+  "Navi Mumbai",
+  "Other",
+] as const;
+
 export type MockReview = {
   rating: number;
   title: string;

@@ -54,7 +54,7 @@ export default async function CustomerProfilePage() {
         }}
       />
 
-      <SecuritySettings currentPhone={user.phone} />
+      <SecuritySettings currentPhone={user.phone} currentEmail={user.email} />
 
       <DangerZone />
     </div>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { VENDOR_CATEGORIES } from "@/lib/mockListings";
+import { VENDOR_CATEGORIES, EVENT_TYPES, LOCATIONS } from "@/lib/mockListings";
 
 type Initial = {
   displayName: string;
@@ -29,6 +29,7 @@ export function ProfileForm({
   const [form, setForm] = useState(initial);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  const [editing, setEditing] = useState(false);
 
   function set(key: "displayName" | "photoUrl" | "eventType" | "location" | "budgetRange", value: string) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -68,10 +69,75 @@ export function ProfileForm({
         return;
       }
       setMsg({ kind: "ok", text: "Profile saved." });
+      setEditing(false);
       router.refresh();
     } finally {
       setLoading(false);
     }
+  }
+
+  if (!editing) {
+    return (
+      <section className="space-y-4 rounded-[var(--radius-mp-card)] bg-mp-card p-6 shadow-[var(--shadow-mp-card)]">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-4">
+            {form.photoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={form.photoUrl}
+                alt={form.displayName || "Profile"}
+                className="size-16 rounded-full border border-mp-border object-cover"
+              />
+            ) : (
+              <div className="flex size-16 items-center justify-center rounded-full border border-mp-border bg-mp-panel text-xl text-mp-muted">
+                {(form.displayName || email).slice(0, 1).toUpperCase()}
+              </div>
+            )}
+            <div>
+              <h2 className="text-lg font-semibold text-mp-charcoal">
+                {form.displayName || "Add your name"}
+              </h2>
+              <p className="text-xs text-mp-muted">{email}</p>
+              <p className="text-xs text-mp-muted">{phone}</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setEditing(true)}
+            className="rounded-md border border-mp-border px-3 py-1.5 text-sm text-mp-charcoal hover:border-mp-accent hover:bg-mp-warm"
+          >
+            Edit profile
+          </button>
+        </div>
+
+        <div className="grid gap-3 border-t border-mp-border pt-4 text-sm sm:grid-cols-3">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-mp-muted">Event type</p>
+            <p className="mt-1 text-mp-charcoal">{form.eventType || "—"}</p>
+          </div>
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-mp-muted">Location</p>
+            <p className="mt-1 text-mp-charcoal">{form.location || "—"}</p>
+          </div>
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-mp-muted">Budget</p>
+            <p className="mt-1 text-mp-charcoal">{form.budgetRange || "—"}</p>
+          </div>
+        </div>
+
+        {form.categories.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {form.categories.map((c) => (
+              <span
+                key={c}
+                className="rounded-full border border-mp-border bg-mp-panel px-2.5 py-0.5 text-xs text-mp-charcoal"
+              >
+                {c}
+              </span>
+            ))}
+          </div>
+        )}
+      </section>
+    );
   }
 
   return (
@@ -131,21 +197,29 @@ export function ProfileForm({
         <div className="grid gap-4 sm:grid-cols-3">
           <label className="space-y-1">
             <span className="text-xs font-medium text-mp-muted">Event type</span>
-            <input
+            <select
               value={form.eventType}
               onChange={(e) => set("eventType", e.target.value)}
-              placeholder="Birthday"
               className={FIELD}
-            />
+            >
+              <option value="">Select…</option>
+              {EVENT_TYPES.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
           </label>
           <label className="space-y-1">
             <span className="text-xs font-medium text-mp-muted">Location</span>
-            <input
+            <select
               value={form.location}
               onChange={(e) => set("location", e.target.value)}
-              placeholder="Mumbai"
               className={FIELD}
-            />
+            >
+              <option value="">Select…</option>
+              {LOCATIONS.map((l) => (
+                <option key={l} value={l}>{l}</option>
+              ))}
+            </select>
           </label>
           <label className="space-y-1">
             <span className="text-xs font-medium text-mp-muted">Budget range</span>
@@ -181,13 +255,25 @@ export function ProfileForm({
         </div>
       </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="rounded-md bg-mp-charcoal px-4 py-2 text-sm text-mp-panel transition-colors hover:bg-mp-accent disabled:opacity-60"
-      >
-        {loading ? "Saving…" : "Save changes"}
-      </button>
+      <div className="flex gap-2">
+        <button
+          type="submit"
+          disabled={loading}
+          className="rounded-md bg-mp-charcoal px-4 py-2 text-sm text-mp-panel transition-colors hover:bg-mp-accent disabled:opacity-60"
+        >
+          {loading ? "Saving…" : "Save changes"}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setForm(initial);
+            setEditing(false);
+          }}
+          className="rounded-md border border-mp-border px-4 py-2 text-sm text-mp-charcoal hover:bg-mp-warm"
+        >
+          Cancel
+        </button>
+      </div>
     </form>
   );
 }

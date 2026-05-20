@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { VENDOR_CATEGORIES } from "@/lib/mockListings";
+import { VENDOR_CATEGORIES, EVENT_TYPES, LOCATIONS } from "@/lib/mockListings";
+
+const BUDGET_MIN = 5000;
+const BUDGET_MAX = 500000;
 
 const FIELD =
   "w-full rounded-md border border-mp-border bg-mp-panel px-3 py-2 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2";
@@ -10,8 +13,11 @@ const FIELD =
 export function WelcomePreferences() {
   const router = useRouter();
   const [form, setForm] = useState({ eventType: "", location: "", budgetRange: "" });
+  const [budgetMax, setBudgetMax] = useState<number>(50000);
   const [categories, setCategories] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [termsError, setTermsError] = useState<string | null>(null);
 
   function set(key: keyof typeof form, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -24,6 +30,11 @@ export function WelcomePreferences() {
   }
 
   async function save() {
+    setTermsError(null);
+    if (!acceptedTerms) {
+      setTermsError("Please agree to the Terms and Privacy Policy to continue.");
+      return;
+    }
     setBusy(true);
     try {
       await fetch("/api/customer/profile", {
@@ -33,7 +44,7 @@ export function WelcomePreferences() {
           preferences: {
             eventType: form.eventType || undefined,
             location: form.location || undefined,
-            budgetRange: form.budgetRange || undefined,
+            budgetRange: `Up to ₹${budgetMax.toLocaleString("en-IN")}`,
             categories: categories.length ? categories : undefined,
           },
         }),
@@ -49,30 +60,47 @@ export function WelcomePreferences() {
       <div className="grid gap-3 sm:grid-cols-3">
         <label className="space-y-1">
           <span className="text-xs font-medium text-mp-muted">Event type</span>
-          <input
+          <select
             value={form.eventType}
             onChange={(e) => set("eventType", e.target.value)}
-            placeholder="Birthday"
             className={FIELD}
-          />
+          >
+            <option value="">Select event type…</option>
+            {EVENT_TYPES.map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
         </label>
         <label className="space-y-1">
           <span className="text-xs font-medium text-mp-muted">Location</span>
-          <input
+          <select
             value={form.location}
             onChange={(e) => set("location", e.target.value)}
-            placeholder="Mumbai"
             className={FIELD}
-          />
+          >
+            <option value="">Select location…</option>
+            {LOCATIONS.map((l) => (
+              <option key={l} value={l}>{l}</option>
+            ))}
+          </select>
         </label>
         <label className="space-y-1">
-          <span className="text-xs font-medium text-mp-muted">Budget range</span>
+          <span className="text-xs font-medium text-mp-muted">
+            Budget · up to ₹{budgetMax.toLocaleString("en-IN")}
+          </span>
           <input
-            value={form.budgetRange}
-            onChange={(e) => set("budgetRange", e.target.value)}
-            placeholder="₹10k–₹25k"
-            className={FIELD}
+            type="range"
+            min={BUDGET_MIN}
+            max={BUDGET_MAX}
+            step={1000}
+            value={budgetMax}
+            onChange={(e) => setBudgetMax(Number(e.target.value))}
+            className="w-full accent-mp-accent"
           />
+          <div className="flex justify-between text-[10px] text-mp-text3">
+            <span>₹{(BUDGET_MIN / 1000).toFixed(0)}k</span>
+            <span>₹{(BUDGET_MAX / 1000).toFixed(0)}k+</span>
+          </div>
         </label>
       </div>
 
@@ -97,6 +125,29 @@ export function WelcomePreferences() {
             );
           })}
         </div>
+      </div>
+
+      <div className="rounded-md border border-mp-border bg-mp-warm p-3 text-xs text-mp-charcoal">
+        <label className="flex items-start gap-2">
+          <input
+            type="checkbox"
+            checked={acceptedTerms}
+            onChange={(e) => setAcceptedTerms(e.target.checked)}
+            className="mt-0.5 accent-mp-accent"
+          />
+          <span>
+            I agree to the{" "}
+            <a href="/terms-and-conditions" target="_blank" rel="noreferrer" className="underline">
+              Terms &amp; Conditions
+            </a>{" "}
+            and{" "}
+            <a href="/privacy-policy" target="_blank" rel="noreferrer" className="underline">
+              Privacy Policy
+            </a>
+            .
+          </span>
+        </label>
+        {termsError && <p className="mt-2 text-mp-accent">{termsError}</p>}
       </div>
 
       <div className="flex gap-2">

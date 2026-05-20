@@ -38,7 +38,7 @@ export default async function HelpPage() {
           )}
         </section>
 
-        <section className="space-y-3">
+        <section id="contact" className="scroll-mt-24 space-y-3">
           <h2 className="text-lg font-semibold text-mp-charcoal">Contact support</h2>
           <ContactForm />
         </section>

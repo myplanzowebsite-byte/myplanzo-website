@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { EVENT_TYPES } from "@/lib/mockListings";
 
 const FIELD =
   "rounded-md border border-mp-border bg-mp-panel px-3 py-2 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2";
@@ -77,12 +78,16 @@ export function CreateEventForm() {
           placeholder="Event name (e.g. Aarav's 1st Birthday)"
           className={`${FIELD} sm:col-span-3`}
         />
-        <input
+        <select
           value={eventType}
           onChange={(e) => setEventType(e.target.value)}
-          placeholder="Type (Birthday, Baby Shower…)"
           className={`${FIELD} sm:col-span-2`}
-        />
+        >
+          <option value="">Event type…</option>
+          {EVENT_TYPES.map((t) => (
+            <option key={t} value={t}>{t}</option>
+          ))}
+        </select>
         <input
           type="date"
           value={date}

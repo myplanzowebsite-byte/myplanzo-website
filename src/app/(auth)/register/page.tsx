@@ -1,13 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AuthSplitShell } from "@/components/auth/AuthSplitShell";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [role, setRole] = useState<"CUSTOMER" | "VENDOR">("CUSTOMER");
+  const params = useSearchParams();
+  const [role, setRole] = useState<"CUSTOMER" | "VENDOR">(
+    (params.get("role") as "CUSTOMER" | "VENDOR") === "VENDOR" ? "VENDOR" : "CUSTOMER",
+  );
+
+  // Honour ?role= changes (e.g. when the user toggles tab between flows on
+  // the same page) so the landing pitch and form stay in sync.
+  useEffect(() => {
+    const r = params.get("role");
+    if (r === "VENDOR" || r === "CUSTOMER") setRole(r);
+  }, [params]);
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -50,8 +60,13 @@ export default function RegisterPage() {
 
   return (
     <AuthSplitShell
-      title="Create your account"
-      subtitle="Choose whether you are booking events or offering services."
+      title={role === "VENDOR" ? "List your business on MyPlanzo" : "Create your account"}
+      subtitle={
+        role === "VENDOR"
+          ? "Get discovered by Mumbai customers planning birthdays, baby showers, anniversaries and more."
+          : "Choose whether you are booking events or offering services."
+      }
+      variant={role === "VENDOR" ? "vendor" : "customer"}
     >
       <form className="space-y-4" onSubmit={onSubmit}>
         {error ? (
@@ -100,14 +115,21 @@ export default function RegisterPage() {
           <label className="text-sm font-medium text-mp-charcoal" htmlFor="phone">
             Mobile (SMS OTP)
           </label>
-          <input
-            id="phone"
-            type="tel"
-            required
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="mt-2 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2.5 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
-          />
+          <div className="mt-2 flex items-center rounded-md border border-mp-border bg-mp-card focus-within:border-mp-accent focus-within:ring-2 focus-within:ring-mp-accent/20">
+            <span className="px-3 text-sm text-mp-muted">+91</span>
+            <input
+              id="phone"
+              type="tel"
+              required
+              inputMode="numeric"
+              pattern="[0-9]{10}"
+              maxLength={10}
+              value={phone}
+              onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+              placeholder="10-digit mobile number"
+              className="flex-1 bg-transparent px-2 py-2.5 text-sm outline-none"
+            />
+          </div>
         </div>
         <div>
           <label className="text-sm font-medium text-mp-charcoal" htmlFor="password">

@@ -6,9 +6,9 @@ export default function Loading() {
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/logo.svg"
+        src="/logo1.jpeg"
         alt="MyPlanzo"
-        style={{ height: 48, width: "auto", filter: "invert(1)" }}
+        style={{ height: 56, width: "auto", borderRadius: 10 }}
       />
       <span className="h-1 w-24 overflow-hidden rounded-full bg-white/15">
         <span className="block h-full w-1/2 animate-pulse rounded-full bg-white/70" />

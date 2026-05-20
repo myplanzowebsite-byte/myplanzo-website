@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { SupportFab } from "@/components/SupportFab";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
     siteName: "MyPlanzo",
     images: [
       {
-        url: "/logo.jpg",
+        url: "/logo1.jpeg",
         width: 1200,
         height: 630,
         alt: "MyPlanzo — Book event vendors in Mumbai",
@@ -42,7 +43,7 @@ export const metadata: Metadata = {
     title: "MyPlanzo — Book event vendors in Mumbai",
     description:
       "Find verified decorators, caterers, photographers & venues for birthdays, baby showers, and more.",
-    images: ["/logo.jpg"],
+    images: ["/logo1.jpeg"],
   },
   // PWA — installable on iOS Safari / Android Chrome.
   appleWebApp: {
@@ -51,8 +52,8 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
   },
   icons: {
-    icon: "/logo.svg",
-    apple: "/logo.jpg",
+    icon: "/logo1.jpeg",
+    apple: "/logo1.jpeg",
   },
 };
 
@@ -67,7 +68,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${plusJakarta.variable} antialiased`}>{children}</body>
+      <body className={`${inter.variable} ${plusJakarta.variable} antialiased`}>
+        {children}
+        <SupportFab />
+      </body>
     </html>
   );
 }

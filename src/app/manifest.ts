@@ -12,8 +12,7 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#0f0f0f",
     icons: [
       // SVG scales to any launcher size; the JPG is a raster fallback.
-      { src: "/logo.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
-      { src: "/logo.jpg", sizes: "512x512", type: "image/jpeg", purpose: "any" },
+      { src: "/logo1.jpeg", sizes: "512x512", type: "image/jpeg", purpose: "any" },
     ],
   };
 }

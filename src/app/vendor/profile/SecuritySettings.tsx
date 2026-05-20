@@ -135,8 +135,8 @@ function ChangePhonePanel({ currentPhone }: { currentPhone: string }) {
 
   async function sendCode() {
     setErr(null);
-    if (newPhone.trim().length < 10) {
-      setErr("Enter a valid phone number.");
+    if (newPhone.trim().length !== 10) {
+      setErr("Enter a valid 10-digit phone number.");
       return;
     }
     setBusy(true);
@@ -192,7 +192,6 @@ function ChangePhonePanel({ currentPhone }: { currentPhone: string }) {
         <div className="space-y-2">
           <input
             inputMode="numeric"
-            pattern="[0-9]{10}"
             maxLength={10}
             value={newPhone}
             onChange={(e) => setNewPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
@@ -229,12 +228,25 @@ function ChangePhonePanel({ currentPhone }: { currentPhone: string }) {
   );
 }
 
-export function SecuritySettings({
+function EmailChangeNotice({ currentEmail }: { currentEmail: string }) {
+  return (
+    <div className="space-y-1 border-t border-mp-border pt-4">
+      <p className="text-sm font-medium text-mp-charcoal">Change email</p>
+      <p className="text-xs text-mp-muted">Current: {currentEmail}</p>
+      <p className="text-xs text-mp-muted">
+        For security reasons we need to verify ownership of the new address. Drop a request via{" "}
+        <a href="/help#contact" className="underline">support</a> and we&apos;ll switch it within 24 hours.
+      </p>
+    </div>
+  );
+}
+
+export function VendorSecuritySettings({
   currentPhone,
   currentEmail,
 }: {
   currentPhone: string;
-  currentEmail?: string;
+  currentEmail: string;
 }) {
   return (
     <section className="space-y-2 rounded-[var(--radius-mp-card)] bg-mp-card p-6 shadow-[var(--shadow-mp-card)]">
@@ -246,16 +258,7 @@ export function SecuritySettings({
       </div>
       <ChangePasswordPanel />
       <ChangePhonePanel currentPhone={currentPhone} />
-      {currentEmail && (
-        <div className="space-y-1 border-t border-mp-border pt-4">
-          <p className="text-sm font-medium text-mp-charcoal">Change email</p>
-          <p className="text-xs text-mp-muted">Current: {currentEmail}</p>
-          <p className="text-xs text-mp-muted">
-            For security we verify ownership of the new address. Drop a request via{" "}
-            <a href="/help#contact" className="underline">support</a> and we&apos;ll switch it within 24 hours.
-          </p>
-        </div>
-      )}
+      <EmailChangeNotice currentEmail={currentEmail} />
     </section>
   );
 }

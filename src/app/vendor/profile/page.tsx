@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { readSession } from "@/lib/auth/session";
 import { VendorProfileForm } from "./VendorProfileForm";
 import { AvailabilityManager } from "./AvailabilityManager";
+import { VendorSecuritySettings } from "./SecuritySettings";
+import { VendorDangerZone } from "./DangerZone";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +14,11 @@ export default async function VendorProfilePage() {
 
   const profile = await prisma.vendorProfile.findUnique({ where: { userId: session.sub } });
   if (!profile) redirect("/vendor");
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.sub },
+    select: { email: true, phone: true },
+  });
 
   return (
     <div className="space-y-6">
@@ -37,6 +44,12 @@ export default async function VendorProfilePage() {
       />
 
       <AvailabilityManager />
+
+      {user && (
+        <VendorSecuritySettings currentPhone={user.phone} currentEmail={user.email} />
+      )}
+
+      <VendorDangerZone />
     </div>
   );
 }

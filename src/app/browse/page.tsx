@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: "Browse vendors · MyPlanzo",
     description:
       "Browse verified decorators, caterers, photographers, venues, DJs & cake makers for events in Mumbai.",
-    images: [{ url: "/logo.jpg", width: 1200, height: 630, alt: "MyPlanzo" }],
+    images: [{ url: "/logo1.jpeg", width: 1200, height: 630, alt: "MyPlanzo" }],
   },
 };
 
@@ -32,12 +32,13 @@ export default async function BrowsePage(props: {
     maxBudget?: string;
     minRating?: string;
     date?: string;
+    location?: string;
   }>;
 }) {
   const searchParams = await props.searchParams;
   const selectedCategory = searchParams?.category;
   const selectedEvent = searchParams?.event;
-  const zone = searchParams?.zone;
+  const zone = searchParams?.zone || searchParams?.location;
   const q = searchParams?.q;
 
   const maxBudget = Number(searchParams?.maxBudget) || undefined;

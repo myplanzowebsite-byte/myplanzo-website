@@ -26,6 +26,70 @@ export function VendorProfileForm({ initial }: { initial: Initial }) {
   const [form, setForm] = useState(initial);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  const [editing, setEditing] = useState(false);
+
+  if (!editing) {
+    return (
+      <section className="space-y-4 rounded-[var(--radius-mp-card)] bg-mp-card p-6 shadow-[var(--shadow-mp-card)]">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-4">
+            {form.photoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={form.photoUrl}
+                alt={form.businessName}
+                className="size-16 rounded-full border border-mp-border object-cover"
+              />
+            ) : (
+              <div className="flex size-16 items-center justify-center rounded-full border border-mp-border bg-mp-panel text-xl text-mp-muted">
+                {form.businessName.slice(0, 1).toUpperCase() || "B"}
+              </div>
+            )}
+            <div>
+              <h2 className="text-lg font-semibold text-mp-charcoal">{form.businessName}</h2>
+              <p className="text-xs text-mp-muted">{form.location || "Location not set"}</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setEditing(true)}
+            className="rounded-md border border-mp-border px-3 py-1.5 text-sm text-mp-charcoal hover:border-mp-accent hover:bg-mp-warm"
+          >
+            Edit profile
+          </button>
+        </div>
+
+        {form.description && (
+          <p className="whitespace-pre-line text-sm text-mp-charcoal">{form.description}</p>
+        )}
+
+        {form.categories.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {form.categories.map((c) => (
+              <span
+                key={c}
+                className="rounded-full border border-mp-border bg-mp-panel px-2.5 py-0.5 text-xs text-mp-charcoal"
+              >
+                {c}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {form.contactPreference && (
+          <p className="text-xs text-mp-muted">Contact preference: {form.contactPreference}</p>
+        )}
+
+        {form.portfolioUrls.length > 0 && (
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+            {form.portfolioUrls.slice(0, 5).map((u) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={u} src={u} alt="Portfolio" className="h-20 w-full rounded-md object-cover" />
+            ))}
+          </div>
+        )}
+      </section>
+    );
+  }
 
   function set<K extends keyof Initial>(key: K, value: Initial[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -65,6 +129,7 @@ export function VendorProfileForm({ initial }: { initial: Initial }) {
         return;
       }
       setMsg({ kind: "ok", text: "Profile saved." });
+      setEditing(false);
       router.refresh();
     } finally {
       setBusy(false);
@@ -241,13 +306,25 @@ export function VendorProfileForm({ initial }: { initial: Initial }) {
         )}
       </div>
 
-      <button
-        type="submit"
-        disabled={busy}
-        className="rounded-md bg-mp-charcoal px-4 py-2 text-sm text-mp-panel transition-colors hover:bg-mp-accent disabled:opacity-60"
-      >
-        {busy ? "Saving…" : "Save profile"}
-      </button>
+      <div className="flex gap-2">
+        <button
+          type="submit"
+          disabled={busy}
+          className="rounded-md bg-mp-charcoal px-4 py-2 text-sm text-mp-panel transition-colors hover:bg-mp-accent disabled:opacity-60"
+        >
+          {busy ? "Saving…" : "Save profile"}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setForm(initial);
+            setEditing(false);
+          }}
+          className="rounded-md border border-mp-border px-4 py-2 text-sm text-mp-charcoal hover:bg-mp-warm"
+        >
+          Cancel
+        </button>
+      </div>
     </form>
   );
 }

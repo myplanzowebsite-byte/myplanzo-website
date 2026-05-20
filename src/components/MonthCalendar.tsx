@@ -94,14 +94,14 @@ export function MonthCalendar({
           const isHighlighted = highlighted.has(ymd);
           const isBusy = busyDate === ymd;
 
-          const base = "aspect-square rounded text-xs flex items-center justify-center";
+          const base = "aspect-square rounded text-xs flex items-center justify-center relative";
           const style = isPast
-            ? "text-mp-text3"
+            ? "text-mp-text3 line-through decoration-mp-border"
             : isBlocked
-              ? "bg-mp-accent text-white"
+              ? "text-mp-text3 bg-mp-warm line-through decoration-mp-accent decoration-2"
               : isHighlighted
                 ? "bg-mp-steel text-white"
-                : "bg-mp-card text-mp-charcoal";
+                : "bg-mp-card text-mp-charcoal hover:bg-mp-warm";
 
           if (editable && !isPast) {
             return (
@@ -127,7 +127,9 @@ export function MonthCalendar({
       <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-mp-muted">
         {(blockedDates.length > 0 || editable) && (
           <span className="flex items-center gap-1.5">
-            <span className="inline-block h-2.5 w-2.5 rounded-sm bg-mp-accent" />
+            <span className="inline-block h-2.5 w-6 rounded-sm bg-mp-warm">
+              <span className="block h-full w-full border-t-2 border-mp-accent" style={{ transform: "translateY(4px)" }} />
+            </span>
             Unavailable
           </span>
         )}
