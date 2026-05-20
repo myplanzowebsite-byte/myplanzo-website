@@ -6,6 +6,7 @@ import { VENDOR_CATEGORIES, EVENT_TYPES, LOCATIONS } from "@/lib/mockListings";
 import { ImageUploader } from "@/components/ImageUploader";
 
 const MAX_PHOTOS = 10;
+const MIN_PHOTOS = 5;
 
 const PRICING_UNITS = [
   { value: "per_event", label: "per event" },
@@ -42,6 +43,10 @@ export function VendorListingForm() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (photos.length < MIN_PHOTOS) {
+      setError(`Please add at least ${MIN_PHOTOS} photos so customers can see your work.`);
+      return;
+    }
     setLoading(true);
     try {
       const priceNum = basePrice.trim() ? Number(basePrice) : undefined;
@@ -223,9 +228,22 @@ export function VendorListingForm() {
         </div>
       )}
 
-      {/* Photos — up to 10 */}
+      {/* Photos — minimum 5, up to 10 */}
       <div className="space-y-2">
-        <span className="text-xs font-medium text-mp-muted">Photos ({photos.length}/{MAX_PHOTOS})</span>
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-medium text-mp-muted">
+            Photos ({photos.length}/{MAX_PHOTOS})
+          </span>
+          <span
+            className={`text-[11px] font-medium ${
+              photos.length >= MIN_PHOTOS ? "text-green-700" : "text-mp-accent"
+            }`}
+          >
+            {photos.length >= MIN_PHOTOS
+              ? `✓ Minimum ${MIN_PHOTOS} reached`
+              : `Add ${MIN_PHOTOS - photos.length} more (min ${MIN_PHOTOS})`}
+          </span>
+        </div>
         {photos.length > 0 && (
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
             {photos.map((u) => (

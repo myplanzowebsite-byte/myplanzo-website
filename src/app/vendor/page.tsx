@@ -147,7 +147,7 @@ export default async function VendorDashboardPage() {
             </div>
             <Link
               href="/vendor/listings"
-              className="rounded-[10px] bg-white px-5 py-2.5 text-sm font-bold text-mp-charcoal transition-opacity hover:opacity-90"
+              className="rounded-[10px] bg-white px-5 py-2.5 text-sm font-bold text-black transition-opacity hover:opacity-90"
             >
               + Add your first listing
             </Link>

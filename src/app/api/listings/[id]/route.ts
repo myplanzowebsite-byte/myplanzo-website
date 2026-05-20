@@ -42,6 +42,14 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
+  const finalStatus = parsed.data.status ?? existing.status;
+  const finalPhotos = parsed.data.photos ?? existing.photos;
+  if (finalStatus === "ACTIVE" && finalPhotos.length < 5) {
+    return NextResponse.json(
+      { error: "Active listings need at least 5 photos so customers can preview your work." },
+      { status: 400 },
+    );
+  }
   const listing = await prisma.serviceListing.update({
     where: { id },
     data: parsed.data,

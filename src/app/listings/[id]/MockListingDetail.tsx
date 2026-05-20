@@ -38,16 +38,6 @@ export function MockListingDetail({
             <h1 className="text-2xl font-semibold text-mp-charcoal mt-1">{listing.title}</h1>
             <p className="text-sm text-mp-muted mt-1">{listing.vendorName}</p>
           </div>
-          {listing.waPhone && (
-            <a
-              href={`https://wa.me/${listing.waPhone}?text=${encodeURIComponent(`Hi ${listing.vendorName}, I saw you on MyPlanzo.`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-md border border-mp-border bg-mp-card px-4 py-2 text-sm font-medium text-mp-charcoal hover:border-green-500/40"
-            >
-              WhatsApp
-            </a>
-          )}
         </div>
 
         <div className="border-t border-mp-border pt-4 flex flex-wrap gap-6 text-sm">

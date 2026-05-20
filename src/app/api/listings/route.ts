@@ -59,6 +59,12 @@ export async function POST(req: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
+  if ((parsed.data.photos?.length ?? 0) < 5) {
+    return NextResponse.json(
+      { error: "Listings need at least 5 photos so customers can preview your work." },
+      { status: 400 },
+    );
+  }
   const listing = await prisma.serviceListing.create({
     data: {
       vendorId: vendor.id,

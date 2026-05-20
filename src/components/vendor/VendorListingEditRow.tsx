@@ -6,6 +6,7 @@ import { VENDOR_CATEGORIES, EVENT_TYPES, LOCATIONS } from "@/lib/mockListings";
 import { ImageUploader } from "@/components/ImageUploader";
 
 const MAX_PHOTOS = 10;
+const MIN_PHOTOS = 5;
 
 const FIELD =
   "w-full rounded-md border border-mp-border bg-mp-panel px-3 py-2 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2";
@@ -51,6 +52,14 @@ export function VendorListingEditRow({ listing }: { listing: Listing }) {
 
   async function save() {
     setErr(null);
+    if (form.status === "ACTIVE" && form.photos.length < MIN_PHOTOS) {
+      setErr(
+        `Active listings need at least ${MIN_PHOTOS} photos. Add ${
+          MIN_PHOTOS - form.photos.length
+        } more or move to draft.`,
+      );
+      return;
+    }
     setBusy(true);
     try {
       const res = await fetch(`/api/listings/${listing.id}`, {
@@ -80,6 +89,15 @@ export function VendorListingEditRow({ listing }: { listing: Listing }) {
   }
 
   async function setStatusOnly(status: "DRAFT" | "ACTIVE" | "ARCHIVED") {
+    if (status === "ACTIVE" && listing.photos.length < MIN_PHOTOS) {
+      setErr(
+        `Add at least ${MIN_PHOTOS} photos before publishing this listing (${
+          MIN_PHOTOS - listing.photos.length
+        } more needed).`,
+      );
+      setEditing(true);
+      return;
+    }
     setBusy(true);
     try {
       const res = await fetch(`/api/listings/${listing.id}`, {
@@ -242,9 +260,20 @@ export function VendorListingEditRow({ listing }: { listing: Listing }) {
       </div>
 
       <div className="space-y-2">
-        <span className="text-xs font-medium text-mp-muted">
-          Photos ({form.photos.length}/{MAX_PHOTOS})
-        </span>
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-medium text-mp-muted">
+            Photos ({form.photos.length}/{MAX_PHOTOS})
+          </span>
+          <span
+            className={`text-[11px] font-medium ${
+              form.photos.length >= MIN_PHOTOS ? "text-green-700" : "text-mp-accent"
+            }`}
+          >
+            {form.photos.length >= MIN_PHOTOS
+              ? `✓ Minimum ${MIN_PHOTOS} reached`
+              : `Need ${MIN_PHOTOS - form.photos.length} more to publish`}
+          </span>
+        </div>
         {form.photos.length > 0 && (
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
             {form.photos.map((u) => (

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 // Floating "Need help?" button that follows the user across the logged-in app
-// and offers quick links to FAQ, contact form, and a WhatsApp escalation.
+// and offers quick links to FAQ search and the contact form.
 export function SupportFab() {
   const [open, setOpen] = useState(false);
 
@@ -51,12 +51,10 @@ export function SupportFab() {
               ✉️ Message support
             </Link>
             <a
-              href="https://wa.me/919999999999?text=Hi%20MyPlanzo%20support%2C%20I%20need%20help%20with..."
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-md bg-[#25D366] px-3 py-2 text-center text-xs font-medium text-white hover:opacity-90"
+              href="mailto:hello@myplanzo.com?subject=MyPlanzo%20support%20request"
+              className="rounded-md bg-mp-charcoal px-3 py-2 text-center text-xs font-medium text-mp-panel hover:bg-mp-accent"
             >
-              📞 Chat on WhatsApp
+              📧 Email support
             </a>
           </div>
         </div>
