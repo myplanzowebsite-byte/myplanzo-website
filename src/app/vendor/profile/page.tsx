@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { readSession } from "@/lib/auth/session";
 import { VendorProfileForm } from "./VendorProfileForm";
 import { AvailabilityManager } from "./AvailabilityManager";
+import { PayoutSettings } from "./PayoutSettings";
 import { VendorSecuritySettings } from "./SecuritySettings";
 import { VendorDangerZone } from "./DangerZone";
 
@@ -45,8 +46,15 @@ export default async function VendorProfilePage() {
 
       <AvailabilityManager />
 
+      <PayoutSettings
+        initial={{
+          payoutUpiId: profile.payoutUpiId ?? "",
+          payoutRazorpayLink: profile.payoutRazorpayLink ?? "",
+        }}
+      />
+
       {user && (
-        <VendorSecuritySettings currentPhone={user.phone} currentEmail={user.email} />
+        <VendorSecuritySettings currentPhone={user.phone ?? ""} currentEmail={user.email} />
       )}
 
       <VendorDangerZone />

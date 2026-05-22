@@ -22,7 +22,7 @@ export function ProfileForm({
   initial,
 }: {
   email: string;
-  phone: string;
+  phone: string | null;
   initial: Initial;
 }) {
   const router = useRouter();
@@ -98,7 +98,7 @@ export function ProfileForm({
                 {form.displayName || "Add your name"}
               </h2>
               <p className="text-xs text-mp-muted">{email}</p>
-              <p className="text-xs text-mp-muted">{phone}</p>
+              <p className="text-xs text-mp-muted">{phone || "Phone not added"}</p>
             </div>
           </div>
           <button
@@ -185,7 +185,12 @@ export function ProfileForm({
         </label>
         <label className="space-y-1">
           <span className="text-xs font-medium text-mp-muted">Mobile number</span>
-          <input value={phone} disabled className={`${FIELD} opacity-60`} />
+          <input
+            value={phone ?? ""}
+            placeholder="Not set"
+            disabled
+            className={`${FIELD} opacity-60`}
+          />
         </label>
       </div>
       <p className="text-xs text-mp-text3">

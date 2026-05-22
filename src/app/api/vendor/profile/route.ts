@@ -14,6 +14,13 @@ export async function GET() {
 
 const url = z.string().trim().url().max(2000);
 
+// UPI IDs look like "handle@bank" — letters, digits, dots, hyphens, underscores.
+const upiId = z
+  .string()
+  .trim()
+  .regex(/^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/, "Enter a valid UPI ID, e.g. name@oksbi")
+  .max(256);
+
 const patchSchema = z.object({
   businessName: z.string().trim().min(2).max(160).optional(),
   description: z.string().trim().max(4000).optional(),
@@ -23,6 +30,8 @@ const patchSchema = z.object({
   categories: z.array(z.string().trim().min(1).max(60)).max(8).optional(),
   contactPreference: z.string().trim().max(60).nullable().optional(),
   portfolioUrls: z.array(url).max(24).optional(),
+  payoutUpiId: upiId.nullable().optional(),
+  payoutRazorpayLink: url.nullable().optional(),
 });
 
 export async function PATCH(req: Request) {
@@ -36,7 +45,8 @@ export async function PATCH(req: Request) {
   const json = await req.json().catch(() => null);
   const parsed = patchSchema.safeParse(json);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid body" }, { status: 400 });
+    const message = parsed.error.issues[0]?.message ?? "Invalid body";
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 
   const updated = await prisma.vendorProfile.update({

@@ -60,8 +60,9 @@ enum DisputeStatus {
 model User {
   id           String    @id @default(cuid())
   email        String    @unique
-  phone        String    @unique
-  passwordHash String
+  phone        String?   @unique // null for Google sign-ups until they verify a phone
+  passwordHash String? // null for Google-only accounts (no password)
+  googleId     String?   @unique // Google "sub" — set for accounts linked to Google
   role         UserRole
   isBlocked      Boolean   @default(false)
   phoneVerified  Boolean   @default(false)
@@ -120,6 +121,8 @@ model VendorProfile {
   contactPreference  String? // e.g. "Chat only" | "Chat & calls"
   verificationStatus VendorVerificationStatus @default(PENDING)
   portfolioUrls      String[]                 @default([])
+  payoutUpiId        String? // UPI ID for payouts, e.g. "name@oksbi"
+  payoutRazorpayLink String? // Razorpay payment link / page URL
   user               User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
   listings           ServiceListing[]
   bookings           Booking[]                @relation("VendorBookings")

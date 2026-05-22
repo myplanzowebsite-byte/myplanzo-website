@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     customerContact: {
       name: booking.customer.customerProfile?.displayName ?? undefined,
       email: booking.customer.email,
-      phone: booking.customer.phone,
+      phone: booking.customer.phone ?? undefined,
     },
   });
 

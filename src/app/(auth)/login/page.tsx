@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthSplitShell } from "@/components/auth/AuthSplitShell";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -64,7 +65,9 @@ export default function LoginPage() {
       currentStep={1}
       totalSteps={2}
     >
-      <form className="space-y-4" onSubmit={onSubmit}>
+      <GoogleSignInButton next={next} dividerLabel="or" />
+
+      <form className="mt-4 space-y-4" onSubmit={onSubmit}>
         {error ? (
           <p
             className="rounded-md border border-mp-accent/20 bg-mp-accent-soft px-3 py-2 text-sm text-mp-accent"

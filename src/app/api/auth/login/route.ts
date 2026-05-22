@@ -24,6 +24,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
   }
 
+  // Google-only accounts have no password — point them at the Google button.
+  if (!user.passwordHash) {
+    return NextResponse.json(
+      { error: "This account uses Google sign-in. Continue with Google instead." },
+      { status: 401 },
+    );
+  }
+
   const valid = await verifyPassword(password, user.passwordHash);
   if (!valid) {
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
@@ -40,7 +48,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, redirect: "/admin" });
   }
 
-  if (!user.phoneVerified) {
+  if (!user.phoneVerified || !user.phone) {
     return NextResponse.json(
       { error: "Phone not verified — complete registration", code: "PHONE_UNVERIFIED" },
       { status: 403 },

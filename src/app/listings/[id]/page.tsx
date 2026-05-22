@@ -57,6 +57,18 @@ export default async function PublicListingPage({
     .catch(() => {});
 
   const isLoggedIn = !!session?.sub;
+
+  // Customers must have a verified phone to book. Google sign-ups start without
+  // one — they get a "verify your phone" prompt instead of the booking form.
+  const phoneVerified = session?.sub
+    ? ((
+        await prisma.user.findUnique({
+          where: { id: session.sub },
+          select: { phoneVerified: true },
+        })
+      )?.phoneVerified ?? false)
+    : false;
+
   const reviews: ListingReview[] = listing.vendor.reviews ?? [];
   const avgRating = reviews.length > 0
     ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
@@ -155,13 +167,31 @@ export default async function PublicListingPage({
 
         <p className="text-sm text-mp-charcoal whitespace-pre-wrap border-t border-mp-border pt-4">{listing.description}</p>
 
-        {isLoggedIn ? (
+        {isLoggedIn && phoneVerified ? (
           <BookingRequestForm
             listingId={listing.id}
             blockedDates={listing.vendor.availability.map((a) =>
               a.date.toISOString().slice(0, 10),
             )}
           />
+        ) : isLoggedIn && !phoneVerified ? (
+          <div className="border-t border-mp-border pt-4">
+            <div className="rounded-md border border-mp-accent/20 bg-mp-accent-soft p-4">
+              <p className="text-sm font-semibold text-mp-charcoal">
+                Verify your phone number to book
+              </p>
+              <p className="mt-1 text-sm text-mp-muted">
+                Add and verify a mobile number on your profile so vendors can reach
+                you about this booking.
+              </p>
+              <Link
+                href="/customer/profile?verifyPhone=1"
+                className="mt-3 inline-block rounded-md bg-mp-charcoal px-4 py-2 text-sm font-semibold text-mp-panel transition-colors hover:bg-mp-accent"
+              >
+                Verify phone number
+              </Link>
+            </div>
+          </div>
         ) : (
           <>
             <div className="border-t border-mp-border pt-4">

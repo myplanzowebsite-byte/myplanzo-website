@@ -25,6 +25,14 @@ export async function POST(req: Request) {
   const user = await prisma.user.findUnique({ where: { id: session.sub } });
   if (!user) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
+  // Google-only accounts have no password and may have no phone yet.
+  if (!user.phone || !user.passwordHash) {
+    return NextResponse.json(
+      { error: "Add and verify a mobile number before changing your password." },
+      { status: 400 },
+    );
+  }
+
   // OTP for a password change goes to the user's current number.
   const otpOk = await consumeOtp(user.phone, "security", parsed.data.otp);
   if (!otpOk) {

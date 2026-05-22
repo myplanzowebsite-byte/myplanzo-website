@@ -14,6 +14,19 @@ export async function POST(req: Request) {
   if (error || !session) {
     return NextResponse.json({ error: error ?? "Unauthorized" }, { status: 401 });
   }
+
+  // A verified phone is required to book — Google sign-ups add theirs later.
+  const customer = await prisma.user.findUnique({
+    where: { id: session.sub },
+    select: { phoneVerified: true },
+  });
+  if (!customer?.phoneVerified) {
+    return NextResponse.json(
+      { error: "Verify your phone number to book.", code: "PHONE_REQUIRED" },
+      { status: 403 },
+    );
+  }
+
   const json = await req.json().catch(() => null);
   const parsed = createSchema.safeParse(json);
   if (!parsed.success) {

@@ -8,9 +8,15 @@ import { DangerZone } from "./DangerZone";
 
 export const dynamic = "force-dynamic";
 
-export default async function CustomerProfilePage() {
+export default async function CustomerProfilePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ verifyPhone?: string }>;
+}) {
   const session = await readSession();
   if (!session || session.role !== "CUSTOMER") redirect("/login?next=/customer/profile");
+
+  const { verifyPhone } = await searchParams;
 
   const user = await prisma.user.findUnique({
     where: { id: session.sub },
@@ -26,12 +32,28 @@ export default async function CustomerProfilePage() {
   };
   const np = (user.customerProfile?.notificationPrefs ?? {}) as Record<string, boolean>;
 
+  // Highlight the phone panel when the customer was sent here to add/verify a
+  // phone (e.g. from a booking attempt) or simply has no number on file.
+  const needsPhone = verifyPhone === "1" || !user.phone;
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold text-mp-charcoal">Profile &amp; Settings</h1>
         <p className="text-sm text-mp-muted mt-1">Manage your details, preferences and account.</p>
       </div>
+
+      {needsPhone && (
+        <div className="rounded-[var(--radius-mp-card)] border border-mp-accent/20 bg-mp-accent-soft p-4">
+          <p className="text-sm font-semibold text-mp-charcoal">
+            Add and verify your mobile number to start booking
+          </p>
+          <p className="mt-1 text-sm text-mp-muted">
+            Vendors need a verified number to confirm and contact you about
+            bookings. Add yours in the Security section below.
+          </p>
+        </div>
+      )}
 
       <ProfileForm
         email={user.email}
@@ -54,7 +76,11 @@ export default async function CustomerProfilePage() {
         }}
       />
 
-      <SecuritySettings currentPhone={user.phone} currentEmail={user.email} />
+      <SecuritySettings
+        currentPhone={user.phone}
+        currentEmail={user.email}
+        highlightPhone={needsPhone}
+      />
 
       <DangerZone />
     </div>

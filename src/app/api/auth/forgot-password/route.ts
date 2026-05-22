@@ -15,13 +15,14 @@ export async function POST(req: Request) {
   }
   const user = await prisma.user.findUnique({ where: { email: parsed.data.email } });
   let devOtp: string | undefined;
-  if (user) {
+  // Google-only accounts may not have a phone yet — nothing to send an OTP to.
+  if (user?.phone) {
     devOtp = await issueOtp(user.phone, "reset", user.id);
   }
   return NextResponse.json({
     message:
       "If an account exists for that email, an OTP was sent to the registered mobile number.",
-    ...(process.env.NODE_ENV === "development" && user
+    ...(process.env.NODE_ENV === "development" && user?.phone
       ? { devPhone: user.phone, devOtp }
       : {}),
   });

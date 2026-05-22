@@ -28,6 +28,12 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const target = parsed.data.phone ?? user.phone;
+  if (!target) {
+    return NextResponse.json(
+      { error: "Enter a mobile number to verify." },
+      { status: 400 },
+    );
+  }
   if (parsed.data.phone && parsed.data.phone !== user.phone) {
     const taken = await prisma.user.findUnique({ where: { phone: parsed.data.phone } });
     if (taken) {

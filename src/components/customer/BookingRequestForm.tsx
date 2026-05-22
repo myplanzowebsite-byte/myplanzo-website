@@ -62,6 +62,11 @@ export function BookingRequestForm({
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
+        // No verified phone yet — send them to the profile to add and verify one.
+        if (data.code === "PHONE_REQUIRED") {
+          router.push("/customer/profile?verifyPhone=1");
+          return;
+        }
         setError(data.error || "Failed");
         return;
       }

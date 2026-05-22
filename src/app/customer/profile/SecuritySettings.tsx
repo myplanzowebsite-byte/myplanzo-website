@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const FIELD =
@@ -123,8 +123,15 @@ function ChangePasswordPanel() {
   );
 }
 
-function ChangePhonePanel({ currentPhone }: { currentPhone: string }) {
+function ChangePhonePanel({
+  currentPhone,
+  highlight,
+}: {
+  currentPhone: string | null;
+  highlight?: boolean;
+}) {
   const router = useRouter();
+  const panelRef = useRef<HTMLDivElement>(null);
   const [newPhone, setNewPhone] = useState("");
   const [sent, setSent] = useState(false);
   const [otp, setOtp] = useState("");
@@ -182,10 +189,32 @@ function ChangePhonePanel({ currentPhone }: { currentPhone: string }) {
     }
   }
 
+  useEffect(() => {
+    if (highlight) {
+      panelRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [highlight]);
+
   return (
-    <div className="space-y-2 border-t border-mp-border pt-4">
-      <p className="text-sm font-medium text-mp-charcoal">Change mobile number</p>
-      <p className="text-xs text-mp-muted">Current: {currentPhone}</p>
+    <div
+      ref={panelRef}
+      className={`space-y-2 border-t pt-4 ${
+        highlight
+          ? "-mx-3 rounded-md border-mp-accent/30 bg-mp-accent-soft/40 px-3 pb-3 ring-1 ring-mp-accent/20"
+          : "border-mp-border"
+      }`}
+    >
+      <p className="text-sm font-medium text-mp-charcoal">
+        {currentPhone ? "Change mobile number" : "Add mobile number"}
+      </p>
+      {currentPhone ? (
+        <p className="text-xs text-mp-muted">Current: {currentPhone}</p>
+      ) : (
+        <p className="text-xs text-mp-muted">
+          No mobile number on file — add and verify one to receive booking updates
+          and to book vendors.
+        </p>
+      )}
       {done && <Notice kind="ok" text="Mobile number updated." />}
       {err && <Notice kind="err" text={err} />}
       {!sent ? (
@@ -232,9 +261,11 @@ function ChangePhonePanel({ currentPhone }: { currentPhone: string }) {
 export function SecuritySettings({
   currentPhone,
   currentEmail,
+  highlightPhone,
 }: {
-  currentPhone: string;
+  currentPhone: string | null;
   currentEmail?: string;
+  highlightPhone?: boolean;
 }) {
   return (
     <section className="space-y-2 rounded-[var(--radius-mp-card)] bg-mp-card p-6 shadow-[var(--shadow-mp-card)]">
@@ -244,8 +275,10 @@ export function SecuritySettings({
           Sensitive changes require a one-time code sent by SMS.
         </p>
       </div>
-      <ChangePasswordPanel />
-      <ChangePhonePanel currentPhone={currentPhone} />
+      {/* Changing a password needs an OTP to the current phone — only offered
+          once a mobile number is on file. */}
+      {currentPhone && <ChangePasswordPanel />}
+      <ChangePhonePanel currentPhone={currentPhone} highlight={highlightPhone} />
       {currentEmail && (
         <div className="space-y-1 border-t border-mp-border pt-4">
           <p className="text-sm font-medium text-mp-charcoal">Change email</p>

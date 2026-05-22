@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthSplitShell } from "@/components/auth/AuthSplitShell";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -68,6 +69,12 @@ export default function RegisterPage() {
       }
       variant={role === "VENDOR" ? "vendor" : "customer"}
     >
+      {role === "CUSTOMER" ? (
+        <div className="mb-4">
+          <GoogleSignInButton dividerLabel="or sign up with email" />
+        </div>
+      ) : null}
+
       <form className="space-y-4" onSubmit={onSubmit}>
         {error ? (
           <p
