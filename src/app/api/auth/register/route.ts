@@ -55,7 +55,7 @@ export async function POST(req: Request) {
     },
   });
 
-  const otp = await issueOtp(phone, "register", user.id);
+  const otp = await issueOtp({ phone, purpose: "register", userId: user.id });
 
   return NextResponse.json({
     ok: true,

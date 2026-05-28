@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUploader } from "@/components/ImageUploader";
-import { VENDOR_CATEGORIES } from "@/lib/mockListings";
+import type { VendorCategoryOption } from "@/lib/vendorCategories";
 
 type Initial = {
   businessName: string;
@@ -21,7 +21,13 @@ const FIELD =
 
 const CONTACT_OPTIONS = ["Chat only", "Chat & calls"];
 
-export function VendorProfileForm({ initial }: { initial: Initial }) {
+export function VendorProfileForm({
+  initial,
+  vendorCategories,
+}: {
+  initial: Initial;
+  vendorCategories: VendorCategoryOption[];
+}) {
   const router = useRouter();
   const [form, setForm] = useState(initial);
   const [busy, setBusy] = useState(false);
@@ -235,20 +241,20 @@ export function VendorProfileForm({ initial }: { initial: Initial }) {
       <div className="space-y-2">
         <span className="text-xs font-medium text-mp-muted">Categories</span>
         <div className="flex flex-wrap gap-2">
-          {VENDOR_CATEGORIES.map((c) => {
-            const on = form.categories.includes(c.label);
+          {vendorCategories.map((c) => {
+            const on = form.categories.includes(c.title);
             return (
               <button
-                key={c.label}
+                key={c.id}
                 type="button"
-                onClick={() => toggleCategory(c.label)}
+                onClick={() => toggleCategory(c.title)}
                 className={`rounded-full border px-3 py-1.5 text-sm transition ${
                   on
                     ? "border-mp-charcoal bg-mp-charcoal text-mp-panel"
                     : "border-mp-border bg-mp-card text-mp-charcoal"
                 }`}
               >
-                {c.emoji} {c.label}
+                {c.emoji} {c.title}
               </button>
             );
           })}

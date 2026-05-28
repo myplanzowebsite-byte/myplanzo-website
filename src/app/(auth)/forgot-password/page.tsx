@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
         setError(data.error || "Request failed");
         return;
       }
-      setMessage(data.message || "If an account exists, an OTP was sent to the registered phone.");
+      setMessage(data.message || "If an account exists, an OTP was sent to the registered phone and email.");
     } finally {
       setLoading(false);
     }
@@ -35,7 +35,7 @@ export default function ForgotPasswordPage() {
   return (
     <AuthSplitShell
       title="Forgot Password"
-      subtitle="Enter your email address and we&apos;ll send an OTP to your registered mobile to reset your password."
+      subtitle="Enter your email address and we&apos;ll send an OTP to your registered mobile and email to reset your password."
     >
       <form className="space-y-5" onSubmit={onSubmit}>
         {error ? (

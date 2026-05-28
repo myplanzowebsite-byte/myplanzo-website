@@ -2,14 +2,9 @@
 // before any real vendor data exists. IDs are prefixed `mock-` so other code
 // can detect them and skip DB lookups.
 
-export const VENDOR_CATEGORIES = [
-  { emoji: "🎀", label: "Decorators" },
-  { emoji: "📸", label: "Photographers" },
-  { emoji: "🍽️", label: "Caterers" },
-  { emoji: "🏛️", label: "Venues" },
-  { emoji: "🎵", label: "DJ & Music" },
-  { emoji: "🎂", label: "Cake" },
-] as const;
+// The list of vendor categories now lives in the database as `VendorCategory`
+// rows, managed from /admin/cms/vendor-categories. Read them via
+// `getVendorCategories()` from `@/lib/vendorCategories`.
 
 export const EVENT_TAGS = [
   "Birthday",
@@ -76,7 +71,7 @@ export type MockListing = {
   id: string;
   title: string;
   vendorName: string;
-  category: string; // one of VENDOR_CATEGORIES labels
+  category: string; // matches a `VendorCategory.title` from the DB
   eventTags: string[];
   location: string;
   priceMin: number;

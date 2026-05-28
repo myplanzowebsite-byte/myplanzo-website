@@ -6,6 +6,7 @@ import { AvailabilityManager } from "./AvailabilityManager";
 import { PayoutSettings } from "./PayoutSettings";
 import { VendorSecuritySettings } from "./SecuritySettings";
 import { VendorDangerZone } from "./DangerZone";
+import { getVendorCategories } from "@/lib/vendorCategories";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,8 @@ export default async function VendorProfilePage() {
     where: { id: session.sub },
     select: { email: true, phone: true },
   });
+
+  const vendorCategories = await getVendorCategories();
 
   return (
     <div className="space-y-6">
@@ -42,6 +45,7 @@ export default async function VendorProfilePage() {
           contactPreference: profile.contactPreference ?? "",
           portfolioUrls: profile.portfolioUrls,
         }}
+        vendorCategories={vendorCategories}
       />
 
       <AvailabilityManager />

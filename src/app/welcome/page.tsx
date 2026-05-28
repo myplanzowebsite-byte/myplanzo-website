@@ -2,12 +2,15 @@ import { redirect } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
 import { readSession } from "@/lib/auth/session";
 import { WelcomePreferences } from "./WelcomePreferences";
+import { getVendorCategories } from "@/lib/vendorCategories";
 
 export const dynamic = "force-dynamic";
 
 export default async function WelcomePage() {
   const session = await readSession();
   if (!session || session.role !== "CUSTOMER") redirect("/login");
+
+  const vendorCategories = await getVendorCategories();
 
   return (
     <div className="min-h-screen bg-mp-canvas">
@@ -20,7 +23,7 @@ export default async function WelcomePage() {
             point you to the right vendors — or skip and explore.
           </p>
           <div className="mt-6">
-            <WelcomePreferences />
+            <WelcomePreferences vendorCategories={vendorCategories} />
           </div>
         </div>
       </main>

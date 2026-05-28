@@ -4,12 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { VendorCard, type VendorCardData } from "@/components/VendorCard";
 import { BrowseFilters } from "@/components/BrowseFilters";
 import { formatINR, priceUnitForListing } from "@/lib/format";
-import {
-  VENDOR_CATEGORIES,
-  EVENT_TYPES,
-  MOCK_LISTINGS,
-  filterMockListings,
-} from "@/lib/mockListings";
+import { EVENT_TYPES, MOCK_LISTINGS, filterMockListings } from "@/lib/mockListings";
+import { getVendorCategories } from "@/lib/vendorCategories";
 
 // Builds /browse?... preserving the current filter state, with `patch`
 // overrides (null clears a key). Keeps the chips/pills synced.
@@ -103,6 +99,8 @@ export default async function BrowsePage(props: {
   const date = /^\d{4}-\d{2}-\d{2}$/.test(searchParams?.date ?? "")
     ? searchParams!.date!
     : undefined;
+
+  const vendorCategories = await getVendorCategories();
 
   const listings = await prisma.serviceListing.findMany({
     where: {
@@ -225,14 +223,14 @@ export default async function BrowsePage(props: {
         >
           All
         </Link>
-        {VENDOR_CATEGORIES.map((c) => {
-          const isActive = selectedCategory === c.label;
+        {vendorCategories.map((c) => {
+          const isActive = selectedCategory === c.title;
           return (
             <Link
-              key={c.label}
+              key={c.id}
               href={buildBrowseHref(
                 { selectedCategory, selectedEvent, zone, q, maxBudget, minRating, date },
-                { category: isActive ? null : c.label },
+                { category: isActive ? null : c.title },
               )}
               className={`rounded-full border px-3 py-1.5 text-sm transition ${
                 isActive
@@ -240,7 +238,7 @@ export default async function BrowsePage(props: {
                   : "border-mp-border bg-mp-card text-mp-charcoal"
               }`}
             >
-              {c.emoji} {c.label}
+              {c.emoji} {c.title}
             </Link>
           );
         })}

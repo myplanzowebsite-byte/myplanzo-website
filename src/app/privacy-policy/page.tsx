@@ -64,7 +64,7 @@ export default function PrivacyPolicyPage() {
             <h2 className="mb-2 text-lg font-semibold text-mp-charcoal">6. Your rights</h2>
             <p>
               You may request access, correction, or deletion of your personal data by emailing{" "}
-              <a href="mailto:hello@myplanzo.com" className="text-mp-accent underline">hello@myplanzo.com</a>.
+              <a href="mailto:support@myplanzo.com" className="text-mp-accent underline">support@myplanzo.com</a>.
             </p>
           </section>
 

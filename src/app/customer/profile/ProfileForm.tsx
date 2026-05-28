@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { VENDOR_CATEGORIES, EVENT_TYPES, LOCATIONS } from "@/lib/mockListings";
+import { EVENT_TYPES, LOCATIONS } from "@/lib/mockListings";
+import type { VendorCategoryOption } from "@/lib/vendorCategories";
 
 type Initial = {
   displayName: string;
@@ -20,10 +21,12 @@ export function ProfileForm({
   email,
   phone,
   initial,
+  vendorCategories,
 }: {
   email: string;
   phone: string | null;
   initial: Initial;
+  vendorCategories: VendorCategoryOption[];
 }) {
   const router = useRouter();
   const [form, setForm] = useState(initial);
@@ -239,20 +242,20 @@ export function ProfileForm({
         <div className="mt-4 space-y-2">
           <span className="text-xs font-medium text-mp-muted">Preferred categories</span>
           <div className="flex flex-wrap gap-2">
-            {VENDOR_CATEGORIES.map((c) => {
-              const on = form.categories.includes(c.label);
+            {vendorCategories.map((c) => {
+              const on = form.categories.includes(c.title);
               return (
                 <button
-                  key={c.label}
+                  key={c.id}
                   type="button"
-                  onClick={() => toggleCategory(c.label)}
+                  onClick={() => toggleCategory(c.title)}
                   className={`rounded-full border px-3 py-1.5 text-sm transition ${
                     on
                       ? "border-mp-charcoal bg-mp-charcoal text-mp-panel"
                       : "border-mp-border bg-mp-card text-mp-charcoal"
                   }`}
                 >
-                  {c.emoji} {c.label}
+                  {c.emoji} {c.title}
                 </button>
               );
             })}

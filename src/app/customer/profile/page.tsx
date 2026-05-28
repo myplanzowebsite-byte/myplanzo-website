@@ -5,6 +5,7 @@ import { ProfileForm } from "./ProfileForm";
 import { NotificationPrefsForm } from "./NotificationPrefsForm";
 import { SecuritySettings } from "./SecuritySettings";
 import { DangerZone } from "./DangerZone";
+import { getVendorCategories } from "@/lib/vendorCategories";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +32,7 @@ export default async function CustomerProfilePage({
     categories?: string[];
   };
   const np = (user.customerProfile?.notificationPrefs ?? {}) as Record<string, boolean>;
+  const vendorCategories = await getVendorCategories();
 
   // Highlight the phone panel when the customer was sent here to add/verify a
   // phone (e.g. from a booking attempt) or simply has no number on file.
@@ -66,6 +68,7 @@ export default async function CustomerProfilePage({
           budgetRange: prefs.budgetRange ?? "",
           categories: prefs.categories ?? [],
         }}
+        vendorCategories={vendorCategories}
       />
 
       <NotificationPrefsForm

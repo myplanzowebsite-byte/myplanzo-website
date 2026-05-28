@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     where: { phone: target, purpose: "security", consumed: false },
     data: { consumed: true },
   });
-  const otp = await issueOtp(target, "security", user.id);
+  const otp = await issueOtp({ phone: target, purpose: "security", userId: user.id });
 
   return NextResponse.json({ ok: true, ...(isMockSms() ? { devOtp: otp } : {}) });
 }

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { VENDOR_CATEGORIES, EVENT_TYPES, LOCATIONS } from "@/lib/mockListings";
+import { EVENT_TYPES, LOCATIONS } from "@/lib/mockListings";
+import type { VendorCategoryOption } from "@/lib/vendorCategories";
 
 const BUDGET_MIN = 5000;
 const BUDGET_MAX = 500000;
@@ -10,7 +11,11 @@ const BUDGET_MAX = 500000;
 const FIELD =
   "w-full rounded-md border border-mp-border bg-mp-panel px-3 py-2 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2";
 
-export function WelcomePreferences() {
+export function WelcomePreferences({
+  vendorCategories,
+}: {
+  vendorCategories: VendorCategoryOption[];
+}) {
   const router = useRouter();
   const [form, setForm] = useState({ eventType: "", location: "", budgetRange: "" });
   const [budgetMax, setBudgetMax] = useState<number>(50000);
@@ -108,20 +113,20 @@ export function WelcomePreferences() {
       <div className="space-y-2">
         <span className="text-xs font-medium text-mp-muted">Preferred categories</span>
         <div className="flex flex-wrap gap-2">
-          {VENDOR_CATEGORIES.map((c) => {
-            const on = categories.includes(c.label);
+          {vendorCategories.map((c) => {
+            const on = categories.includes(c.title);
             return (
               <button
-                key={c.label}
+                key={c.id}
                 type="button"
-                onClick={() => toggleCategory(c.label)}
+                onClick={() => toggleCategory(c.title)}
                 className={`rounded-full border px-3 py-1.5 text-sm transition ${
                   on
                     ? "border-mp-charcoal bg-mp-charcoal text-mp-panel"
                     : "border-mp-border bg-mp-card text-mp-charcoal"
                 }`}
               >
-                {c.emoji} {c.label}
+                {c.emoji} {c.title}
               </button>
             );
           })}

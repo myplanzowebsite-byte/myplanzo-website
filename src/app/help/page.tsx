@@ -40,6 +40,20 @@ export default async function HelpPage() {
 
         <section id="contact" className="scroll-mt-24 space-y-3">
           <h2 className="text-lg font-semibold text-mp-charcoal">Contact support</h2>
+          <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-mp-muted">
+            <span>
+              Email:{" "}
+              <a href="mailto:support@myplanzo.com" className="text-mp-accent underline">
+                support@myplanzo.com
+              </a>
+            </span>
+            <span>
+              Phone:{" "}
+              <a href="tel:+919892788527" className="text-mp-accent underline">
+                +91 98927 88527
+              </a>
+            </span>
+          </div>
           <ContactForm />
         </section>
 

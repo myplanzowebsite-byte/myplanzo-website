@@ -51,7 +51,7 @@ export function SupportFab() {
               ✉️ Message support
             </Link>
             <a
-              href="mailto:hello@myplanzo.com?subject=MyPlanzo%20support%20request"
+              href="mailto:support@myplanzo.com?subject=MyPlanzo%20support%20request"
               className="rounded-md bg-mp-charcoal px-3 py-2 text-center text-xs font-medium text-mp-panel hover:bg-mp-accent"
             >
               📧 Email support

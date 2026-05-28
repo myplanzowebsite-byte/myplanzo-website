@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { VENDOR_CATEGORIES, EVENT_TYPES, LOCATIONS } from "@/lib/mockListings";
+import { EVENT_TYPES, LOCATIONS } from "@/lib/mockListings";
+import type { VendorCategoryOption } from "@/lib/vendorCategories";
 import { ImageUploader } from "@/components/ImageUploader";
 
 const MAX_PHOTOS = 10;
@@ -18,7 +19,11 @@ const PRICING_UNITS = [
 const FIELD =
   "w-full rounded-md border border-mp-border bg-mp-panel px-3 py-2 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2";
 
-export function VendorListingForm() {
+export function VendorListingForm({
+  vendorCategories,
+}: {
+  vendorCategories: VendorCategoryOption[];
+}) {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -129,9 +134,9 @@ export function VendorListingForm() {
             className={FIELD}
           >
             <option value="" disabled>Select category…</option>
-            {VENDOR_CATEGORIES.map((c) => (
-              <option key={c.label} value={c.label}>
-                {c.emoji} {c.label}
+            {vendorCategories.map((c) => (
+              <option key={c.id} value={c.title}>
+                {c.emoji} {c.title}
               </option>
             ))}
           </select>

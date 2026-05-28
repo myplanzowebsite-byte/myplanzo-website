@@ -4,9 +4,9 @@ export const dynamic = "force-dynamic";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-mp-canvas">
+    <div className="min-h-screen bg-mp-canvas lg:flex">
       <AdminSidebar />
-      <div className="flex-1 overflow-auto p-6 lg:p-10">{children}</div>
+      <main className="flex-1 p-4 sm:p-6 lg:p-10">{children}</main>
     </div>
   );
 }

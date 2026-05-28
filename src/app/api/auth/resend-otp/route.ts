@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     });
 
     // Issue new OTP
-    const otp = await issueOtp(phone, purpose);
+    const otp = await issueOtp({ phone, purpose });
 
     return NextResponse.json({
       ok: true,

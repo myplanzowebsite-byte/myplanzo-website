@@ -7,7 +7,7 @@ import { AuthSplitShell } from "@/components/auth/AuthSplitShell";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
-  const [phone, setPhone] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -26,7 +26,7 @@ export default function ResetPasswordPage() {
       const res = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, code, newPassword }),
+        body: JSON.stringify({ identifier: identifier.trim(), code, newPassword }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -42,7 +42,7 @@ export default function ResetPasswordPage() {
   return (
     <AuthSplitShell
       title="Reset your password"
-      subtitle="Enter the OTP from SMS and choose a new password."
+      subtitle="Enter the OTP we sent to your phone or email and choose a new password."
     >
       <form className="space-y-5" onSubmit={onSubmit}>
         {error ? (
@@ -54,19 +54,17 @@ export default function ResetPasswordPage() {
           </p>
         ) : null}
         <div>
-          <label className="text-sm font-medium text-mp-charcoal" htmlFor="phone">
-            Mobile number
+          <label className="text-sm font-medium text-mp-charcoal" htmlFor="identifier">
+            Phone or email
           </label>
           <input
-            id="phone"
-            type="tel"
+            id="identifier"
+            type="text"
             required
-            inputMode="numeric"
-            pattern="[0-9]{10}"
-            maxLength={10}
-            placeholder="10-digit mobile number"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+            autoComplete="username"
+            placeholder="10-digit mobile or email address"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
             className="mt-1.5 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2.5 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2"
           />
         </div>

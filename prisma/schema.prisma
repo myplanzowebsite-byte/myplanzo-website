@@ -88,7 +88,8 @@ model User {
 model OtpCode {
   id        String   @id @default(cuid())
   userId    String?
-  phone     String
+  phone     String? // identifier for SMS delivery; null when the OTP is email-only
+  email     String? // identifier for email delivery; either phone or email (or both) must be set
   code      String
   purpose   String // register | login | reset
   expiresAt DateTime
@@ -97,6 +98,7 @@ model OtpCode {
   user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([phone, purpose, consumed])
+  @@index([email, purpose, consumed])
 }
 
 model CustomerProfile {

@@ -113,8 +113,95 @@ function CompareViewContent({ items }: { items: ShortlistItem[] }) {
   const compareItems = items.slice(0, 4);
 
   return (
-    <div className="overflow-x-auto rounded-[var(--radius-mp-card)] border border-mp-border shadow-[var(--shadow-mp-card)]">
-      <table className="w-full border-collapse text-sm">
+    <>
+      {/* Mobile (<md): per-vendor stacked cards with labelled attribute rows */}
+      <div className="grid gap-3 md:hidden">
+        {compareItems.map((item) => {
+          const avgRating = item.listing.vendor.reviews.length
+            ? item.listing.vendor.reviews.reduce((sum, r) => sum + r.rating, 0) /
+              item.listing.vendor.reviews.length
+            : 0;
+          return (
+            <div
+              key={item.id}
+              className="rounded-[var(--radius-mp-card)] border border-mp-border bg-mp-card p-4 shadow-[var(--shadow-mp-card)]"
+            >
+              <p className="text-base font-semibold text-mp-charcoal">
+                {item.listing.vendor.businessName}
+              </p>
+              <p className="mt-0.5 text-xs text-mp-muted">{item.listing.title}</p>
+
+              <dl className="mt-3 divide-y divide-mp-border text-sm">
+                <div className="flex items-center justify-between py-2">
+                  <dt className="text-mp-muted">Pricing</dt>
+                  <dd className="text-right">
+                    {item.listing.priceMin ? (
+                      <>
+                        <span className="font-semibold text-mp-accent">
+                          ₹{item.listing.priceMin.toLocaleString()}
+                        </span>
+                        {item.listing.priceMax ? (
+                          <span className="text-xs text-mp-muted">
+                            {" "}
+                            – ₹{item.listing.priceMax.toLocaleString()}
+                          </span>
+                        ) : null}
+                      </>
+                    ) : (
+                      <span className="text-mp-muted">Contact</span>
+                    )}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <dt className="text-mp-muted">Rating</dt>
+                  <dd className="flex items-center gap-1.5">
+                    <span className="flex gap-0.5">
+                      {[...Array(5)].map((_, i) => (
+                        <span
+                          key={i}
+                          className={
+                            i < Math.floor(avgRating)
+                              ? "text-mp-accent"
+                              : "text-mp-muted"
+                          }
+                        >
+                          ★
+                        </span>
+                      ))}
+                    </span>
+                    {avgRating > 0 ? (
+                      <span className="text-xs text-mp-muted">
+                        {avgRating.toFixed(1)} ({item.listing.vendor.reviews.length})
+                      </span>
+                    ) : null}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <dt className="text-mp-muted">Events done</dt>
+                  <dd className="font-medium">
+                    {item.listing.vendor.eventsCompleted || 0}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <dt className="text-mp-muted">Location</dt>
+                  <dd>{item.listing.location || "Mumbai"}</dd>
+                </div>
+              </dl>
+
+              <Link
+                href={`/listings/${item.listingId}`}
+                className="mt-3 block w-full rounded-md bg-mp-charcoal py-2 text-center text-sm font-medium text-mp-panel hover:bg-mp-accent"
+              >
+                Book
+              </Link>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop (md+): keep the side-by-side comparison table */}
+      <div className="hidden overflow-x-auto rounded-[var(--radius-mp-card)] border border-mp-border shadow-[var(--shadow-mp-card)] md:block">
+        <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="border-b border-mp-border bg-mp-panel">
             <th className="text-left font-semibold text-mp-charcoal p-4 sticky left-0 bg-mp-panel min-w-[180px]">
@@ -211,6 +298,7 @@ function CompareViewContent({ items }: { items: ShortlistItem[] }) {
           </tr>
         </tbody>
       </table>
-    </div>
+      </div>
+    </>
   );
 }

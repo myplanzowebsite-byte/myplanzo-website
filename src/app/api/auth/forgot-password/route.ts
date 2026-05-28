@@ -15,15 +15,21 @@ export async function POST(req: Request) {
   }
   const user = await prisma.user.findUnique({ where: { email: parsed.data.email } });
   let devOtp: string | undefined;
-  // Google-only accounts may not have a phone yet — nothing to send an OTP to.
-  if (user?.phone) {
-    devOtp = await issueOtp(user.phone, "reset", user.id);
+  // Always email; SMS in addition if the account has a verified phone.
+  // Google-only sign-ups without a phone can still recover via email.
+  if (user) {
+    devOtp = await issueOtp({
+      phone: user.phone,
+      email: user.email,
+      purpose: "reset",
+      userId: user.id,
+    });
   }
   return NextResponse.json({
     message:
-      "If an account exists for that email, an OTP was sent to the registered mobile number.",
-    ...(process.env.NODE_ENV === "development" && user?.phone
-      ? { devPhone: user.phone, devOtp }
+      "If an account exists for that email, an OTP has been sent to the registered mobile number and email.",
+    ...(process.env.NODE_ENV === "development" && user
+      ? { devEmail: user.email, devPhone: user.phone, devOtp }
       : {}),
   });
 }

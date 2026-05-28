@@ -52,7 +52,7 @@ export default function TermsPage() {
             </p>
           </section>
 
-          <section>
+          <section id="refund" className="scroll-mt-24">
             <h2 className="mb-2 text-lg font-semibold text-mp-charcoal">6. Cancellations &amp; refunds</h2>
             <p>
               Cancellation policies vary by vendor and will be disclosed at the time of booking. Refund requests are reviewed in
@@ -85,8 +85,8 @@ export default function TermsPage() {
             <h2 className="mb-2 text-lg font-semibold text-mp-charcoal">10. Contact</h2>
             <p>
               Questions about these terms? Email{" "}
-              <a href="mailto:hello@myplanzo.com" className="text-mp-accent underline">
-                hello@myplanzo.com
+              <a href="mailto:support@myplanzo.com" className="text-mp-accent underline">
+                support@myplanzo.com
               </a>
               .
             </p>

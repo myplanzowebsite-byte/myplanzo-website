@@ -19,7 +19,7 @@ export default function AboutPage() {
         </p>
         <p className="text-sm leading-relaxed text-mp-muted">
           Have feedback or want to partner with us? Email{" "}
-          <a href="mailto:hello@myplanzo.com" className="text-mp-accent underline">hello@myplanzo.com</a>.
+          <a href="mailto:support@myplanzo.com" className="text-mp-accent underline">support@myplanzo.com</a>.
         </p>
       </main>
     </div>

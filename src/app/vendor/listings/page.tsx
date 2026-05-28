@@ -3,6 +3,7 @@ import { readSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import { VendorListingForm } from "@/components/vendor/VendorListingForm";
 import { VendorListingEditRow } from "@/components/vendor/VendorListingEditRow";
+import { getVendorCategories } from "@/lib/vendorCategories";
 
 export default async function VendorListingsPage() {
   const session = await readSession();
@@ -12,6 +13,8 @@ export default async function VendorListingsPage() {
     include: { listings: { orderBy: { updatedAt: "desc" } } },
   });
   if (!vendor) redirect("/login");
+
+  const vendorCategories = await getVendorCategories();
 
   const active = vendor.listings.filter((l) => l.status === "ACTIVE");
   const drafts = vendor.listings.filter((l) => l.status === "DRAFT");
@@ -26,7 +29,7 @@ export default async function VendorListingsPage() {
         </p>
       </div>
 
-      <VendorListingForm />
+      <VendorListingForm vendorCategories={vendorCategories} />
 
       {vendor.listings.length === 0 ? (
         <p className="text-mp-muted text-sm">No listings yet — create your first one above.</p>
@@ -39,7 +42,7 @@ export default async function VendorListingsPage() {
               </h2>
               <ul className="space-y-2">
                 {active.map((l) => (
-                  <VendorListingEditRow key={l.id} listing={l} />
+                  <VendorListingEditRow key={l.id} listing={l} vendorCategories={vendorCategories} />
                 ))}
               </ul>
             </section>
@@ -52,7 +55,7 @@ export default async function VendorListingsPage() {
               </h2>
               <ul className="space-y-2">
                 {drafts.map((l) => (
-                  <VendorListingEditRow key={l.id} listing={l} />
+                  <VendorListingEditRow key={l.id} listing={l} vendorCategories={vendorCategories} />
                 ))}
               </ul>
             </section>
@@ -65,7 +68,7 @@ export default async function VendorListingsPage() {
               </h2>
               <ul className="space-y-2">
                 {archived.map((l) => (
-                  <VendorListingEditRow key={l.id} listing={l} />
+                  <VendorListingEditRow key={l.id} listing={l} vendorCategories={vendorCategories} />
                 ))}
               </ul>
             </section>

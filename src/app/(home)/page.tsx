@@ -241,7 +241,7 @@ export default function HomePage() {
               {i < HOW_STEPS.length - 1 && (
                 <span
                   aria-hidden
-                  className="absolute left-1/2 top-[44px] block h-[calc(100%-44px+1.5rem)] w-px -translate-x-1/2 xl:hidden"
+                  className="absolute left-1/2 top-[44px] hidden h-[calc(100%-44px+1.5rem)] w-px -translate-x-1/2 sm:block xl:hidden"
                   style={{
                     background:
                       "repeating-linear-gradient(to bottom, var(--color-mp-steel) 0 6px, transparent 6px 12px)",
@@ -359,23 +359,24 @@ export default function HomePage() {
 
       {/* ── FOOTER ──────────────────────────────────────────────────────────── */}
       <footer className="border-t px-6 pb-5 pt-8" style={{ borderColor: "var(--color-mp-border)" }}>
-        <div className="mb-7 flex flex-wrap justify-between gap-8">
+        <div className="mb-7 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="ft-brand">
             <div className="flex items-center gap-1.5 font-bold" style={{ fontSize: "0.95rem", color: "var(--color-mp-charcoal)" }}>
               <div
                 className="flex items-center justify-center rounded-[7px] text-[13px]"
                 style={{ width: 26, height: 26, background: "var(--color-mp-accent)" }}
-              >          <img
-            src="/logo1.jpeg"
-            alt="MyPlanzo"
-            style={{ height: 26, width: "auto", borderRadius: 8 }}
-          />
+              >
+                <img
+                  src="/logo1.jpeg"
+                  alt="MyPlanzo"
+                  style={{ height: 26, width: "auto", borderRadius: 8 }}
+                />
               </div>
-              MyPlanzo
+              MyPlanzo Events Private Limited
             </div>
-            <p className="mt-2 text-[0.75rem] leading-[1.6]" style={{ color: "var(--color-mp-text3)", maxWidth: 200 }}>
-              Mumbai&apos;s marketplace for personal celebrations. Trusted vendors, stress-free booking.
+            <p className="mt-2 text-[0.75rem] leading-[1.6]" style={{ color: "var(--color-mp-text3)", maxWidth: 260 }}>
+              Helping people plan birthdays, baby showers, farewells, and personal celebrations with trusted vendor discovery and simplified booking.
             </p>
           </div>
 
@@ -385,7 +386,12 @@ export default function HomePage() {
               Customers
             </h4>
             <ul className="flex flex-col gap-2">
-              {[["Browse vendors", "/browse"], ["How it works", "#how"], ["Birthday", "/browse?event=Birthday"], ["Baby shower", "/browse?event=Baby%20Shower"]].map(([label, href]) => (
+              {[
+                ["Browse vendors", "/browse"],
+                ["How it works", "/#how"],
+                ["Birthdays", "/browse?event=Birthday"],
+                ["Baby showers", "/browse?event=Baby%20Shower"],
+              ].map(([label, href]) => (
                 <li key={label}>
                   <Link href={href} className="text-[0.77rem] transition-colors hover:text-[var(--color-mp-charcoal)]" style={{ color: "var(--color-mp-muted)", textDecoration: "none" }}>
                     {label}
@@ -401,7 +407,11 @@ export default function HomePage() {
               Vendors
             </h4>
             <ul className="flex flex-col gap-2">
-              {[["List your business", "/register?role=VENDOR"], ["Vendor dashboard", "/vendor"], ["Commission model", "/terms-and-conditions#commission"]].map(([label, href]) => (
+              {[
+                ["List your business", "/register?role=VENDOR"],
+                ["Vendor dashboard", "/vendor"],
+                ["Commission policy", "/terms-and-conditions#commission"],
+              ].map(([label, href]) => (
                 <li key={label}>
                   <Link href={href} className="text-[0.77rem] transition-colors hover:text-[var(--color-mp-charcoal)]" style={{ color: "var(--color-mp-muted)", textDecoration: "none" }}>
                     {label}
@@ -417,11 +427,17 @@ export default function HomePage() {
               Company
             </h4>
             <ul className="flex flex-col gap-2">
-              {[["About us", "/about"], ["Help & Support", "/help"], ["Terms & conditions", "/terms-and-conditions"], ["Privacy policy", "/privacy-policy"]].map(([label, href]) => (
+              {[
+                ["About us", "/about"],
+                ["Contact & Support", "/help#contact"],
+                ["Terms & Conditions", "/terms-and-conditions"],
+                ["Privacy Policy", "/privacy-policy"],
+                ["Refund & Cancellation Policy", "/terms-and-conditions#refund"],
+              ].map(([label, href]) => (
                 <li key={label}>
-                  <a href={href} className="text-[0.77rem] transition-colors hover:text-[var(--color-mp-charcoal)]" style={{ color: "var(--color-mp-muted)", textDecoration: "none" }}>
+                  <Link href={href} className="text-[0.77rem] transition-colors hover:text-[var(--color-mp-charcoal)]" style={{ color: "var(--color-mp-muted)", textDecoration: "none" }}>
                     {label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -430,15 +446,26 @@ export default function HomePage() {
 
         {/* Bottom bar */}
         <div
-          className="flex flex-wrap justify-between gap-2 border-t pt-4"
+          className="flex flex-col gap-3 border-t pt-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between"
           style={{ borderColor: "var(--color-mp-border)" }}
         >
-          <p className="text-[0.68rem]" style={{ color: "var(--color-mp-text3)" }}>
-            © 2026 MyPlanzo Pvt. Ltd. · Mumbai, Maharashtra
-          </p>
-          <p className="text-[0.68rem]" style={{ color: "var(--color-mp-text3)" }}>
-            hello@myplanzo.com
-          </p>
+          <div className="flex flex-col gap-1 text-[0.68rem]" style={{ color: "var(--color-mp-text3)" }}>
+            <p>© 2026 MyPlanzo Events Private Limited. All rights reserved.</p>
+            <p>Mumbai, Maharashtra, India</p>
+          </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-[0.7rem]" style={{ color: "var(--color-mp-text3)" }}>
+            <span>
+              Contact:{" "}
+              <a href="mailto:support@myplanzo.com" className="hover:text-[var(--color-mp-charcoal)]" style={{ color: "var(--color-mp-muted)" }}>
+                support@myplanzo.com
+              </a>
+            </span>
+            <span>
+              <a href="tel:+919892788527" className="hover:text-[var(--color-mp-charcoal)]" style={{ color: "var(--color-mp-muted)" }}>
+                +91 98927 88527
+              </a>
+            </span>
+          </div>
         </div>
       </footer>
 

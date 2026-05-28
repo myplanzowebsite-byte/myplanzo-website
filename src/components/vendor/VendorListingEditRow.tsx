@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { VENDOR_CATEGORIES, EVENT_TYPES, LOCATIONS } from "@/lib/mockListings";
+import { EVENT_TYPES, LOCATIONS } from "@/lib/mockListings";
+import type { VendorCategoryOption } from "@/lib/vendorCategories";
 import { ImageUploader } from "@/components/ImageUploader";
 
 const MAX_PHOTOS = 10;
@@ -24,7 +25,13 @@ type Listing = {
   eventTags: string[];
 };
 
-export function VendorListingEditRow({ listing }: { listing: Listing }) {
+export function VendorListingEditRow({
+  listing,
+  vendorCategories,
+}: {
+  listing: Listing;
+  vendorCategories: VendorCategoryOption[];
+}) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({
@@ -206,9 +213,9 @@ export function VendorListingEditRow({ listing }: { listing: Listing }) {
           className={FIELD}
         >
           <option value="">Category…</option>
-          {VENDOR_CATEGORIES.map((c) => (
-            <option key={c.label} value={c.label}>
-              {c.emoji} {c.label}
+          {vendorCategories.map((c) => (
+            <option key={c.id} value={c.title}>
+              {c.emoji} {c.title}
             </option>
           ))}
         </select>
