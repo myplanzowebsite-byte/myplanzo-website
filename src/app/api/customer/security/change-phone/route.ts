@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth/requireSession";
 import { consumeOtp } from "@/lib/auth/otp";
+import { sendWelcomeSms } from "@/lib/notifications/welcome";
 
 const bodySchema = z.object({
   otp: z.string().length(6),
@@ -34,9 +35,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "That number is already in use." }, { status: 409 });
   }
 
+  const wasUnverified = !user.phoneVerified;
   await prisma.user.update({
     where: { id: user.id },
     data: { phone: parsed.data.newPhone, phoneVerified: true },
   });
+  // First-time phone verification (e.g. a Google sign-up adding their phone)
+  // is the welcome moment. Phone *changes* on already-verified accounts skip.
+  if (wasUnverified) {
+    void sendWelcomeSms(user.id).catch((e) => console.error("[sms] welcome:", e));
+  }
   return NextResponse.json({ ok: true });
 }

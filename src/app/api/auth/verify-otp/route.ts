@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { consumeOtp } from "@/lib/auth/otp";
 import { createSessionToken, setSessionCookie } from "@/lib/auth/session";
+import { sendWelcomeSms } from "@/lib/notifications/welcome";
 
 const bodySchema = z.object({
   phone: z.string().min(8),
@@ -33,6 +34,7 @@ export async function POST(req: Request) {
       where: { id: user.id },
       data: { phoneVerified: true },
     });
+    void sendWelcomeSms(user.id).catch((e) => console.error("[sms] welcome:", e));
   }
 
   const token = await createSessionToken({

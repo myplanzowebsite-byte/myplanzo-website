@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth/requireSession";
+import { notifyVendorOfBooking } from "@/lib/notifications/booking";
 
 const createSchema = z.object({
   listingId: z.string(),
@@ -54,6 +55,9 @@ export async function POST(req: Request) {
       amountPaise: 0,
     },
   });
+  void notifyVendorOfBooking(booking.id).catch((e) =>
+    console.error("[sms] vendor booking alert:", e),
+  );
   return NextResponse.json({ booking });
 }
 

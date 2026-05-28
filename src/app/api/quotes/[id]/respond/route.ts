@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth/requireSession";
 import { createNotification } from "@/lib/notifications/notify";
+import { notifyCustomerOfConfirmation } from "@/lib/notifications/booking";
 
 const bodySchema = z.object({
   action: z.enum(["accept", "decline"]),
@@ -67,6 +68,10 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       data: { amountPaise: quote.amountPaise, status: "CONFIRMED" },
     }),
   ]);
+
+  void notifyCustomerOfConfirmation(quote.bookingId).catch((e) =>
+    console.error("[sms] booking confirmation:", e),
+  );
 
   void createNotification({
     userId: quote.vendor.userId,
