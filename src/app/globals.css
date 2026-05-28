@@ -60,6 +60,13 @@
 }
 
 /* ── Base ──────────────────────────────────────────────────────────────────── */
+html {
+  /* Tells the browser the page is dark-themed so native form widgets
+     (date/time pickers, scrollbars, dropdowns) render their dark variants.
+     Without this, mobile Safari/Chrome paint date-input text in their default
+     dark colour on top of our dark background → the picked value looks blank. */
+  color-scheme: dark;
+}
 body {
   min-height: 100vh;
   font-family: var(--font-sans);
