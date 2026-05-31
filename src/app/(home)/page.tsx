@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { VendorCard, type VendorCardData } from "@/components/VendorCard";
+import { EventIcon, hasEventIcon } from "@/components/EventIcon";
 import { MOCK_LISTINGS, normalizeSearchInput } from "@/lib/mockListings";
 import { formatINR, priceUnitForListing } from "@/lib/format";
 
@@ -180,7 +181,11 @@ export default function HomePage() {
                   textDecoration: "none",
                 }}
               >
-                <span className="text-2xl leading-none">{cat.emoji}</span>
+                {hasEventIcon(cat.label) ? (
+                  <EventIcon name={cat.label} size={30} />
+                ) : (
+                  <span className="text-2xl leading-none">{cat.emoji}</span>
+                )}
                 <span
                   className="text-[0.68rem] font-semibold text-center"
                   style={{ color: activeCat === i ? "var(--color-mp-steel)" : "var(--color-mp-muted)" }}
