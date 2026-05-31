@@ -20,6 +20,7 @@ export async function AppHeader() {
     session.role === "CUSTOMER"
       ? [
           { label: "Browse", href: "/browse" },
+          { label: "Discover", href: "/customer/discover" },
           { label: "Events", href: "/customer/events" },
           { label: "Shortlist", href: "/customer/shortlist" },
           { label: "Bookings", href: "/customer/bookings" },

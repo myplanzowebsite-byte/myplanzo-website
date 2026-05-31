@@ -120,6 +120,8 @@ export default async function BrowsePage(props: {
             OR: [
               { title: { contains: q, mode: "insensitive" } },
               { description: { contains: q, mode: "insensitive" } },
+              { category: { contains: q, mode: "insensitive" } },
+              { vendor: { is: { businessName: { contains: q, mode: "insensitive" } } } },
             ],
           }
         : {}),

@@ -120,30 +120,30 @@ export default function HomePage() {
           style={{ maxWidth: 580, background: "var(--color-mp-panel)", borderColor: "var(--color-mp-border)" }}
         >
           <div className="flex-1">
-            <label className="block text-[0.6rem] font-bold uppercase tracking-[0.07em]" style={{ color: "var(--color-mp-text3)" }}>
+            <label className="block text-center text-[0.62rem] font-bold uppercase tracking-[0.1em] text-mp-charcoal">
               What are you planning?
             </label>
             <input
               value={searchWhat}
               onChange={(e) => setSearchWhat(e.target.value)}
-              placeholder="Birthday party, baby shower…"
-              className="w-full bg-transparent text-[0.875rem] outline-none"
-              style={{ color: "var(--color-mp-charcoal)", fontFamily: "inherit" }}
+              placeholder="Event, service, or vendor name…"
+              className="w-full bg-transparent text-center text-[0.875rem] text-mp-charcoal outline-none placeholder:text-center placeholder:text-slate-400"
+              style={{ fontFamily: "inherit" }}
             />
           </div>
 
-          <div className="h-[30px] w-px flex-shrink-0" style={{ background: "var(--color-mp-border)" }} />
+          <div className="h-[34px] w-0.5 flex-shrink-0 rounded-full bg-slate-300" />
 
           <div className="flex-1">
-            <label className="block text-[0.6rem] font-bold uppercase tracking-[0.07em]" style={{ color: "var(--color-mp-text3)" }}>
+            <label className="block text-center text-[0.62rem] font-bold uppercase tracking-[0.1em] text-mp-charcoal">
               Where in Mumbai?
             </label>
             <input
               value={searchWhere}
               onChange={(e) => setSearchWhere(e.target.value)}
               placeholder="Andheri, Bandra, Thane…"
-              className="w-full bg-transparent text-[0.875rem] outline-none"
-              style={{ color: "var(--color-mp-charcoal)", fontFamily: "inherit" }}
+              className="w-full bg-transparent text-center text-[0.875rem] text-mp-charcoal outline-none placeholder:text-center placeholder:text-slate-400"
+              style={{ fontFamily: "inherit" }}
             />
           </div>
 
@@ -358,7 +358,7 @@ export default function HomePage() {
       </div>
 
       {/* ── FOOTER ──────────────────────────────────────────────────────────── */}
-      <footer className="border-t px-6 pb-5 pt-8" style={{ borderColor: "var(--color-mp-border)" }}>
+      <footer className="border-t px-6 pb-24 pt-8 sm:pb-20" style={{ borderColor: "var(--color-mp-border)" }}>
         <div className="mb-7 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="ft-brand">

@@ -29,7 +29,7 @@ export function SiteHeader({ navLinks, isLoggedIn }: SiteHeaderProps) {
 
   function handleNavSearch(e: React.FormEvent) {
     e.preventDefault();
-    if (query.trim()) router.push(`/browse?event=${encodeURIComponent(query.trim())}`);
+    if (query.trim()) router.push(`/browse?q=${encodeURIComponent(query.trim())}`);
   }
 
   const hasNav = !!(navLinks && navLinks.length > 0);

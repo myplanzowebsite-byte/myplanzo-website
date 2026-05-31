@@ -15,6 +15,8 @@ export async function GET(req: Request) {
             OR: [
               { title: { contains: q, mode: "insensitive" } },
               { description: { contains: q, mode: "insensitive" } },
+              { category: { contains: q, mode: "insensitive" } },
+              { vendor: { is: { businessName: { contains: q, mode: "insensitive" } } } },
             ],
           }
         : {}),
@@ -59,9 +61,9 @@ export async function POST(req: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
-  if ((parsed.data.photos?.length ?? 0) < 5) {
+  if ((parsed.data.status ?? "DRAFT") === "ACTIVE" && (parsed.data.photos?.length ?? 0) < 5) {
     return NextResponse.json(
-      { error: "Listings need at least 5 photos so customers can preview your work." },
+      { error: "Active listings need at least 5 photos so customers can preview your work." },
       { status: 400 },
     );
   }

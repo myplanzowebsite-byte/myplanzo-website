@@ -33,6 +33,23 @@ export async function POST(req: Request) {
     return NextResponse.json({ url });
   } catch (e) {
     console.error("[uploads] failed:", e);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    const raw = e instanceof Error ? e.message : "";
+    // Map the most common backend failures to actionable messages so the
+    // uploader UI shows *why* it failed instead of a blank "Upload failed".
+    let error = "Upload failed. Please try again.";
+    let status = 500;
+    if (raw.includes("not configured")) {
+      error = "Image uploads aren't set up yet — storage is not configured.";
+      status = 503;
+    } else if (/bucket|not found|404/i.test(raw)) {
+      error =
+        "Upload storage bucket is missing. Create a public bucket named \"uploads\" in Supabase.";
+      status = 502;
+    } else if (/row-level security|unauthorized|403|401|policy/i.test(raw)) {
+      error =
+        "Storage rejected the upload (permissions). Check the bucket is public and the service-role key is set.";
+      status = 502;
+    }
+    return NextResponse.json({ error }, { status });
   }
 }

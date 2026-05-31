@@ -48,8 +48,10 @@ export function VendorListingForm({
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (photos.length < MIN_PHOTOS) {
-      setError(`Please add at least ${MIN_PHOTOS} photos so customers can see your work.`);
+    if (status === "ACTIVE" && photos.length < MIN_PHOTOS) {
+      setError(
+        `Add at least ${MIN_PHOTOS} photos to publish. You can save as a draft now and add them later.`,
+      );
       return;
     }
     setLoading(true);
@@ -246,7 +248,7 @@ export function VendorListingForm({
           >
             {photos.length >= MIN_PHOTOS
               ? `✓ Minimum ${MIN_PHOTOS} reached`
-              : `Add ${MIN_PHOTOS - photos.length} more (min ${MIN_PHOTOS})`}
+              : `Add ${MIN_PHOTOS - photos.length} more (min ${MIN_PHOTOS} to publish)`}
           </span>
         </div>
         {photos.length > 0 && (
