@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { AppHeader } from "@/components/AppHeader";
 
 export const metadata: Metadata = {
@@ -12,14 +13,26 @@ export default function TermsPage() {
       <AppHeader />
       <main className="mx-auto max-w-3xl px-4 py-10 text-mp-charcoal">
         <h1 className="mb-2 text-3xl font-bold">Terms & Conditions</h1>
-        <p className="mb-8 text-sm text-mp-muted">Last updated: 12 May 2026</p>
+        <p className="mb-4 text-sm text-mp-muted">Last updated: 31 May 2026</p>
+
+        <p className="mb-8 rounded-md border border-mp-border bg-mp-card px-4 py-3 text-sm text-mp-muted">
+          These Terms govern your use of the Platform. For details on how we collect, use, and protect
+          your personal data, please also read our{" "}
+          <Link href="/privacy-policy" className="text-mp-accent underline">
+            Privacy Policy
+          </Link>
+          , which forms part of these Terms.
+        </p>
 
         <div className="space-y-6 text-sm leading-relaxed text-mp-muted">
           <section>
             <h2 className="mb-2 text-lg font-semibold text-mp-charcoal">1. Acceptance of terms</h2>
             <p>
-              By accessing or using MyPlanzo (the &ldquo;Platform&rdquo;), you agree to be bound by these Terms &amp; Conditions and our
-              Privacy Policy. If you do not agree, please do not use the Platform.
+              By accessing or using MyPlanzo (the &ldquo;Platform&rdquo;), you agree to be bound by these Terms &amp; Conditions and our{" "}
+              <Link href="/privacy-policy" className="text-mp-accent underline">
+                Privacy Policy
+              </Link>
+              . If you do not agree, please do not use the Platform.
             </p>
           </section>
 
