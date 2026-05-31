@@ -30,6 +30,7 @@ export function AuthSplitShell({
   currentStep,
   totalSteps,
   variant = "customer",
+  showPitchDetails = true,
 }: {
   children: React.ReactNode;
   title: string;
@@ -37,6 +38,8 @@ export function AuthSplitShell({
   currentStep?: number;
   totalSteps?: number;
   variant?: Variant;
+  /** When false, hides everything below the headline (bullets, how-it-works, dashboard mock). */
+  showPitchDetails?: boolean;
 }) {
   const pitch = variant === "vendor" ? VENDOR_PITCH : CUSTOMER_PITCH;
 
@@ -61,22 +64,24 @@ export function AuthSplitShell({
               {pitch.headline}
             </p>
 
-            <div className="mt-10 space-y-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-mp-accent">{pitch.bulletsHeading}</p>
-              <div className="space-y-3">
-                {pitch.bullets.map((b) => (
-                  <div key={b.title} className="flex items-start gap-3">
-                    <span className="text-lg">{b.icon}</span>
-                    <div>
-                      <p className="font-medium text-mp-charcoal text-sm">{b.title}</p>
-                      <p className="text-xs text-mp-muted">{b.body}</p>
+            {showPitchDetails && (
+              <div className="mt-10 space-y-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.1em] text-mp-accent">{pitch.bulletsHeading}</p>
+                <div className="space-y-3">
+                  {pitch.bullets.map((b) => (
+                    <div key={b.title} className="flex items-start gap-3">
+                      <span className="text-lg">{b.icon}</span>
+                      <div>
+                        <p className="font-medium text-mp-charcoal text-sm">{b.title}</p>
+                        <p className="text-xs text-mp-muted">{b.body}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            {variant === "vendor" && (
+            {showPitchDetails && variant === "vendor" && (
               <div className="mt-8 rounded-2xl border border-mp-border bg-mp-card/80 p-4">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-mp-accent">
                   How it works
@@ -91,7 +96,7 @@ export function AuthSplitShell({
             )}
           </div>
 
-          {variant !== "vendor" && (
+          {showPitchDetails && variant !== "vendor" && (
             <div className="relative mx-auto aspect-square w-4/5 max-w-md">
               <div className="absolute -right-4 top-6 size-20 rounded-full bg-mp-accent-soft/80 blur-xl" aria-hidden />
               <div className="absolute inset-0 rounded-[28px] border border-mp-border bg-gradient-to-br from-mp-card via-mp-panel to-mp-accent-soft shadow-mp-card" />

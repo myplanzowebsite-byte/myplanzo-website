@@ -64,6 +64,7 @@ export default function LoginPage() {
       subtitle="Log in with your email and password"
       currentStep={1}
       totalSteps={2}
+      showPitchDetails={false}
     >
       <GoogleSignInButton next={next} dividerLabel="or" />
 

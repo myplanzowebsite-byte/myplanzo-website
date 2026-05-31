@@ -68,6 +68,7 @@ export default function RegisterPage() {
           : "Choose whether you are booking events or offering services."
       }
       variant={role === "VENDOR" ? "vendor" : "customer"}
+      showPitchDetails={false}
     >
       {role === "CUSTOMER" ? (
         <div className="mb-4">
