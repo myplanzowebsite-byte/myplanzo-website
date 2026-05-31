@@ -4,14 +4,18 @@ import { prisma } from "@/lib/prisma";
 import { readSession } from "@/lib/auth/session";
 import { formatINR } from "@/lib/format";
 import { CheckoutClient } from "./CheckoutClient";
+import { PixelEvent } from "@/components/PixelEvent";
 
 export default async function CheckoutPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ paid?: string }>;
 }) {
   const session = await readSession();
   const { id } = await params;
+  const { paid: justPaid } = await searchParams;
   if (!session || session.role !== "CUSTOMER") {
     redirect(`/login?next=/customer/checkout/${id}`);
   }
@@ -44,9 +48,23 @@ export default async function CheckoutPage({
         </div>
 
         {paid ? (
-          <p className="rounded-md border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-700">
-            Payment received. Your booking is confirmed.
-          </p>
+          <>
+            {/* Fire the Purchase pixel only on the fresh post-payment redirect. */}
+            {justPaid === "1" && (
+              <PixelEvent
+                event="Purchase"
+                params={{
+                  content_type: "product",
+                  content_ids: [booking.id],
+                  value: amount / 100,
+                  currency: "INR",
+                }}
+              />
+            )}
+            <p className="rounded-md border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-700">
+              Payment received. Your booking is confirmed.
+            </p>
+          </>
         ) : amount <= 0 ? (
           <p className="rounded-md border border-mp-border bg-mp-warm px-4 py-3 text-sm text-mp-charcoal">
             No confirmed amount yet. Accept a vendor quote from your messages to proceed to

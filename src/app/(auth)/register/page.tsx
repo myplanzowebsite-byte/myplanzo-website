@@ -24,6 +24,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [businessName, setBusinessName] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [devOtp, setDevOtp] = useState<string | null>(null);
@@ -31,6 +32,10 @@ export default function RegisterPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (!acceptedTerms) {
+      setError("Please accept the Terms & Conditions and Privacy Policy to continue.");
+      return;
+    }
     setDevOtp(null);
     setLoading(true);
     try {
@@ -181,9 +186,36 @@ export default function RegisterPage() {
             />
           </div>
         )}
+        <label className="flex items-start gap-3 text-sm text-mp-muted">
+          <input
+            type="checkbox"
+            checked={acceptedTerms}
+            onChange={(e) => setAcceptedTerms(e.target.checked)}
+            className="mt-0.5 accent-mp-accent"
+          />
+          <span>
+            I agree to MyPlanzo&apos;s{" "}
+            <Link
+              href="/terms-and-conditions"
+              target="_blank"
+              className="font-medium text-mp-accent underline-offset-4 hover:text-mp-charcoal hover:underline"
+            >
+              Terms &amp; Conditions
+            </Link>{" "}
+            and{" "}
+            <Link
+              href="/privacy-policy"
+              target="_blank"
+              className="font-medium text-mp-accent underline-offset-4 hover:text-mp-charcoal hover:underline"
+            >
+              Privacy Policy
+            </Link>
+            .
+          </span>
+        </label>
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || !acceptedTerms}
           className="w-full rounded-md bg-mp-charcoal py-3 text-sm font-semibold text-mp-panel transition-colors hover:bg-mp-accent disabled:opacity-60"
         >
           {loading ? "Creating…" : "Continue"}

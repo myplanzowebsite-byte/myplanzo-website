@@ -8,6 +8,7 @@ import { formatINR, priceUnitForListing } from "@/lib/format";
 import { isMockId, getMockListing } from "@/lib/mockListings";
 import { MockListingDetail } from "./MockListingDetail";
 import { MonthCalendar } from "@/components/MonthCalendar";
+import { PixelEvent } from "@/components/PixelEvent";
 
 // Render the standalone availability calendar only for logged-out viewers so
 // they can still gauge a vendor's booked-up dates before signing in. Logged-in
@@ -32,7 +33,20 @@ export default async function PublicListingPage({
     const mock = getMockListing(id);
     if (!mock) notFound();
     const session = await readSession();
-    return <MockListingDetail listing={mock} isLoggedIn={!!session?.sub} />;
+    return (
+      <>
+        <PixelEvent
+          event="ViewContent"
+          params={{
+            content_type: "product",
+            content_ids: [mock.id],
+            content_name: mock.title,
+            content_category: mock.category,
+          }}
+        />
+        <MockListingDetail listing={mock} isLoggedIn={!!session?.sub} />
+      </>
+    );
   }
 
   const [listing, session] = await Promise.all([
@@ -83,6 +97,17 @@ export default async function PublicListingPage({
 
   return (
     <div className="space-y-6 pb-24">
+      <PixelEvent
+        event="ViewContent"
+        params={{
+          content_type: "product",
+          content_ids: [listing.id],
+          content_name: listing.title,
+          content_category: listing.category ?? undefined,
+          value: listing.priceMin ?? undefined,
+          currency: "INR",
+        }}
+      />
       <Link href="/browse" className="text-sm text-mp-charcoal underline">
         ← Back to browse
       </Link>

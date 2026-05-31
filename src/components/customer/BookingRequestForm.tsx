@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { EVENT_TYPES, GUEST_COUNT_PRESETS } from "@/lib/mockListings";
 import { MonthCalendar } from "@/components/MonthCalendar";
+import { fbTrack } from "@/lib/fbpixel";
 
 const FIELD =
   "mt-1 w-full rounded-md border border-mp-border bg-mp-card px-3 py-2 text-sm outline-none ring-mp-accent/20 focus:border-mp-accent focus:ring-2";
@@ -33,6 +34,13 @@ export function BookingRequestForm({
       return;
     }
     setLoading(true);
+    // Meta Pixel: customer is starting a booking request.
+    fbTrack("InitiateCheckout", {
+      content_type: "product",
+      content_ids: [listingId],
+      content_category: eventType || undefined,
+      num_items: guestCount ? Number(guestCount) || undefined : undefined,
+    });
     try {
       const parts: string[] = [];
       if (eventType) parts.push(`Event: ${eventType}`);

@@ -38,5 +38,5 @@ export async function GET(req: NextRequest) {
   if (!result.ok) {
     return NextResponse.redirect(fallback);
   }
-  return NextResponse.redirect(`${base}/customer/checkout/${result.bookingId}`);
+  return NextResponse.redirect(`${base}/customer/checkout/${result.bookingId}?paid=1`);
 }
