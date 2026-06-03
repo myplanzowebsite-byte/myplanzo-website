@@ -18,6 +18,20 @@ export function otpEmail(purpose: string, code: string): Omit<SendEmailInput, "t
         </div>`,
     };
   }
+  if (purpose === "arrival") {
+    return {
+      subject: `Your MyPlanzo event code: ${code}`,
+      text: `Your MyPlanzo event code is ${code}. Share it with your vendor when they arrive to confirm the start of your event. Do not share it with anyone else.`,
+      html: `
+        <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:24px;color:#222;">
+          <h2 style="margin:0 0 16px;">Your event code</h2>
+          <p>Share this code with your vendor when they arrive to confirm the start of your event:</p>
+          <p style="font-size:28px;font-weight:700;letter-spacing:4px;background:#f5f5f5;padding:12px 16px;border-radius:8px;text-align:center;">${code}</p>
+          <p>Only share it with your vendor at the venue.</p>
+          <p style="color:#666;font-size:12px;margin-top:24px;">— Team MyPlanzo</p>
+        </div>`,
+    };
+  }
   return {
     subject: `Your MyPlanzo verification code: ${code}`,
     text: `Your MyPlanzo verification code is ${code}. Valid for 5 minutes.`,

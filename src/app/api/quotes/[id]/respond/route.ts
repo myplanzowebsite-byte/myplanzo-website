@@ -64,8 +64,9 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     }),
     prisma.booking.update({
       where: { id: quote.bookingId },
-      // Accepting a quote = price agreed = booking confirmed.
-      data: { amountPaise: quote.amountPaise, status: "CONFIRMED" },
+      // Accepting a quote = price agreed = booking confirmed. The fulfilment
+      // stage starts at BOOKED, with the 50% advance now due.
+      data: { amountPaise: quote.amountPaise, status: "CONFIRMED", stage: "BOOKED" },
     }),
   ]);
 

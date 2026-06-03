@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { MockListing } from "@/lib/mockListings";
 import { formatINR, priceUnitForListing } from "@/lib/format";
+import { ImageCarousel } from "@/components/ImageCarousel";
 
 export function MockListingDetail({
   listing,
@@ -24,10 +25,9 @@ export function MockListingDetail({
         </span>
       </div>
 
-      {listing.photos[0] && (
+      {listing.photos.length > 0 && (
         <div className="rounded-[var(--radius-mp-card)] overflow-hidden shadow-[var(--shadow-mp-card)]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={listing.photos[0]} alt={listing.title} className="w-full h-64 object-cover" />
+          <ImageCarousel photos={listing.photos} alt={listing.title} heightClass="h-64 sm:h-80" />
         </div>
       )}
 

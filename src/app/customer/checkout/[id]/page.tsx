@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { readSession } from "@/lib/auth/session";
 import { formatINR } from "@/lib/format";
+import { advancePaise, balancePaise } from "@/lib/payments/installments";
 import { CheckoutClient } from "./CheckoutClient";
 import { PixelEvent } from "@/components/PixelEvent";
 
@@ -26,8 +27,16 @@ export default async function CheckoutPage({
   });
   if (!booking) notFound();
 
-  const paid = booking.payments.some((p) => p.status === "CAPTURED" || p.status === "AUTHORIZED");
+  const isPaid = (kind: string) =>
+    booking.payments.some(
+      (p) => p.kind === kind && (p.status === "CAPTURED" || p.status === "AUTHORIZED"),
+    );
+  const advanceDone = isPaid("ADVANCE") || isPaid("FULL");
+  const balanceDone = isPaid("BALANCE") || isPaid("FULL");
+  const fullyPaid = advanceDone && balanceDone;
   const amount = booking.amountPaise;
+  const advanceAmt = advancePaise(amount);
+  const balanceAmt = balancePaise(amount);
 
   return (
     <div className="space-y-6">
@@ -40,14 +49,32 @@ export default async function CheckoutPage({
       </div>
 
       <div className="rounded-[var(--radius-mp-card)] bg-mp-card p-6 shadow-[var(--shadow-mp-card)] space-y-4">
-        <div className="flex items-baseline justify-between border-b border-mp-border pb-4">
-          <span className="text-sm text-mp-muted">Vendor-confirmed amount</span>
-          <span className="text-2xl font-semibold text-mp-charcoal">
-            {amount > 0 ? formatINR(amount / 100) : "—"}
-          </span>
+        <div className="space-y-2 border-b border-mp-border pb-4">
+          <div className="flex items-baseline justify-between">
+            <span className="text-sm text-mp-muted">Vendor-confirmed amount</span>
+            <span className="text-2xl font-semibold text-mp-charcoal">
+              {amount > 0 ? formatINR(amount / 100) : "—"}
+            </span>
+          </div>
+          {amount > 0 && (
+            <div className="space-y-1 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-mp-muted">
+                  50% advance {advanceDone && <span className="text-green-700">· paid</span>}
+                </span>
+                <span className="text-mp-charcoal">{formatINR(advanceAmt / 100)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-mp-muted">
+                  Balance {balanceDone && <span className="text-green-700">· paid</span>}
+                </span>
+                <span className="text-mp-charcoal">{formatINR(balanceAmt / 100)}</span>
+              </div>
+            </div>
+          )}
         </div>
 
-        {paid ? (
+        {fullyPaid ? (
           <>
             {/* Fire the Purchase pixel only on the fresh post-payment redirect. */}
             {justPaid === "1" && (
@@ -62,7 +89,7 @@ export default async function CheckoutPage({
               />
             )}
             <p className="rounded-md border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-700">
-              Payment received. Your booking is confirmed.
+              Payment complete. Check your booking for the arrival code to share with your vendor.
             </p>
           </>
         ) : amount <= 0 ? (
@@ -70,8 +97,22 @@ export default async function CheckoutPage({
             No confirmed amount yet. Accept a vendor quote from your messages to proceed to
             payment.
           </p>
+        ) : !advanceDone ? (
+          <div className="space-y-2">
+            <p className="text-sm text-mp-muted">
+              Pay the 50% advance now to confirm your booking. The balance is due before your
+              event.
+            </p>
+            <CheckoutClient bookingId={booking.id} kind="advance" />
+          </div>
         ) : (
-          <CheckoutClient bookingId={booking.id} />
+          <div className="space-y-2">
+            <p className="text-sm text-mp-muted">
+              Advance paid. Pay the remaining balance before your event — once it&apos;s paid
+              we&apos;ll send you an arrival code to share with your vendor.
+            </p>
+            <CheckoutClient bookingId={booking.id} kind="balance" />
+          </div>
         )}
 
         <p className="text-xs text-mp-text3">

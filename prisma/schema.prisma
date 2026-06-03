@@ -31,6 +31,24 @@ enum BookingStatus {
   CANCELLED
 }
 
+// Fine-grained fulfilment lifecycle, layered on top of the coarse BookingStatus.
+// Booked → 50% advance paid → in progress (balance paid + vendor entered the
+// arrival OTP) → completed (vendor marked the event done).
+enum BookingStage {
+  BOOKED
+  ADVANCE_PAID
+  IN_PROGRESS
+  COMPLETED
+}
+
+// Which installment a Payment row represents. Existing/legacy single payments
+// (incl. hosted Payment Links) default to FULL so their behaviour is unchanged.
+enum PaymentKind {
+  ADVANCE
+  BALANCE
+  FULL
+}
+
 enum ListingStatus {
   DRAFT
   ACTIVE
@@ -183,9 +201,13 @@ model Booking {
   listingId       String?
   eventId         String?
   status          BookingStatus @default(PENDING)
+  stage           BookingStage  @default(BOOKED)
   eventDate       DateTime?
   eventDetails    String?
   amountPaise     Int           @default(0)
+  arrivalOtp         String? // booking-scoped 6-digit code issued when fully paid, read out to the vendor on arrival
+  arrivalOtpSentAt   DateTime?
+  otpVerifiedAt      DateTime? // set when the vendor enters the correct arrival OTP
   cancelledAt        DateTime?
   cancellationReason String?
   reminderSentAt     DateTime? // set when the T-24h SMS reminder has been sent
@@ -270,6 +292,7 @@ model Payment {
   razorpayPaymentId String?
   amountPaise      Int
   commissionPaise  Int           @default(0)
+  kind             PaymentKind   @default(FULL)
   status           PaymentStatus @default(PENDING)
   createdAt        DateTime      @default(now())
   booking          Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)

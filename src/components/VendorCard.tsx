@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ImageCarousel } from "@/components/ImageCarousel";
 
 export interface VendorCardData {
   id: string | number;
@@ -13,6 +14,7 @@ export interface VendorCardData {
   price: string;                // e.g. "₹8,000"
   unit?: string;                // e.g. "starting" or "/ plate"
   img?: string;
+  photos?: string[];            // full gallery; falls back to [img] then emoji
   emoji?: string;               // fallback when no img
   waPhone?: string;             // digits only, e.g. "919999999999"
   href: string;                 // card/book destination
@@ -34,14 +36,17 @@ export function VendorCard({ v }: { v: VendorCardData }) {
       className="cursor-pointer overflow-hidden rounded-2xl border transition-all duration-200 hover:-translate-y-0.5 hover:border-[#383838] hover:shadow-[0_14px_44px_rgba(0,0,0,0.45)]"
       style={{ background: "var(--color-mp-panel)", borderColor: "var(--color-mp-border)" }}
     >
-      {/* Image / emoji fallback */}
+      {/* Image carousel / emoji fallback */}
       <div className="relative h-[170px] overflow-hidden" style={{ background: "var(--color-mp-taupe)" }}>
-        {v.img ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={v.img} alt={v.name} className="absolute inset-0 h-full w-full object-cover" />
-        ) : (
-          <div className="flex h-full items-center justify-center text-5xl">{v.emoji ?? "🎉"}</div>
-        )}
+        <ImageCarousel
+          photos={v.photos && v.photos.length > 0 ? v.photos : v.img ? [v.img] : []}
+          alt={v.name}
+          heightClass="h-[170px]"
+          showCounter={false}
+          fallback={
+            <div className="flex h-full items-center justify-center text-5xl">{v.emoji ?? "🎉"}</div>
+          }
+        />
 
         {/* Category tag */}
         <div

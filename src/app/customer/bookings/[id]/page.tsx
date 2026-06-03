@@ -43,27 +43,51 @@ export default async function CustomerBookingDetailPage({
             : "Awaiting a quote from the vendor."}
         </p>
         {(() => {
-          const paid = booking.payments.some(
-            (p) => p.status === "CAPTURED" || p.status === "AUTHORIZED",
-          );
-          if (booking.amountPaise > 0 && paid) {
+          if (booking.amountPaise <= 0) return null;
+          const isPaid = (kind: string) =>
+            booking.payments.some(
+              (p) => p.kind === kind && (p.status === "CAPTURED" || p.status === "AUTHORIZED"),
+            );
+          const advanceDone = isPaid("ADVANCE") || isPaid("FULL");
+          const balanceDone = isPaid("BALANCE") || isPaid("FULL");
+
+          // Fully paid, awaiting the vendor's arrival — show the code to read out.
+          if (advanceDone && balanceDone && booking.arrivalOtp && booking.stage === "ADVANCE_PAID") {
+            return (
+              <div className="rounded-md border border-mp-accent/20 bg-mp-accent-soft px-4 py-3 text-sm">
+                <p className="text-mp-charcoal">Give this code to your vendor on arrival:</p>
+                <p className="mt-1 text-3xl font-bold tracking-[0.3em] text-mp-accent">
+                  {booking.arrivalOtp}
+                </p>
+                <p className="mt-1 text-xs text-mp-muted">
+                  We also sent it to you by SMS and email.
+                </p>
+              </div>
+            );
+          }
+          if (booking.stage === "IN_PROGRESS") {
             return (
               <p className="rounded-md border border-green-500/20 bg-green-500/10 px-3 py-2 text-sm text-green-700">
-                Paid — booking confirmed.
+                Your vendor has arrived — your event is in progress.
               </p>
             );
           }
-          if (booking.amountPaise > 0) {
+          if (advanceDone && balanceDone) {
             return (
-              <Link
-                href={`/customer/checkout/${booking.id}`}
-                className="inline-block rounded-md bg-mp-charcoal px-4 py-2 text-sm font-medium text-mp-panel transition-colors hover:bg-mp-accent"
-              >
-                Proceed to checkout →
-              </Link>
+              <p className="rounded-md border border-green-500/20 bg-green-500/10 px-3 py-2 text-sm text-green-700">
+                Paid in full — booking confirmed.
+              </p>
             );
           }
-          return null;
+          // Something still owed — send to checkout for the right installment.
+          return (
+            <Link
+              href={`/customer/checkout/${booking.id}`}
+              className="inline-block rounded-md bg-mp-charcoal px-4 py-2 text-sm font-medium text-mp-panel transition-colors hover:bg-mp-accent"
+            >
+              {advanceDone ? "Pay balance →" : "Pay 50% advance →"}
+            </Link>
+          );
         })()}
         {booking.status === "COMPLETED" && (
           <Link

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { createNotification } from "@/lib/notifications/notify";
+import { issueArrivalOtp } from "@/lib/payments/arrivalOtp";
 
 type CaptureResult =
   | { ok: false; reason: "not_found" }
@@ -40,6 +41,29 @@ export async function capturePayment(params: {
     )} for their booking.`,
     link: "/vendor/bookings",
   }).catch((e) => console.error("[notify] payment captured:", e));
+
+  // Advance the fulfilment stage. The first captured payment moves the booking
+  // off BOOKED; once the captured total covers the full amount we issue the
+  // arrival OTP (once — guarded by `!arrivalOtp`). This works identically for
+  // the split flow (ADVANCE then BALANCE) and the legacy single FULL payment.
+  const booking = payment.booking;
+  if (booking.stage === "BOOKED") {
+    await prisma.booking.update({
+      where: { id: booking.id },
+      data: { stage: "ADVANCE_PAID" },
+    });
+  }
+
+  const captured = await prisma.payment.aggregate({
+    where: { bookingId: booking.id, status: "CAPTURED" },
+    _sum: { amountPaise: true },
+  });
+  const totalCaptured = captured._sum.amountPaise ?? 0;
+  if (totalCaptured >= booking.amountPaise && !booking.arrivalOtp) {
+    await issueArrivalOtp(booking.id).catch((e) =>
+      console.error("[capturePayment] issueArrivalOtp:", e),
+    );
+  }
 
   return { ok: true, alreadyCaptured: false, bookingId: payment.bookingId };
 }

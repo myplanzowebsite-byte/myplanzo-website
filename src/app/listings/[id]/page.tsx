@@ -9,6 +9,7 @@ import { isMockId, getMockListing } from "@/lib/mockListings";
 import { MockListingDetail } from "./MockListingDetail";
 import { MonthCalendar } from "@/components/MonthCalendar";
 import { PixelEvent } from "@/components/PixelEvent";
+import { ImageCarousel } from "@/components/ImageCarousel";
 
 // Render the standalone availability calendar only for logged-out viewers so
 // they can still gauge a vendor's booked-up dates before signing in. Logged-in
@@ -112,10 +113,9 @@ export default async function PublicListingPage({
         ← Back to browse
       </Link>
 
-      {listing.photos?.[0] && (
+      {listing.photos?.length > 0 && (
         <div className="rounded-[var(--radius-mp-card)] overflow-hidden shadow-[var(--shadow-mp-card)]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={listing.photos[0]} alt={listing.title} className="w-full h-64 object-cover" />
+          <ImageCarousel photos={listing.photos} alt={listing.title} heightClass="h-64 sm:h-80" />
         </div>
       )}
 

@@ -32,6 +32,77 @@ export function verifyPaymentLinkSignature(params: {
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
+/** Error thrown by Razorpay API helpers, carrying the HTTP status so routes
+ * can distinguish auth failures (401) from other gateway errors (500). */
+export class RazorpayApiError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "RazorpayApiError";
+    this.status = status;
+  }
+}
+
+/**
+ * Create a Razorpay Order for Standard Web Checkout (the in-page checkout.js
+ * modal). Returns the order id the browser hands to the Razorpay modal. The
+ * order id is later used as the lookup key for capture, mirroring how Payment
+ * Links store their link id in `Payment.razorpayOrderId`.
+ */
+export async function createRazorpayOrder(params: {
+  amountPaise: number;
+  receipt: string;
+  notes?: Record<string, string>;
+}) {
+  const keyId = process.env.RAZORPAY_KEY_ID;
+  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  if (!keyId || !keySecret) {
+    throw new Error("Razorpay keys are not configured (RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET)");
+  }
+  const auth = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
+  const res = await fetch("https://api.razorpay.com/v1/orders", {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${auth}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      amount: params.amountPaise,
+      currency: "INR",
+      receipt: params.receipt,
+      notes: params.notes,
+    }),
+  });
+  if (!res.ok) {
+    const t = await res.text();
+    throw new RazorpayApiError(`Razorpay order failed: ${t}`, res.status);
+  }
+  const data = (await res.json()) as { id: string; amount: number; currency: string };
+  return { orderId: data.id, amount: data.amount, currency: data.currency };
+}
+
+/**
+ * Verify a Razorpay Standard Checkout success signature. The modal returns
+ * `razorpay_order_id`, `razorpay_payment_id` and `razorpay_signature`; the
+ * signature is HMAC-SHA256 of `order_id|payment_id` keyed by the secret. Note
+ * this differs from the Payment Link scheme in verifyPaymentLinkSignature().
+ */
+export function verifyCheckoutSignature(params: {
+  orderId: string;
+  paymentId: string;
+  signature: string;
+}): boolean {
+  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  if (!keySecret) return false;
+  const expected = crypto
+    .createHmac("sha256", keySecret)
+    .update(`${params.orderId}|${params.paymentId}`)
+    .digest("hex");
+  const a = Buffer.from(expected);
+  const b = Buffer.from(params.signature);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
 /**
  * Issue a full refund for a captured Razorpay payment. Used when a paid
  * booking is cancelled. Throws if the gateway rejects the refund so the

@@ -5,7 +5,8 @@ import { capturePayment } from "@/lib/payments/capturePayment";
 /**
  * Razorpay webhook — the source of truth for payment capture. Fires
  * server-to-server regardless of what the customer's browser does.
- * Handles the `payment_link.paid` event. Idempotent via capturePayment().
+ * Handles `payment_link.paid` (Payment Links) and `order.paid` (Standard
+ * Checkout). Idempotent via capturePayment(), which keys on the order/link id.
  */
 export async function POST(req: Request) {
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -26,7 +27,8 @@ export async function POST(req: Request) {
     event?: string;
     payload?: {
       payment_link?: { entity?: { id?: string } };
-      payment?: { entity?: { id?: string } };
+      order?: { entity?: { id?: string } };
+      payment?: { entity?: { id?: string; order_id?: string } };
     };
   };
   try {
@@ -35,11 +37,23 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
+  // Payment Links flow.
   if (payload.event === "payment_link.paid") {
     const paymentLinkId = payload.payload?.payment_link?.entity?.id;
     const paymentId = payload.payload?.payment?.entity?.id;
     if (paymentLinkId && paymentId) {
       await capturePayment({ paymentLinkId, paymentId });
+    }
+  }
+
+  // Standard Checkout (Orders) flow. `order.paid` carries both the order and
+  // the payment; `payment.captured` carries the order id on the payment entity.
+  if (payload.event === "order.paid" || payload.event === "payment.captured") {
+    const orderId =
+      payload.payload?.order?.entity?.id ?? payload.payload?.payment?.entity?.order_id;
+    const paymentId = payload.payload?.payment?.entity?.id;
+    if (orderId && paymentId) {
+      await capturePayment({ paymentLinkId: orderId, paymentId });
     }
   }
 
