@@ -208,7 +208,7 @@ export default async function BrowsePage(props: {
           href="/customer/discover"
           className="shrink-0 rounded-full border border-mp-border bg-mp-card px-3 py-1.5 text-sm text-mp-charcoal transition hover:border-mp-accent"
         >
-          ✨ Discover (swipe)
+          Discover (swipe)
         </Link>
       </div>
 
@@ -242,7 +242,7 @@ export default async function BrowsePage(props: {
                   : "border-mp-border bg-mp-card text-mp-charcoal"
               }`}
             >
-              {c.emoji} {c.title}
+              {c.title}
             </Link>
           );
         })}

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 interface SiteHeaderProps {
   /** Extra nav links shown when user is logged in (e.g. Browse, Shortlist, Bookings) */
@@ -23,14 +22,7 @@ function Badge({ count }: { count: number }) {
 }
 
 export function SiteHeader({ navLinks, isLoggedIn }: SiteHeaderProps) {
-  const router = useRouter();
-  const [query, setQuery] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
-
-  function handleNavSearch(e: React.FormEvent) {
-    e.preventDefault();
-    if (query.trim()) router.push(`/browse?q=${encodeURIComponent(query.trim())}`);
-  }
 
   const hasNav = !!(navLinks && navLinks.length > 0);
 
@@ -55,24 +47,8 @@ export function SiteHeader({ navLinks, isLoggedIn }: SiteHeaderProps) {
           />
         </Link>
 
-        {/* Inline search (hidden on mobile) */}
-        <form
-          onSubmit={handleNavSearch}
-          className="hidden flex-1 items-center gap-2 rounded-[10px] border px-3.5 transition-colors focus-within:border-[var(--color-mp-steel)] md:flex"
-          style={{ maxWidth: 500, background: "var(--color-mp-panel)", borderColor: "var(--color-mp-border)", height: 38 }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2" strokeLinecap="round">
-            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-          </svg>
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search vendors, services…"
-            className="flex-1 bg-transparent text-sm outline-none"
-            style={{ color: "var(--color-mp-charcoal)", fontFamily: "inherit" }}
-          />
-        </form>
+        {/* Spacer pushes nav + actions to the right now that search is gone */}
+        <div className="flex-1" />
 
         {/* Extra nav links — desktop only */}
         {hasNav && (
