@@ -5,6 +5,14 @@ import { prisma } from "@/lib/prisma";
 import { VendorVerifyButtons } from "@/components/admin/VendorVerifyButtons";
 
 const DATE_FMT = new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" });
+const DATETIME_FMT = new Intl.DateTimeFormat("en-IN", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  timeZone: "Asia/Kolkata",
+});
 const inr = (paise: number) => `₹${(paise / 100).toLocaleString("en-IN")}`;
 
 export default async function AdminProfessionalDetailPage({
@@ -57,6 +65,12 @@ export default async function AdminProfessionalDetailPage({
           <div>
             <p className="text-xs text-mp-muted">Profile views</p>
             <p className="font-medium">{v.profileViews}</p>
+          </div>
+          <div>
+            <p className="text-xs text-mp-muted">Terms &amp; Privacy accepted</p>
+            <p className="font-medium">
+              {user.termsAcceptedAt ? `${DATETIME_FMT.format(user.termsAcceptedAt)} IST` : "Not recorded"}
+            </p>
           </div>
           <VendorVerifyButtons vendorUserId={user.id} status={v.verificationStatus} />
           <Link

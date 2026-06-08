@@ -76,6 +76,8 @@ export async function POST(req: Request) {
       googleId: identity.sub,
       role: "CUSTOMER",
       phoneVerified: false,
+      // Signing up via Google constitutes acceptance of the T&C / Privacy Policy.
+      termsAcceptedAt: new Date(),
       customerProfile: {
         create: {
           displayName: identity.name ?? identity.email.split("@")[0],

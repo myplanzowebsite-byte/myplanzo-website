@@ -49,6 +49,7 @@ export default function RegisterPage() {
           role,
           displayName: displayName || undefined,
           businessName: role === "VENDOR" ? businessName : undefined,
+          acceptedTerms,
         }),
       });
       const data = await res.json().catch(() => ({}));

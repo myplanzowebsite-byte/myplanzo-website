@@ -11,6 +11,8 @@ const bodySchema = z.object({
   role: z.enum(["CUSTOMER", "VENDOR"]),
   displayName: z.string().min(1).optional(),
   businessName: z.string().min(1).optional(),
+  // Must be explicitly true — the user has to tick the T&C / Privacy Policy box.
+  acceptedTerms: z.literal(true),
 });
 
 export async function POST(req: Request) {
@@ -39,6 +41,7 @@ export async function POST(req: Request) {
       passwordHash,
       role,
       phoneVerified: false,
+      termsAcceptedAt: new Date(),
       customerProfile:
         role === "CUSTOMER"
           ? { create: { displayName: displayName ?? email.split("@")[0] } }
